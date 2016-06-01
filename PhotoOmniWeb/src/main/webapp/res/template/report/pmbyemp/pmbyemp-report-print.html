@@ -1,0 +1,84 @@
+<html ng-app="printReport">
+<head>
+	<meta charset="ISO-8859-1">
+	<title>PMByEmployee: Report</title>
+	<script src="/PhotoOmniWeb/res/js/vendor/angular.js"></script>
+	<link rel="stylesheet" type="text/css" href="/PhotoOmniWeb/res/css/bootstrap.min.css">
+		<style type="text/css" media="print,screen">
+		.hideMe {
+			display: block;
+		}
+		
+		.PrintClass {
+			display: block;
+		}
+		
+		.NoPrintClass {
+			display: block;
+		}
+	</style>
+</head>
+<body ng-controller="PMByEmpPrintController">
+	<center><h3>PMByEmployee Report</h3></center>
+	<table class="table table-condensed table-hover table-bordered">
+	<thead>
+	  <tr>
+		<th>Employee Name.</th>
+		<th>PM Dollars Earned</th>
+		<th>PM Earned Qty</th>
+	  </tr>
+	</thead>
+	<tbody>
+	<tr ng-repeat="data in workspace.data"  tooltip-animation="false">
+		<td><a href="">{{data.employeeName}}</a></td>
+		<td>$ {{data.pmDollarEarned}}</td>
+		<td>{{data.pmEarnedQty}}</td>
+	  </tr>
+	</tbody>
+	</table>
+</body>
+</html>
+
+<script>
+angular.module('printReport', []).controller('PMByEmpPrintController', ['$scope','$http',function($scope, $http){
+	
+	var PMByEmpMessageHeader = {
+		"appID": "PHOTOOMNI",
+		"transactionID": transactionID(),
+		"msgSentTimestamp": messageHeaderCurrentTimestamp(),
+		"commandName":"PMByEmployeeReportDetails",
+		"versionOfCommand":"1",
+		"origin":"PMReport"
+	}
+	$scope.workspace = {};
+	$scope.rptObj = JSON.parse(sessionStorage.getItem('PMByEmpPrint'));
+	//console.log($scope.rptObj +">>>>"+JSON.stringify($scope.rptObj) +"balaji"+ JSON.stringify(PMByEmpMessageHeader));
+	var url = "/PhotoOmniOMSWeb/orders/pm_mbpm/PMByEmpPrint?param="
+		 + JSON.stringify($scope.rptObj) + JSON.stringify(PMByEmpMessageHeader);
+	 
+	$http.post(url).then(function(response){
+		$scope.workspace.data = response.data.pmByEmployeeDetailBeans;
+	})
+}])
+
+var messageHeaderCurrentTimestamp = function(){
+     var str = "";
+     var currentTime = new Date()
+     var year = currentTime.getFullYear()
+     var month = currentTime.getMonth() + 1
+     var day = currentTime.getDate()
+     var hours = currentTime.getHours()
+     var minutes = currentTime.getMinutes()
+     var seconds = currentTime.getSeconds()
+     str += year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
+     return str;
+};
+/* to generate transaction ID for the KIOSK report */
+var transactionID = function guid() {
+    function _p8(s) {
+        var p = (Math.random().toString()+"000000000").substr(2,8);
+        return s ? "-" + p.substr(0,4) + "-" + p.substr(4,4) : p ;
+    }
+    return _p8() + _p8(true) + _p8(true) + _p8();
+};
+</script>

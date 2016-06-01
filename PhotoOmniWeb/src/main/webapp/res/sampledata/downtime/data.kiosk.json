@@ -1,0 +1,118 @@
+{
+	"startDate" : "01/05/2008",
+	"endDate" : "01/05/2008",
+	"location" : "Chain",
+	"locationNumber" : "",
+	"machine" : "Walgreen Kiosk",
+	"store" : [
+			{
+				"regionNumber" : "4",
+				"districtNumber" : "12",
+				"storeNumber" : "41256",
+				"totalRecord" : "34",
+				"currrentPage" : "1",
+				"data":[
+						{
+							"machineName" : "Walgreen Kiosk",
+							"equipmentName": "All",
+							"enteredBy" : "Headphoto PCP",
+							"startTime" : "12/30/2014  8:49:00 AM",
+							"endTime" : "12/30/2014  11:00:00 PM",
+							"duration" : "14:11",
+							"reason" : "Machine Down due to Hardware issue"
+						},
+						{
+							"machineName" : "Walgreen Kiosk",
+							"equipmentName": "All",
+							"enteredBy" : "CARREIRO, CYNTHIA",
+							"startTime" : "12/30/2014  8:49:00 AM",
+							"endTime" : "12/30/2014  11:00:00 PM",
+							"duration" : "14:11",
+							"reason" : "Machine Down due to Hardware issue"
+						},
+						{
+							"machineName" : "Walgreen Kiosk",
+							"equipmentName": "All",
+							"enteredBy" : "ESCOBAR, TRISHA",
+							"startTime" : "12/30/2014  8:49:00 AM",
+							"endTime" : "12/30/2014  11:00:00 PM",
+							"duration" : "14:11",
+							"reason" : "Machine Down due to Hardware issue"
+						}
+					]
+			},
+			{
+				"regionNumber" : "4",
+				"districtNumber" : "12",
+				"storeNumber" : "41256",
+				"totalRecord" : "24",
+				"currrentPage" : "1",
+				"data":[
+						{
+							"machineName" : "Walgreen Kiosk",
+							"equipmentName": "All",
+							"enteredBy" : "Headphoto PCP",
+							"startTime" : "12/30/2014  8:49:00 AM",
+							"endTime" : "12/30/2014  11:00:00 PM",
+							"duration" : "14:11",
+							"reason" : "Machine Down due to Hardware issue"
+						},
+						{
+							"machineName" : "Walgreen Kiosk",
+							"equipmentName": "All",
+							"enteredBy" : "CARREIRO, CYNTHIA",
+							"startTime" : "12/30/2014  8:49:00 AM",
+							"endTime" : "12/30/2014  11:00:00 PM",
+							"duration" : "14:11",
+							"reason" : "Machine Down due to Hardware issue"
+						},
+						{
+							"machineName" : "Walgreen Kiosk",
+							"equipmentName": "All",
+							"enteredBy" : "ESCOBAR, TRISHA",
+							"startTime" : "12/30/2014  8:49:00 AM",
+							"endTime" : "12/30/2014  11:00:00 PM",
+							"duration" : "14:11",
+							"reason" : "Machine Down due to Hardware issue"
+						}
+					]
+			},
+			{
+				"regionNumber" : "4",
+				"districtNumber" : "12",
+				"storeNumber" : "41256",
+				"totalRecord" : "14",
+				"currrentPage" : "1",
+				"data":[
+						{
+							"machineName" : "Walgreen Kiosk",
+							"equipmentName": "All",
+							"enteredBy" : "Headphoto PCP",
+							"startTime" : "12/30/2014  8:49:00 AM",
+							"endTime" : "12/30/2014  11:00:00 PM",
+							"duration" : "14:11",
+							"reason" : "Machine Down due to Hardware issue"
+						},
+						{
+							"machineName" : "Walgreen Kiosk",
+							"equipmentName": "All",
+							"enteredBy" : "CARREIRO, CYNTHIA",
+							"startTime" : "12/30/2014  8:49:00 AM",
+							"endTime" : "12/30/2014  11:00:00 PM",
+							"duration" : "14:11",
+							"reason" : "Machine Down due to Hardware issue"
+						},
+						{
+							"machineName" : "Walgreen Kiosk",
+							"equipmentName": "All",
+							"enteredBy" : "ESCOBAR, TRISHA",
+							"startTime" : "12/30/2014  8:49:00 AM",
+							"endTime" : "12/30/2014  11:00:00 PM",
+							"duration" : "14:11",
+							"reason" : "Machine Down due to Hardware issue"
+						}
+					]
+			}
+		]
+	
+}

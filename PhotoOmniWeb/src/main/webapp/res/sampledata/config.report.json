@@ -1,0 +1,117 @@
+{
+  "catagory":[
+    { "id": 3, "text": "Orders" ,
+    	"subcat" : [
+    		 
+             { "id": 5, "text": "PM by WIC Report","viewInCorp":true,
+                "filterTemplate" : "res/template/report/pmwic/filter.template.html" ,
+                "storeTemplate" : "res/template/report/pmwic/store.template.html" ,
+                "dataJson" : "/PhotoOmniOMSWeb/orders/pm_mbpm/submit/pm_wic_rpt_req"
+               },
+             { "id": 6, "text": "Royalty Report","viewInCorp":true,
+                "filterTemplate" : "res/template/report/royalty/filter.template.html" ,
+                "storeTemplate" : "res/template/report/royalty/store.template.html" ,
+                "dataJson" : "/PhotoOmniOMSWeb/orders/submit/sales_by_royalty_template_rpt_reqt",
+                "royaltyVendorlistJson" : "/PhotoOmniOMSWeb/orders/getRoyaltyVendorNameList" 
+               },
+               {
+               	"id":8,
+               	"text" : "Template Sales Report by Product","viewInCorp":true,
+               	"filterTemplate" : "res/template/report/photocard/filter.template.html" ,
+               	"storeTemplate" : "res/template/report/photocard/store.template.html" ,
+               	"filterDataUrl" : "/PhotoOmniOMSWeb/orders/sales_by_photo_card_rpt_req"
+               },
+               { "id": 10, "text": "PLU Report","viewInCorp":true,
+                "filterTemplate" : "res/template/report/plu/filter.template.html" ,
+                "storeTemplate" : "res/template/report/plu/store.template.html" ,
+                "dataJson" : "/PhotoOmniOMSWeb/orders/submit/plu_rpt_req"
+               },
+               { "id": 13, "text": "Printable Signs Report","viewInCorp":true,
+                "filterTemplate" : "res/template/report/printsign/printsign.html" ,
+                "storeTemplate" : "res/template/report/printsign/store.template.html" ,
+                "dataJson" : "/PhotoOmniOMSWeb/orders/submit/signs_rpt_req",
+                "filterCriteria" : "/PhotoOmniOMSWeb/orders/submit/signs_event_rpt_req"
+               },
+               { "id": 1, "text": "Pay On Fulfillment Report" ,"viewInCorp":true,
+                "filterTemplate" : "res/template/report/payonfulfilment/filter.template.html" ,
+                "storeTemplate" : "res/template/report/payonfulfilment/store.template.html" ,
+                "storeTemplateEdiupc" : "res/template/report/payonfulfilment/store.ediupc.template.html" ,
+                "vendorlistJson" : "/PhotoOmniOMSWeb/orders/getPOFVendorNameList" ,
+                "dataJson" : "/PhotoOmniOMSWeb/orders/payOnFulfillmentReportRequest", 
+                "dataJsonEdiupc" : "res/sampledata/payonfulfillment/ediupc.payonfullfill.json",
+                "dataJsonItemDetail" : "res/sampledata/payonfulfillment/item.detail.json",
+                "exportToCSVJson" : "/PhotoOmniOMSWeb/orders/DownloadPOFCSV",
+                "printTemplate"      : "res/template/report/store-report-print.html"
+
+               },
+               { "id": 11, "text": "Approve Vendor Cost" ,"viewInCorp":true,
+                "filterTemplate" : "res/template/report/payonfulfilment/filter.vndrcost.template.html",
+                "storeTemplate" : "res/template/report/payonfulfilment/store.vndrcost.template.html" ,
+                "storeTemplateEDIUPC": "res/template/report/payonfulfilment/store.ediupc.template.html",
+                "vendorlistJson" : "/PhotoOmniOMSWeb/orders/getPOFApproveVendorNameList",
+                "dataJson" : "/PhotoOmniOMSWeb/orders/fetchVendorPaymentAwaitingApproval", 
+                "pofSuccessJson" : "/PhotoOmniOMSWeb/orders/updateVendorpaymentApproval"  
+                },
+	            { "id": 19, "text":      "Placed & Sold Orders by Channel" ,"viewInCorp":true,
+	                "filterTemplate"     :"res/template/report/cannedReport/filter.template.html" ,
+	                "storeTemplate"      : "res/template/report/cannedReport/store.template.html" ,
+	                "dataJson"           : "/PhotoOmniWeb/servlet/exceptionReport/generateOrderPlacedCannedReport",
+	                "cannedlistJson"     : "/PhotoOmniWeb/servlet/exceptionReport/getCannedReportOrderTypeInputChannelRequest",
+	                "printJson"          : "/PhotoOmniOMSWeb/orders/unclaimed-store-print"  ,
+	                "exportToCSVJson"    : "/PhotoOmniWeb/servlet/exceptionReport/downloadCannedReportCSV" ,
+	                "totalRevJson"       : "/PhotoOmniWeb/servlet/exceptionReport/generateOrderPlacedCannedReportGenerricFields"     
+	            }
+    	]
+    },
+    { "id": 4, "text": "Machine" ,
+    	"subcat" : [
+    		{ "id": 3, "text": "Kiosk Report" ,"viewInCorp":true,
+                "filterTemplate" : "res/template/report/kiosk/filter.template.html" ,
+                "storeTemplate" : "res/template/report/kiosk/store.template.html" ,
+                "dataJson" : "/PhotoOmniAdminWeb/report/kiosk-data",
+                "filterCriteria" : "/PhotoOmniAdminWeb/report/koisk-filters"
+             },
+    		{ "id": 4, "text": "Machine Downtime Report","viewInCorp":true,
+                "filterTemplate" : "res/template/report/machine/filter.template.html" ,
+                "storeTemplate" : "res/template/report/machine/store.template.html" ,
+                "dataJson" : "/PhotoOmniAdminWeb/machines/down_time" ,
+                "machinelistJson" : "/PhotoOmniAdminWeb/machines/machine_type" ,
+                "locationlistJson" : "res/sampledata/downtime/location.list.json",
+                "machineStorePrint" : "/PhotoOmniAdminWeb/machines/machine-store-print",
+                "printTemplate"      : "res/template/report/store-report-print.html"
+            },
+            { "id": 14, "text": "Exception report" ,"viewInCorp":false,
+                "filterTemplate"     : "res/template/report/exceptionReport/filter.template.html" ,
+                "storeTemplate"      : "res/template/report/exceptionReport/store.template.html" ,
+                "storeEmplTemplate"  : "res/template/report/exceptionReport/store.employee.template.html" ,
+                "dataJson"           : "/PhotoOmniOMSWeb/orders/submitEnvelopeReportRequest",
+                "dataJsonByEmp"      : "/PhotoOmniOMSWeb/orders/submitEmployeeReportRequest",
+                "dataJsonItemDetail" : "/PhotoOmniOMSWeb/orders/submitEnvelopePopupRequest",
+                "viewSectionDetail"  : "res/sampledata/exceptionReport/section.list.json",
+                "getReasonList"      : "/PhotoOmniOMSWeb/orders/exceptionReasonRequest",
+                "printTemplate"      : "res/template/report/store-report-print.html"
+            },
+            { "id": 17, "text": "Silver Recovery Report" ,"viewInCorp":true,
+            	"filterTemplate"     : "res/template/report/silverCanRprt/filter.template.html" ,
+                "storeTemplate"      : "res/template/report/silverCanRprt/store.template.html" ,
+                "locationlistJson"   : "res/sampledata/silverCanRprt/location.list.json",
+                "dataJson"           : "/PhotoOmniWeb/servlet/exceptionReport/silverCanisterReportRequest",
+                "exportToCSVJson"    : "/PhotoOmniWeb/servlet/exceptionReport/downloadSilverCanisterCSV"
+            },
+            { "id": 18, "text": "Silver Canister Change" ,"viewInCorp":true,
+            	"filterTemplate"     : "res/template/report/silverCanChngdScrn/filter.template.html" ,
+                "storeTemplate"      : "res/template/report/silverCanChngdScrn/store.template.html" ,
+                "dataJson"           : "/PhotoOmniWeb/servlet/exceptionReport/uploadfile",
+                "exportToCSVJson"    : "/PhotoOmniWeb/servlet/exceptionReport/downloadFailureSilverCanisterCSV"
+            },
+            { "id": 16, "text": "Unclaimed Order Report" ,"viewInCorp":false,
+                "storeTemplate"      : "res/template/report/unclaimedOrderReport/store.template.html" ,
+                "dataJson"           : "/PhotoOmniOMSWeb/orders/unclaimed",
+                "customerDetailJson" : "/PhotoOmniOMSWeb/orders/unclaimedEnvCustOrderRequest"  ,
+                "printJson"          : "/PhotoOmniOMSWeb/orders/unclaimed-store-print",
+                "printTemplate"      : "res/template/report/store-report-print.html"         
+            }
+    	]
+    } 
+  ]
+}

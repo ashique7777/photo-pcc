@@ -1,0 +1,9 @@
+<div class="wgpagination pull-right">
+    <ul class="pager wag-pager pagi">
+		<li class="cursor">
+			<a ng-class="disabledPrevPagination ? 'wag-btn-disabled' : 'wag-btn-default-sm'" ng-disabled="disabledPrevPagination" ng-click="changePagination('prev')"><i class="icon-ChevronLeft wag-pager-icon-pos"></i></a>
+		</li>
+		<li><span>Page {{startIndex}} of {{totalPageCount}}</span></li>
+		<li class="cursor"><a ng-class="disabledNextPagination ? 'wag-btn-disabled' : 'wag-btn-default-sm'" ng-disabled="disabledNextPagination" ng-click="changePagination('next')"><i class="icon-ChevronRight wag-pager-icon-pos"></i></a></li>
+	</ul>
+</div>

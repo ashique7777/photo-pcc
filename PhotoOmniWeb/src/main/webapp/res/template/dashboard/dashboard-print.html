@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html ng-app="pcpPrintApp">
+<head>
+<meta charset="ISO-8859-1">
+<title>Reports : Centralization</title>
+
+<script src="/PhotoOmniWeb/res/js/vendor/angular.js"></script>
+<link rel="stylesheet" type="text/css" href="/PhotoOmniWeb/res/css/bootstrap.min.css">
+<style>
+.center{
+	text-align:center;
+}
+</style>
+</head>
+<body>
+
+<div ng-controller="PrintController">
+	<div class="row">
+		<div class="col-md-12 center">
+			<h3>{{printData.reportName}}</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-1"></div>
+		<div class="col-md-10">
+			<table class="table table-bordered table-striped">
+				<tr class="info">
+					<th ng-repeat="key in keys" class="center">{{key}}</th>
+				</tr>
+				<tr ng-repeat="print in printData.data">
+					<td ng-repeat="key in keys">{{print[key]}}</td>		
+				</tr>
+			</table>
+		</div>
+		<div class="col-md-1"></div>
+	</div>
+	
+</div>
+
+</body>
+</html>
+
+<script>
+angular.module('pcpPrintApp', []).controller('PrintController',['$scope','$http',function($scope,$http){
+	 $scope.rpt = JSON.parse(sessionStorage.getItem('rpt'));
+	 $scope.keys = [];
+	    if($scope.rpt != null){
+	    	$http.get('/PhotoOmniWeb/servlet/dashboard/'+$scope.rpt.reportName+'/'+$scope.rpt.defaultItem+'/print-data').then(function(res){
+	    		$scope.printData = res.data.data;
+	    		if($scope.printData.data.length > 0){
+	    			$scope.keys = Object.keys($scope.printData.data[0]);
+	    		}
+	    	})
+	    }
+}])
+</script>

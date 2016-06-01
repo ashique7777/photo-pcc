@@ -1,0 +1,82 @@
+<div ng-repeat="error in errorMessageText">
+    <div ng-show="showErrorContainer" class="error-container">
+		<section class="alert wag-alert alert-danger" role="alert">
+			<span class="icon-Alert"></span>
+			<span><strong>Error:</strong> {{error}}</span>
+		</section>
+  	</div>
+</div>
+<div ng-show="showNoDataFound" class="error-container">
+ 		<section class="alert wag-alert alert-info" role="alert">
+			<span class="icon-Info text-primary"></span>
+			<span><strong></strong> No data found for the search criteria </span>
+		</section>
+ </div>
+<div class="row">
+      <div class="col-md-4 paddingTopBottom3">
+        <div class="input-group">
+          <span class="input-group-addon fontSize80" >
+            Start Date 
+          </span>
+          <input type="text" class="form-control cursor start" placeholder="{{format}}" datepicker-popup={{format}} ng-model="machineFilter.startDate" is-open="workspace.openedStart"  ng-click="open($event,'start')" max-date="endMacMaxDate" min-date="startMinDate"/>
+        </div>
+      </div>
+      <div class="col-md-4 paddingTopBottom3">
+        <div class="input-group">
+          <span class="input-group-addon fontSize80" >
+            End Date 
+          </span>
+          <input type="text" class="form-control cursor end" placeholder="{{format}}" datepicker-popup={{format}} ng-model="machineFilter.endDate" is-open="workspace.openedEnd"  ng-click="open($event,'end')" max-date="endMacMaxDate" min-date="startMinDate"/>
+        </div>
+      </div>
+      <div class="col-md-4 paddingTopBottom3">
+        <div class="input-group">
+          <span class="input-group-addon fontSize80 line-break-class" >
+            Machine 
+          </span>
+          <select class="form-control" ng-model="workspace.machineObj" ng-options="list.machineName for list in workspace.machineList">
+          	<option value="">All</option>
+          </select>
+          
+        </div>
+      </div>
+    </div>
+    <div class="row">
+    	   <div class="col-md-4 paddingTopBottom3" ng-hide="showForCorpScreen">
+	        <div class="input-group ">
+	          <span class="input-group-addon fontSize80 line-break-class" >
+	            Location type
+	          </span>
+	          <select class="form-control" ng-model="workspace.macLocationObj" ng-options="list.text for list in workspace.locationType">
+	          	<option value="">Chain</option>
+	          </select>
+	        </div>      
+	       </div>
+	       <div class="col-md-4 paddingTopBottom3" ng-show="showLocation">
+	        <div class="input-group">
+	          <span class="input-group-addon fontSize80" >
+	            Number
+	          </span>
+	          <input type="text" class="form-control" ng-click="hideErrorMessage()" ng-model="machineFilter.storeId" id="storeId"  />
+	        </div>
+	      </div>
+    </div>
+<!-- show in add to dashboard popup only start -->
+ <div class="row" ng-show="addDashboardPop">
+	<div class="col-md-3" >
+		<div class="checkbox"><label><input type="checkbox" value="true"  ng-model="machineFilter.autorefresh" /> Auto Refresh</label></div>
+	</div>
+	<div class="col-md-3" >
+          <div class="checkbox"><label><input type="checkbox" value="true"  ng-model="machineFilter.autopopulate" /> Auto Populate</label></div>
+	</div>
+</div>
+ <!-- show in add to dashboard popup only end -->
+ 
+<div class="row filter-buttons">
+	<div class="col-md-12 pull-right">
+		<button class="btn btn-info pull-right btn-xs wag-btn-primary-sm" ng-show="showFilter" ng-hide="addDashboardPop" ng-click="updateData($event,'machineFilter')" >Generate Report</button>
+		<!-- show in add to dashboard popup only start -->
+		<!-- <button class="btn btn-info pull-right btn-xs" ng-show="addDashboardPop" ng-click="addToDashboard($event,'machineFilter')" >Add to Dashboard</button> -->
+		 <!-- show in add to dashboard popup only end -->
+	</div>
+</div>

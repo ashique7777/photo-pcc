@@ -1,0 +1,26 @@
+{
+	"totalRecord" : "3",
+	"data":[
+			{
+				"id"					: 63192,
+				"channeldayspastdue"	: "Internet",
+				"oneto30days" 			: "20",
+				"thiryoneto60days" 		: "30",
+				"sixtyoneto90days" 		: "5"
+			},
+			{
+				"id"					: 22182,
+				"channeldayspastdue"	: "Mobile",
+				"oneto30days" 			: "57",
+				"thiryoneto60days" 		: "28",
+				"sixtyoneto90days" 		: "78"
+			},
+			{
+				"id"					: 232172,
+				"channeldayspastdue"	: "Kiosk",
+				"oneto30days" 			: "10",
+				"thiryoneto60days" 		: "71",
+				"sixtyoneto90days" 		: "67"
+			}
+		]
+}

@@ -1,0 +1,226 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+  		
+	<!-- Import Common Job : Start -->
+	<import resource="classpath:spring/batch/jobs/job_Common.xml" />
+	<!-- Import Common Job : End -->	
+			
+	<!-- License Content Adhoc and Exception Report Batch Configuration Start -->
+										
+	<bean id="LCAdhocExceptionCustomReportListener" class="org.springframework.batch.core.listener.ExecutionContextPromotionListener">
+		<property name="keys" value="refDataKeyForAdhocAndException" />
+	</bean>
+	
+	<batch:job id="LicenseContentJob">
+		<batch:step id="licenseContentJob1" next="licenseContentJob2">
+			<batch:tasklet>
+				<batch:chunk reader="lCCSVReportItemReader" processor="lCCSVReportItemProcessor" writer="lCCSVCustomWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="LCAdhocExceptionCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="licenseContentJob2" next = "licenseContentJob5">
+			<batch:tasklet>
+				<batch:chunk reader="lCCSVFileItemReader" writer="lCCSVFileCustomWriter"
+					commit-interval="1000">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="LCAdhocExceptionCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		<!-- <batch:step id="licenseContentJob3" next="licenseContentJob5">
+			<batch:tasklet>
+				<batch:chunk reader="lCCloseCSVCustomReader" writer="lCCloseCSVCustomWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="LCAdhocExceptionCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step> -->
+		<!-- <batch:step id="licenseContentJob4" next="licenseContentJob5">
+			<batch:tasklet>
+				<batch:chunk reader="lCReportZipCustomReader"  writer="lCReportZipCustomWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="LCAdhocExceptionCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step> -->
+		<batch:step id="licenseContentJob5" next="licenseContentJob6">
+			<batch:tasklet>
+				<batch:chunk reader="lCReportEmailCustomReader" processor="lCReportEmailItemProcessor" writer="emailWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="LCAdhocExceptionCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+        <batch:step id="licenseContentJob6">
+			<batch:tasklet>
+				<batch:chunk reader="lCReportCustomReader" writer="lCReportItemWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="LCAdhocExceptionCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	<!-- FOR STEP 1 -->
+	<bean id="lCCSVReportItemReader" scope="step" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="omniDataSource" />
+		<property name="sql"
+			value=" SELECT SYS_USER_REPORT_PREF_ID, SYS_REPORT_ID, FILTER_STATE FROM OM_USER_REPORT_PREFS 
+					WHERE SYS_USER_REPORT_PREF_ID = #{jobParameters['REPORT_ID']}" />
+		<property name="rowMapper">
+			<bean class="com.walgreens.batch.central.rowmapper.LCAndPSDataRowmapper" />
+		</property>
+	</bean>
+	<bean id="lCCSVReportItemProcessor" class="com.walgreens.batch.central.processor.LCCSVReportItemProcessor" scope="step">
+	</bean>
+	<bean id="lCCSVCustomWriter" class="com.walgreens.batch.central.writer.LCCSVCustomWriter" scope="step">
+	</bean>
+	<!-- FOR STEP 2 -->
+	<bean id="lCCSVFileItemReader" class="com.walgreens.batch.central.reader.LCCSVFileItemReader" scope="step">
+	</bean>
+	<bean id="lCCSVFileCustomWriter" class="com.walgreens.batch.central.writer.LCCSVFileCustomWriter" scope="step">
+	</bean>
+	<!-- FOR STEP 3 -->
+	<!-- <bean id="lCCloseCSVCustomReader" class="com.walgreens.batch.central.reader.LCCloseCSVCustomReader">
+	</bean>
+	<bean id="lCCloseCSVCustomWriter" class="com.walgreens.batch.central.writer.LCCloseCSVCustomWriter">
+	</bean> -->
+	<!-- FOR STEP 4 -->
+	<!-- <bean id="lCReportZipCustomReader" class="com.walgreens.batch.central.reader.LCReportZipCustomReader">
+	</bean>
+	<bean id="lCReportZipCustomWriter" class="com.walgreens.batch.central.writer.LCReportZipCustomWriter">
+	</bean> -->
+	<!-- FOR STEP 5 -->
+	<bean id="lCReportEmailCustomReader" class="com.walgreens.batch.central.reader.LCReportEmailCustomReader" scope="step">
+	</bean>
+	<bean id="lCReportEmailItemProcessor" class="com.walgreens.batch.central.processor.LCReportEmailItemProcessor" scope="step">
+	</bean>
+	<!-- FOR STEP 6 -->
+	<bean id="lCReportCustomReader" class="com.walgreens.batch.central.reader.LCReportCustomReader" scope="step">
+	</bean>
+	<bean id="lCReportItemWriter" class="com.walgreens.batch.central.writer.LCReportItemWriter" scope="step">
+	</bean>
+	
+	<!-- License Content Adhoc and Exception Report Batch Configuration End -->
+	
+	
+	<!-- License Content Daily Report Batch Configuration Start -->
+	
+	<bean id="LCDailyCustomReportListener" class="org.springframework.batch.core.listener.ExecutionContextPromotionListener">
+		<property name="keys" value="refDataKeyForDaily" />
+	</bean>
+	
+	<batch:job id="LCDailyJob">
+		<batch:step id="lCDailyJob1" next="lCDailyJob2">
+			<batch:tasklet>
+				<batch:chunk reader="lCDailyCSVReportItemReader" processor="lCDailyCSVReportItemProcessor" writer="lCDailyCSVCustomWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="LCDailyCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="lCDailyJob2" next = "lCDailyJob5">
+			<batch:tasklet>
+				<batch:chunk reader="lCDailyCSVFileItemReader" writer="lCDailyCSVFileCustomWriter"
+					commit-interval="1000">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="LCDailyCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		<!-- <batch:step id="lCDailyJob3" next="lCDailyJob5">
+			<batch:tasklet>
+				<batch:chunk reader="lCDailyCloseCSVCustomReader" writer="lCDailyCloseCSVCustomWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="lCDailyReportEmailCustomReader" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step> -->
+		<!-- <batch:step id="lCDailyJob4" next="lCDailyJob5">
+			<batch:tasklet>
+				<batch:chunk reader="lCDailyReportZipCustomReader"  writer="lCDailyReportZipCustomWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="LCDailyCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step> -->
+		<batch:step id="lCDailyJob5">
+			<batch:tasklet>
+				<batch:chunk reader="lCDailyReportEmailCustomReader" processor="lCDailyReportEmailItemProcessor" writer="emailWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="LCDailyCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	
+	<!-- FOR STEP 1 -->
+	<bean id="lCDailyCSVReportItemReader" scope="step" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="omniDataSource" />
+		<property name="sql"
+			value=" SELECT SYS_DEFAULT_REPORT_PREF_ID, SYS_REPORT_ID, FILTER_STATE FROM OM_DEFAULT_REPORT_PREFS 
+					WHERE SYS_DEFAULT_REPORT_PREF_ID = #{jobParameters['REPORT_ID']}" /> 
+		<property name="rowMapper">
+			<bean class="com.walgreens.batch.central.rowmapper.LCDailyDataRowmapper" />
+		</property>
+	</bean>
+	<bean id="lCDailyCSVReportItemProcessor" class="com.walgreens.batch.central.processor.LCDailyCSVReportItemProcessor" scope="step" >
+	</bean>
+	<bean id="lCDailyCSVCustomWriter" class="com.walgreens.batch.central.writer.LCDailyCSVCustomWriter" scope="step" >
+	</bean>
+	<!-- FOR STEP 2 -->
+	<bean id="lCDailyCSVFileItemReader" class="com.walgreens.batch.central.reader.LCDailyCSVFileItemReader" scope="step" >
+	</bean>
+	<bean id="lCDailyCSVFileCustomWriter" class="com.walgreens.batch.central.writer.LCDailyCSVFileCustomWriter" scope="step" >
+	</bean>
+	<!-- FOR STEP 3 -->
+	<!-- <bean id="lCDailyCloseCSVCustomReader" class="com.walgreens.batch.central.reader.LCDailyCloseCSVCustomReader">
+	</bean>
+	<bean id="lCDailyCloseCSVCustomWriter" class="com.walgreens.batch.central.writer.LCDailyCloseCSVCustomWriter">
+	</bean> -->
+	<!-- FOR STEP 4 -->
+	<!-- <bean id="lCDailyReportZipCustomReader" class="com.walgreens.batch.central.reader.LCDailyReportZipCustomReader">
+	</bean>
+	<bean id="lCDailyReportZipCustomWriter" class="com.walgreens.batch.central.writer.LCDailyReportZipCustomWriter">
+	</bean> -->
+	<!-- FOR STEP 5 -->
+	<bean id="lCDailyReportEmailCustomReader" class="com.walgreens.batch.central.reader.LCDailyReportEmailCustomReader" scope="step" >
+	</bean>
+	<bean id="lCDailyReportEmailItemProcessor" class="com.walgreens.batch.central.processor.LCDailyReportEmailItemProcessor" scope="step" >
+	</bean>
+	
+	<!-- License Content Daily Report Batch Configuration End -->
+</beans>

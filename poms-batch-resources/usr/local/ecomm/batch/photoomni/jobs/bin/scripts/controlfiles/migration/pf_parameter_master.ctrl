@@ -1,0 +1,15 @@
+LOAD DATA append into table OM_PF_PARAMETER_MASTER_TMP TRAILING NULLCOLS
+( 
+PF_PARAMETER_ID char terminated by '^|' OPTIONALLY ENCLOSED BY '"' ,
+PF_PARAMETER_TYPE char terminated by '^|' OPTIONALLY ENCLOSED BY '"' ,
+PF_PARAMETER_NAME char  terminated by '^|' OPTIONALLY ENCLOSED BY '"' ,
+PF_DESC char  terminated by '^|' OPTIONALLY ENCLOSED BY '"' ,
+PF_PARAMETER_VALUE char  terminated by '^|' OPTIONALLY ENCLOSED BY '"' ,
+PF_ACTIVE_IND char  terminated by '^|' OPTIONALLY ENCLOSED BY '"' ,
+PF_DEACTIVATION_DTTM DATE  "MM/DD/RRRR HH24:MI:SS"  terminated by '^|' OPTIONALLY ENCLOSED BY '"' ,
+PF_TRANSFER_IND char terminated by '^|' OPTIONALLY ENCLOSED BY '"' "nvl(trim(:PF_TRANSFER_IND),' ')", 
+ID_CREATED char terminated by '^|' OPTIONALLY ENCLOSED BY '"' , 
+DATE_TIME_CREATED DATE  "MM/DD/RRRR HH24:MI:SS" terminated by '^|' OPTIONALLY ENCLOSED BY '"'  ,
+ID_MODIFIED  char terminated by '^|' OPTIONALLY ENCLOSED BY '"' , 
+DATE_TIME_MODIFIED DATE  "MM/DD/RRRR HH24:MI:SS" terminated by '^|' OPTIONALLY ENCLOSED BY '"' 
+)

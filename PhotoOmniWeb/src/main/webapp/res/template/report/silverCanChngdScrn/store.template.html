@@ -1,0 +1,37 @@
+<div class="row paddingTopBottom3" ng-hide="showNoDataFound">
+
+	<div class="col-sm-12 col-md-12 nopadding">
+		
+		<div class="pull-right">		
+	   		<!-- <pagination  previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" total-items="store.totalRecord" items-per-page="itemCount" boundary-links="true" ng-model="store.currentPage" class="pagination-sm nomargin" max-size="5" rotate="false" ng-click="changeStorePagination('machine',$index,store.storeNumber)" ></pagination> -->
+			<wgpagination start-index="1" total-page-count="{{totalPageCount}}" id="{{$index}}" show-table-data="showTableData" ng-click="changeCustomPagination()"></wgpagination>
+	  	</div>
+	  	<div class="pull-left">
+			<button class="btn btn-default btn-xs marginTopMin20 paddingT7L11" ng-click="exportSilverCanRptToExcel('changedReport')">Export</button>
+		</div>
+	</div>
+</div>
+<div class="row"><b>{{workspace.errorString}}</b></div>
+<div class="" ng-hide="showNoDataFound">   
+     
+	 <table  class="table table-condensed table-hover table-bordered">
+		<thead>
+		  <tr>
+			<th>Store</th>
+			<th>
+				<a class="cursor" ng-click="orderByField='VendorUpdSilverCanisterDetails.CanisterChangeDate'; reverseSort = !reverseSort">
+		        	Last Canister Change Date<span ng-show="orderByField == 'VendorUpdSilverCanisterDetails.CanisterChangeDate'"></span>
+		        </a>
+			</th>
+			<th>Service Description</th>
+		  </tr>
+		</thead>
+		<tbody>
+		  <tr  ng-repeat="data in workspace.data|orderBy:orderByField:reverseSort" >
+			<td>{{data.VendorUpdSilverCanisterDetails.StoreNumber}}</td>
+			<td>{{data.VendorUpdSilverCanisterDetails.CanisterChangeDate}}</td>
+			<td>{{data.VendorUpdSilverCanisterDetails.ServiceDescription}}</td>
+		  </tr>
+		</tbody>
+  </table>
+</div>

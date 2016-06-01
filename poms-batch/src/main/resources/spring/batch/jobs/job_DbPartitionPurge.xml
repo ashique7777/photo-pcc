@@ -1,0 +1,32 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+  		
+	<!-- Import Common Job : Start -->
+	<import resource="classpath:spring/batch/jobs/job_Common.xml" />
+	<!-- Import Common Job : End -->		
+		
+	<batch:job id="dbPartitionPurge">
+		<batch:step id="dbPartitionPurgetep1">
+			<batch:tasklet ref="dbPartitionPurgeTasklet"></batch:tasklet>
+		</batch:step>
+	</batch:job>
+	
+	<bean id="dbPartitionPurgeTasklet" class="com.walgreens.batch.central.tasklet.DbPartitionPurgeTasklet" scope="step">
+		<property name="dbPartitionQuery" value="SELECT HIGH_VALUE, PARTITION_NAME FROM ALL_TAB_PARTITIONS WHERE TABLE_NAME=? AND TABLE_OWNER=?"></property>
+		<property name="omniJdbcTemplate" ref="omniJdbcTemplate" ></property>
+	</bean>
+		 
+</beans>	
+		

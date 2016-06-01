@@ -1,0 +1,41 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+ 
+<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+	<property name="host" value="javasmtp.walgreens.com" />
+	<property name="port" value="25" />
+	<property name="username" value="animesh.naskar@walgreens.com" />
+	<property name="password" value="no password" />
+	<property name="javaMailProperties">
+		<props>
+           	<prop key="mail.smtp.auth">true</prop>
+           	<prop key="mail.smtp.starttls.enable">true</prop>
+       	</props>
+	</property>
+</bean>
+
+<bean id="customeMailMessage" class="org.springframework.mail.SimpleMailMessage">
+	<property name="from" value="sangeeta.manna@walgreens.com" />
+<!-- For multiple -->	<!-- <property name="to" value="animesh.naskar@cognizant.com,Satyasree.Chatterjee@cognizant.com,Raja-2.Das-2@cognizant.com,Samarendu.Ghosh@cognizant.com,Sangeeta.Manna@cognizant.com,Suvam.Das@cognizant.com" /> -->
+	<!-- <property name="to" value="animesh.naskar@cognizant.com" /> -->
+	<property name="subject" value="Re:  " />
+	<property name="text">
+	<value>
+		<![CDATA[
+			Dear %s,
+			Mail Content : %s
+		]]>
+	</value>
+    </property>
+</bean>
+ 
+<bean id="sendMailService" class="com.walgreens.batch.central.mail.SendMailService">
+	<property name="mailSender" ref="mailSender" />
+	<property name="simpleMailMessage" ref="customeMailMessage" />
+</bean>
+ 
+
+ 
+</beans>

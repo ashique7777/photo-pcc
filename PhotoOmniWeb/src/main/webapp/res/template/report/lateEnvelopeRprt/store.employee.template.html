@@ -1,0 +1,86 @@
+<!-- commented to remove total row :: 03-24-2015 -->
+<!-- <div class="row paddingTopBottom3">
+<div class="col-sm-12 col-md-12 nopadding">
+ <span class="label label-default" ng-show="workspace.data.totalRecord">Total Row: {{workspace.data.totalRecord}}</span>
+</div>
+</div> -->
+<div ng-hide="showErrorMessage">
+	<div class="row paddingTopBottom3">
+	<div class="col-sm-12 col-md-12 nopadding" ng-show="showTableData">
+	 <div class="">
+	  
+	   <!--<pagination  previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" total-items="workspace.data.totalRecord" items-per-page="workspace.data.storeDetails.length" boundary-links="true" ng-model="workspace.data.currentPage" class="pagination-sm nomargin" max-size="5" rotate="false" ng-click="changeStorePagination('orders','default')"></pagination>-->
+	   <ul class="pager wag-pager pagi pull-right marginLeft3 margintop2">
+			<li><a href="#" class="wag-btn-default-sm"><i class="icon-ChevronLeft wag-pager-icon-pos"></i></a></li>
+			<li><span>Page 1 of 4</span></li>
+			<li><a href="#" class="wag-btn-default-sm"><i class="icon-ChevronRight wag-pager-icon-pos"></i></a></li>
+	</ul>
+	<!-- "Add to Dashboard" button removed on 03-24-2015 -->
+	<!-- <button class="btn btn-default btn-xs marginTopMin20 paddingT7L11 wag-btn-default-sm">
+		<i class="glyphicon glyphicon-star"></i>Add to Dashboard</button> -->
+	   <!-- <button class="btn btn-default btn-xs marginTopMin20 paddingT7L11 wag-btn-default-sm">Generate Report</button>
+	   <button class="btn btn-default btn-xs marginTopMin20 paddingT7L11 wag-btn-default-sm">Export<!-- Generate CSV --><!-- changed to "Export" on 03-24-2015 --><!-- </button>  -->
+	 </div>
+	
+	  
+	</div>
+	</div>
+	<table class="table table-condensed table-hover table-bordered" ng-show="showTableData">
+	<thead>
+		  <tr>
+			<th>Employee Name</th>
+			<th colspan="2">Total Exceptions</th>
+			<th colspan="2">Refused</th>
+			<th colspan="2">Remake</th>
+			<th colspan="2">Cancel</th>
+			<th colspan="2">Un-sellable</th>
+			<th colspan="2">Sold for free</th>
+			<th colspan="2">Price Modify</th>
+			<th colspan="2">Missing</th>
+			
+		  </tr>
+		  <tr>
+			<td></td>
+			<td>count</td><td>$</td>
+			<td>count</td><td>$</td>
+			<td>count</td><td>$</td>
+			<td>count</td><td>$</td>
+			<td>count</td><td>$</td>
+			<td>count</td><td>$</td>
+			<td>count</td><td>$</td>
+			<td>count</td><td>$</td>
+			
+		  </tr>
+		</thead>
+		<tbody>
+	
+		  <tr ng-repeat="data in workspace.data.repByEmpList" class="cPointer">
+		  	<td>{{data.EMPNAME}}</td>
+		  	 
+			<td>{{data.TOTALExceptions.count}}</td>
+			<td>{{data.TOTALExceptions.$}}</td>
+			
+			<td>{{data.Refused.count}}</td>
+			<td>{{data.Refused.$}}</td>
+			
+			<td>{{data.Remake.count}}</td>
+			<td>{{data.Remake.$}}</td>
+			
+			<td>{{data.Cancel.count}}</td>
+			<td>{{data.Cancel.$}}</td>
+			
+			<td>{{data.Unsellable.count}}</td>
+			<td>{{data.Unsellable.$}}</td>
+			
+			<td>{{data.SoldForfree.count}}</td>
+			<td>{{data.SoldForfree.$}}</td>
+						
+			<td>{{data.PriceModify.count}}</td>
+			<td>{{data.PriceModify.$}}</td>
+			
+			<td>{{data.Missing.count}}</td>
+			<td>{{data.Missing.$}}</td>
+		  </tr>
+		</tbody>
+	</table>
+</div>

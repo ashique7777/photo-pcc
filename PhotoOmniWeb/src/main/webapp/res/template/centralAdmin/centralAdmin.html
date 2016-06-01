@@ -1,0 +1,57 @@
+<div class="row sub-nav">
+	<ul class="nav nav-tabs report-tabs tabrow">
+		<li class="btn-group" dropdown ng-repeat="list in adminlist" ng-class="{active: parentmenu == list.text}">
+			<button type="button" class="" dropdown-toggle ng-disabled="disabled">
+				{{list.text}}<span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu" role="menu">
+				<li ng-repeat="subcat in list.subcat" ui-sref-active="active" class="active cursor"><a ng-click="callCentralAdmin(subcat.id)">{{subcat.text}}</a></li>
+			</ul>
+		 </li>
+	</ul>
+</div>
+<!-- Sub-Navigation Ends -->
+
+<div class="row padding10 paddingtopbottom5">
+
+  <div class="col-md-12 nopadding bordered-nav">
+	<tabset>
+		<tab ng-repeat="workspace in centralWorkspaces track by $index"
+             active=workspace.active ng-click="setActive(workspace.id);" class="sbtab">
+            <tab-heading >{{workspace.name}} <a ng-click="removeTab($index)" href=''>
+            	<i class="glyphicon glyphicon-remove" ng-show="(centralWorkspaces.length > 1)" ></i>
+            </a></tab-heading>
+             <div ng-controller="singleAdminCtrl" ng-init="workspace=workspace">
+                 <div class="panel panel-default notopborder marginbottom0"  ng-show="workspace.urlfilterPage">
+                   <div class="panel-body paddingtopbottom5">
+                   <!-- Keep filter template dynamic as it may change depend upon server response -->
+                     <div class="btn-filter" ng-click="filterToggle();">
+                        Search <!-- Filter --> <!-- text changed to search on 03-24-2015 -->
+                        <div class="pull-right">
+							<i class="glyphicon glyphicon-plus" ng-show="!showFilter"></i>
+							<i class="glyphicon glyphicon-minus" ng-show="showFilter"></i>
+                      	</div>
+                      </div>
+			   <div  ng-show="showFilter" ng-include="workspace.urlfilterPage" class="paddingtop5"></div>
+                   </div>
+               </div>
+               <!-- Keep store-table template dynamic as it may change depend upon server response -->
+			  <div class="posRelative" id="workspace{{workspace.id}}">
+				<div class="loading" style="display: none;">
+					<div class="loadingImg" style="display: none;"><img src="res/images/ajax-loader.gif" alt="Loading..." style="display: none;"/><!--<br />Loading Please Wait--></div>
+					<div class="loadingOverlay" style="display: none;"></div>
+				</div>
+		        <!-- <div ng-show="(workspace.urlStoreTable && showDataTable)" ng-include="workspace.urlStoreTable" onload="hideLoading(workspace.id)"></div>-->
+			 	<div ng-show="workspace.urlStoreTable" ng-include="workspace.urlStoreTable"></div>
+				  <!-- <div ng-hide="workspace.urlStoreTable">
+					<small>No Template / DataSet Defined for {{workspace.name}}</small>
+				  </div> -->
+			  </div>
+            </div>
+        </tab>
+    </tabset>
+  <div ui-view><div ng-show="!workspaces.length">Select a Report to show details</div></div>
+  </div>
+</div>  
+
+

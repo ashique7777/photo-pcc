@@ -1,0 +1,36 @@
+{
+	"regionNumber" : "4",
+	"districtNumber" : "12",
+	"storeNumber" : "41256",
+	"totalRecord" : "10",
+	"currrentPage" : "3",
+	"data":[
+			{
+				"machineName" : "Fuji",
+				"equipmentName": "All",
+				"enteredBy" : "Headphoto PCP",
+				"startTime" : "12/30/2014  8:49:00 AM",
+				"endTime" : "12/30/2014  11:00:00 PM",
+				"duration" : "14:11",
+				"reason" : "Machine Down due to Hardware issue"
+			},
+			{
+				"machineName" : "Fuji",
+				"equipmentName": "All",
+				"enteredBy" : "CARREIRO, CYNTHIA",
+				"startTime" : "12/30/2014  8:49:00 AM",
+				"endTime" : "12/30/2014  11:00:00 PM",
+				"duration" : "14:11",
+				"reason" : "Machine Down due to Hardware issue"
+			},
+			{
+				"machineName" : "Fuji",
+				"equipmentName": "All",
+				"enteredBy" : "ESCOBAR, TRISHA",
+				"startTime" : "12/30/2014  8:49:00 AM",
+				"endTime" : "12/30/2014  11:00:00 PM",
+				"duration" : "14:11",
+				"reason" : "Machine Down due to Hardware issue"
+			}
+		]
+}

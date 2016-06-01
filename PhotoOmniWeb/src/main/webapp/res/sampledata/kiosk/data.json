@@ -1,0 +1,115 @@
+{
+	"totalRecord" : "34",
+	"currrentPage" : "1",
+	"data":[
+			{
+				"id"						: 2312,
+				"StoreNumber"				: "13706",
+				"KioskIP" 					: "10.53.138.206",
+				"SoftwareVer" 				: "1.1.8",
+				"TemplateVer" 				: "2014.01",
+				"iMemoriesVer" 				: "1.0.41",
+				"TOMOVer" 					: "5.7.30",
+				"LastReboot" 				: "03/05 /2014",
+				"CSpace" 					: "411921",
+				"DSpace" 					: "14524"
+			},
+			{
+				"id"						: 1212,
+				"StoreNumber"				: "13716",
+				"KioskIP" 					: "10.53.128.211",
+				"SoftwareVer" 				: "1.6.4",
+				"TemplateVer" 				: "2014.02",
+				"iMemoriesVer" 				: "1.1.71",
+				"TOMOVer" 					: "5.0.30",
+				"LastReboot" 				: "03/15 /2014",
+				"CSpace" 					: "411921",
+				"DSpace" 					: "14524"
+			},
+			{
+				"id"						: 654,
+				"StoreNumber"				: "13236",
+				"KioskIP" 					: "10.53.138.216",
+				"SoftwareVer" 				: "1.7.4",
+				"TemplateVer" 				: "2014.03",
+				"iMemoriesVer" 				: "2.0.71",
+				"TOMOVer" 					: "3.7.32",
+				"LastReboot" 				: "03/05 /2014",
+				"CSpace" 					: "413221",
+				"DSpace" 					: "234156"
+			},
+			{
+				"id"						: 7623,
+				"StoreNumber"				: "13706",
+				"KioskIP" 					: "10.53.138.206",
+				"SoftwareVer" 				: "1.1.8",
+				"TemplateVer" 				: "2014.01",
+				"iMemoriesVer" 				: "1.0.41",
+				"TOMOVer" 					: "5.7.30",
+				"LastReboot" 				: "03/05 /2014",
+				"CSpace" 					: "411921",
+				"DSpace" 					: "14524"
+			},
+			{
+				"id"						: 54213,
+				"StoreNumber"				: "13716",
+				"KioskIP" 					: "10.53.128.211",
+				"SoftwareVer" 				: "1.6.4",
+				"TemplateVer" 				: "2014.02",
+				"iMemoriesVer" 				: "1.1.71",
+				"TOMOVer" 					: "5.0.30",
+				"LastReboot" 				: "03/15 /2014",
+				"CSpace" 					: "411921",
+				"DSpace" 					: "14524"
+			},
+			{
+				"id"						: 7651,
+				"StoreNumber"				: "13236",
+				"KioskIP" 					: "10.53.138.216",
+				"SoftwareVer" 				: "1.7.4",
+				"TemplateVer" 				: "2014.03",
+				"iMemoriesVer" 				: "2.0.71",
+				"TOMOVer" 					: "3.7.32",
+				"LastReboot" 				: "03/05 /2014",
+				"CSpace" 					: "413221",
+				"DSpace" 					: "234156"
+			},
+			{
+				"id"						: 98768,
+				"StoreNumber"				: "13706",
+				"KioskIP" 					: "10.53.138.206",
+				"SoftwareVer" 				: "1.1.8",
+				"TemplateVer" 				: "2014.01",
+				"iMemoriesVer" 				: "1.0.41",
+				"TOMOVer" 					: "5.7.30",
+				"LastReboot" 				: "03/05 /2014",
+				"CSpace" 					: "411921",
+				"DSpace" 					: "14524"
+			},
+			{
+				"id"						: 234234,
+				"StoreNumber"				: "13716",
+				"KioskIP" 					: "10.53.128.211",
+				"SoftwareVer" 				: "1.6.4",
+				"TemplateVer" 				: "2014.02",
+				"iMemoriesVer" 				: "1.1.71",
+				"TOMOVer" 					: "5.0.30",
+				"LastReboot" 				: "03/15 /2014",
+				"CSpace" 					: "411921",
+				"DSpace" 					: "14524"
+			},
+			{
+				"id"						: 324234,
+				"StoreNumber"				: "13236",
+				"KioskIP" 					: "10.53.138.216",
+				"SoftwareVer" 				: "1.7.4",
+				"TemplateVer" 				: "2014.03",
+				"iMemoriesVer" 				: "2.0.71",
+				"TOMOVer" 					: "3.7.32",
+				"LastReboot" 				: "03/05 /2014",
+				"CSpace" 					: "413221",
+				"DSpace" 					: "234156"
+			}
+
+		]
+}

@@ -1,0 +1,29 @@
+<div class="modal-custom-backdrop"></div>
+<div class="spopupOuterContainer col-sm-6 col-md-4" ui-keydown="{'pageup':'goToReport($event);'}">
+	<div class="popupMainContainer panel panel-primary slide">
+		<div class="panel-heading">
+	  		<h3 class="panel-title">Event lookup
+	  		<a href="#" ng-click="goToReport($event);"  class="pull-right glyphicon glyphicon-remove"></a></h3>
+		</div>
+		<div ng-show="lookupDataError" class="error-container pop-context-content">
+			<section class="alert wag-alert alert-info" role="alert">
+				<span class="icon-Alert"></span>
+				<span><strong></strong> {{lookupErrorMessage}}</span>
+			</section>
+	  	</div>
+	  
+		<div ng-hide="lookupDataError" class="pop-context-content header-content">
+			<span>Search Result</span>
+		</div>
+		
+		<div ng-hide="lookupDataError" class="pop-context-content printSignScroll">
+		  <table class="table table-condensed table-hover table-bordered">
+		        <tbody>
+		        	<tr ng-repeat="data in lookupDataList">
+						<td ng-click="selectData($event,data)">{{data.signName}}</td>
+					</tr>
+				</tbody>
+			</table>		    
+		</div>
+	</div>
+</div>

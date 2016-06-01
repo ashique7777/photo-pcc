@@ -1,0 +1,99 @@
+<div class="spopupOuterContainer" ui-keydown="{'pageup':'goToReport($event);'}">
+	<div class="popupMainContainer col-md-7 panel panel-primary slide">
+	  <div class="panel-heading">
+	  <h3 class="panel-title">Order Details
+	  <a href="#" ng-click="goToReport($event);"  class="pull-right glyphicon glyphicon-remove"></a></h3>
+	  </div>
+	  <!-- Next, Prev Nav -->
+	  <div class="col-md-12 pop-nav">
+		<a ng-click="changeItem($event,'prev')" ng-class="{'disabled': !getNextItem($event,'prev')}" class="pull-left  glyphicon glyphicon-chevron-left" href="#">&nbsp;</a>
+		<a ng-click="changeItem($event,'next')" ng-class="{'disabled': !getNextItem($event,'next')}" class="pull-right glyphicon glyphicon-chevron-right" href="#">&nbsp;</a>
+	  </div>
+
+	  <div class="panel-body pop-content">
+		  <div class="row paddingTopBottom10">
+		  	<div class="col-md-4 nopadding">Envelope Number : {{detail.envelopeNumber}}</div>
+		  	<div class="col-md-4 nopadding">Web ID : {{detail.webid}}</div>
+		  	<div class="col-md-4 nopadding">Vendor Nmae : WALGREENS</div>
+		  </div>
+		<tabset>
+		    <tab heading="Product Details">
+		    	 <table class="table table-condensed table-hover table-bordered" ng-show="itemType == 'storeDetails'">
+				    <thead>
+			          <tr class="active">
+			            <th>Order Details</th>
+			            <th>Quantity</th>
+			            <th>Per Unit Price</th>
+			            <th>Price</th>
+			          </tr>
+			        </thead>
+			        <tbody>
+			        	<tr>
+			        		<td>Internal(1HR - 12 4x6 internal print 1HR)</td>
+			        		<td>&nbsp;</td>
+			        		<td>&nbsp;</td>
+			        		<td>$3.48</td>
+			        	</tr>
+			        	<tr>
+			        		<td>Internal(4x6 internal print 1HR)</td>
+			        		<td>12</td>
+			        		<td>$0.29</td>
+			        		<td>$3.48</td>
+			        	</tr>
+			        	<tr>
+			        		<td>No Charge ad prints</td>
+			        		<td>1</td>
+			        		<td>0.00</td>
+			        		<td>0.00</td>
+			        	</tr>
+			        	<tr class="info">
+			        		<td colspan="3"><strong>Total</strong></td>
+			        		<td><strong>$3.48</strong></td>
+			        	</tr>
+					</tbody>
+				</table>
+		    </tab>
+		    <tab heading="Envelope History">
+		    	<table class="table table-condensed table-hover table-bordered" ng-show="itemType == 'storeDetails'">
+				    <thead>
+			          <tr class="active">
+			            <th>Date/Time</th>
+			            <th>Action</th>
+			            <th>User</th>
+			            <th>Reason for Transfer</th>
+			            <th>Comments</th>
+			          </tr>
+			        </thead>
+			        <tbody>
+			        	<tr>
+			        		<td>1/21/15 01:14 AM</td>
+			        		<td>Envelop Entered</td>
+			        		<td>HeadPhoto, PCP</td>
+			        		<td>&nbsp;</td>
+			        		<td>&nbsp;</td>
+			        	</tr>
+			        	<tr>
+			        		<td>1/21/15 01:29 AM</td>
+			        		<td>Envelop Done</td>
+			        		<td>HeadPhoto, PCP</td>
+			        		<td>&nbsp;</td>
+			        		<td>&nbsp;</td>
+			        	</tr>
+					</tbody>
+				</table>
+		    </tab>
+		</tabset>
+
+		<div ng-show="itemType == 'productDetail'">
+			Item Id : {{itemId}} <br />
+			Product : {{detail.product}}<br />
+			WIC : {{detail.wic}}<br />
+		</div>
+	  </div>
+
+		
+		
+	</div>
+
+</div>
+

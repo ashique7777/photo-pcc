@@ -1,0 +1,17 @@
+{
+  "catagory":[
+	{ "id": 1, "text": "Master Screens" ,
+		"subcat" : [
+			{ "id": 1, "text": "SIMS Retail Block" ,
+	            "filterTemplate"     : "res/template/centralAdmin/masterScreen/SIMSRetailBlock/filter.template.html" ,
+	            "storeTemplate"      : "res/template/centralAdmin/masterScreen/SIMSRetailBlock/store.template.html" ,
+                "dataJson"           : "/PhotoOmniWeb/servlet/submitReportRequest/genarateSimRetailBlockReport",
+                "filterCriteriaJson" : "/PhotoOmniWeb/servlet/submitReportRequest/submitSimRetailBlockOnloadRequest",
+                "locationlistJson"   : "res/sampledata/simsRetailBlock/location.list.json",
+                "updateRetailBlock"  : "/PhotoOmniWeb/servlet/submitReportRequest/updateRetailBlockRequest",
+                "exportToCSVJson"    : "/PhotoOmniWeb/servlet/submitReportRequest/downloadSimRetailBlockCSV"
+	        }
+		]
+	}
+	]
+}

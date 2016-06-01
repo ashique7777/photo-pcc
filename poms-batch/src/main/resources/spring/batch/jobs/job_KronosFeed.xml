@@ -1,0 +1,420 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+  		
+	<!-- Import Common Job : Start -->
+	<import resource="classpath:spring/batch/jobs/job_Common.xml" />
+	<!-- Import Common Job : End -->
+	
+	
+	
+		
+	<bean id="kronosReportListener" class="org.springframework.batch.core.listener.ExecutionContextPromotionListener">
+		<property name="keys" value="deploymentProcessRef, paramDataForKronos, storeOpenCloseSlot" />
+	</bean>
+	
+	<bean id="deploymentProcessDecider" class="com.walgreens.batch.central.decider.DeploymentProcessDecider"  ></bean>
+  
+	<batch:job id="kronosReportJob" restartable="true">
+					<!-- Deployment Process Start -->
+	  <batch:step id="deploymentProcessJob1" next="deploymentProcessDecider1">
+			<batch:tasklet allow-start-if-complete="false" >
+				<batch:chunk reader="deploymentProcessReader" writer="deploymentProcessWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="kronosReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		<batch:decision id="deploymentProcessDecider1" decider="deploymentProcessDecider">
+	        	 <batch:next on="COMPLETED" to="kronosReportStepSelStore1" />
+	        	 <batch:next on="FAILED" to="kronosReportStepAllStore1" />
+	    </batch:decision>
+	    
+	    		<!-- Deployment Process End -->
+	    		
+	   						<!-- For Selected Store Start-->
+	   						
+		<batch:step id="kronosReportStepSelStore1" next="kronosReportStepSelStore2">
+			<batch:tasklet allow-start-if-complete="false" >
+				<batch:chunk reader="kronosStoreOpenCloseReaderForSelStore" writer="kronosStoreOpenCloseWriterForSelStore" commit-interval="5000">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="kronosReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="kronosReportStepSelStore2" next="kronosReportStepSelStore3" >
+			<batch:tasklet ref="kronosFileMovingTasklet" allow-start-if-complete="false"></batch:tasklet>
+		</batch:step>
+		<batch:step id="kronosReportStepSelStore3"  next="kronosReportStepSelStore4">
+			<batch:tasklet allow-start-if-complete="false" >
+				<batch:chunk reader="kronosCompleteOrderDataReaderForSelStore" processor="kronosCompleteOrderDataProcessorSelStore" writer="kronosCompleteFileWriterSelStore" commit-interval="50000">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="kronosReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="kronosReportStepSelStore4" next="kronosReportStepSelStore5">
+			<batch:tasklet allow-start-if-complete="false" >
+				<batch:chunk reader="kronosReceivingOrderDataReaderSelStore" processor="kronosReceivingOrderDataProcessorSelStore" writer="kronosReceivingFileWriterSelStore" commit-interval="50000">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="kronosReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="kronosReportStepSelStore5" next="kronosReportStep6">
+			<batch:tasklet allow-start-if-complete="false" >
+				<batch:chunk reader="kronosWebOrderDataReaderSelStore" writer="kronosWebOrderFileWriterSelStore" commit-interval="50000">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="kronosReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+	          				<!-- For Selected Store end -->
+	  
+	  
+	  						<!-- For AllStore start-->
+	  
+	  
+	  <batch:step id="kronosReportStepAllStore1" next="kronosReportStepAllStore2">
+			<batch:tasklet allow-start-if-complete="false" >
+				<batch:chunk reader="kronosStoreOpenCloseReaderAllStore" writer="kronosStoreOpenCloseWriterAllStore" commit-interval="5000">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="kronosReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="kronosReportStepAllStore2" next="kronosReportStepAllStore3" >
+			<batch:tasklet ref="kronosFileMovingTasklet" allow-start-if-complete="false"></batch:tasklet>
+		</batch:step>
+		<batch:step id="kronosReportStepAllStore3"  next="kronosReportStepAllStore4">
+			<batch:tasklet allow-start-if-complete="false" >
+				<batch:chunk reader="kronosCompleteOrderDataReaderAllStore" processor="kronosCompleteOrderDataProcessorAllStore" writer="kronosCompleteFileWriterAllStore" commit-interval="50000">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="kronosReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="kronosReportStepAllStore4" next="kronosReportStepAllStore5">
+			<batch:tasklet allow-start-if-complete="false" >
+				<batch:chunk reader="kronosReceivingOrderDataReaderAllStore" processor="kronosReceivingOrderDataProcessorAllStore" writer="kronosReceivingFileWriterAllStore" commit-interval="50000">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="kronosReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="kronosReportStepAllStore5" next="kronosReportStep6">
+			<batch:tasklet allow-start-if-complete="false" >
+				<batch:chunk reader="kronosWebOrderDataReaderAllStore" writer="kronosWebOrderFileWriterAllStore" commit-interval="50000">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="kronosReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+	  								<!-- For AllStore end-->
+	  								
+	  								<!-- For Selected Store / AllStore -->
+	  								
+		<batch:step id="kronosReportStep6" next="kronosReportStep7" >
+			<batch:tasklet ref="KronosExactTask" allow-start-if-complete="false"></batch:tasklet>
+		</batch:step>
+		
+		<batch:step id="kronosReportStep7" >
+			<batch:tasklet ref="kronosTriggerTask" allow-start-if-complete="false"></batch:tasklet>
+		</batch:step>
+		
+	  </batch:job>
+	  								<!-- For Selected Store / AllStore -->
+	  
+	  							<!-- FOR STEP 1 for Selected Store / AllStore Start-->
+	  
+	  <bean id="deploymentProcessReader" scope="step" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="omniDataSource" />
+		<property name="sql" value="#{PhotoOmniBatchsql['KRONOS_DEPLOYMENT_PROCESS']}" />
+		<property name="rowMapper">
+			<bean class="com.walgreens.batch.central.rowmapper.DeploymentProcessRowmapper" />
+		</property>
+	</bean>
+	<bean id="deploymentProcessWriter" class="com.walgreens.batch.central.writer.DeploymentProcessWriter" scope="step">
+	</bean>
+	  							<!-- FOR STEP 1 for Selected Store / AllStore End-->
+	  							
+								<!-- For Selected Store -->
+								
+	<!-- FOR Selected Store STEP 1 -->
+	
+	<bean id="kronosStoreOpenCloseReaderForSelStore" scope="step" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+	<property name="dataSource" ref="omniDataSource" />
+	<property name="sql" value="#{PhotoOmniBatchsql['WEEKLY_STORE_OPENCLOSE_TIME_SEL_STORE']}" />
+	<property name="rowMapper">
+		<bean class="com.walgreens.batch.central.rowmapper.LocationDataRowMapper" />
+	</property>
+	</bean>
+	
+	<bean id="kronosStoreOpenCloseWriterForSelStore" class="com.walgreens.batch.central.writer.KronosStoreOpenCloseWriter" scope="step"></bean>
+	
+	<!-- FOR Selected Store STEP 2 -->
+	
+	<bean id="kronosCompleteOrderDataReaderForSelStore" scope="step" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="omniDataSource" />
+		<property name="sql" value="#{PhotoOmniBatchsql['KRONOS_COMPLETED_ORDER_SEL_STORE']}" />
+		<property name="preparedStatementSetter">
+		 <bean class="org.springframework.batch.core.resource.ListPreparedStatementSetter" scope ="step">
+			<property name="parameters">
+				<list>
+					<value>#{jobParameters['BEGIN_DATE']}</value>
+					<value>#{jobParameters['END_DATE']}</value>
+					<value>#{jobParameters['BEGIN_DATE']}</value>
+					<value>#{jobParameters['END_DATE']}</value>
+					<value>#{jobParameters['BEGIN_DATE']}</value>
+					<value>#{jobParameters['END_DATE']}</value>
+					<value>#{jobParameters['BEGIN_DATE']}</value>
+					<value>#{jobParameters['END_DATE']}</value>
+				</list>
+			</property>
+		 </bean>
+		</property>
+		<property name="rowMapper"><bean class="com.walgreens.batch.central.rowmapper.KronosDataRowMapper" />
+		</property>
+	</bean>
+	<bean id="kronosCompleteOrderDataProcessorSelStore" class="com.walgreens.batch.central.processor.KronosCompleteOrderDataProcessor" scope="step"></bean>
+	
+	<bean id="kronosCompleteFileWriterSelStore" class="org.springframework.batch.item.file.FlatFileItemWriter" scope="step">
+		<property name="resource"><value>file:${kronos.src.folder.path}Photo_VolumeDriver_#{jobParameters['FILE_CREATION_DATE']}.txt</value></property>
+		<property name="appendAllowed" value="true" />
+		<property name="lineAggregator">
+			<bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+			<property name="delimiter" value="," />
+			<property name="fieldExtractor">
+	  		<bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+			<property name="names" value="units, storeNumber, matrixCode, date, slotAndCount" />
+			</bean>
+		</property>
+	  </bean>
+	</property>
+	</bean>
+	
+	<!-- FOR Selected Store STEP 3 -->
+	
+	<bean id="kronosReceivingOrderDataReaderSelStore" scope="step" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="omniDataSource" />
+		<property name="sql" value="#{PhotoOmniBatchsql['KRONOS_RECEIVING_ORDER_SEL_STORE']}" />
+		<property name="preparedStatementSetter">
+		 <bean class="org.springframework.batch.core.resource.ListPreparedStatementSetter" scope ="step">
+			<property name="parameters">
+				<list>
+					<value>#{jobParameters['BEGIN_DATE']}</value>
+					<value>#{jobParameters['END_DATE']}</value>
+					<value>#{jobParameters['BEGIN_DATE']}</value>
+					<value>#{jobParameters['END_DATE']}</value>
+					<value>#{jobParameters['BEGIN_DATE']}</value>
+					<value>#{jobParameters['END_DATE']}</value>
+					<value>#{jobParameters['BEGIN_DATE']}</value>
+					<value>#{jobParameters['END_DATE']}</value>
+				</list>
+			</property>
+		 </bean>
+		</property>
+		<property name="rowMapper"><bean class="com.walgreens.batch.central.rowmapper.KronosDataRowMapper" />
+		</property>
+	</bean>
+	
+	<bean id="kronosReceivingOrderDataProcessorSelStore" class="com.walgreens.batch.central.processor.KronosReceivingOrderDataProcessor" scope="step"></bean>
+	
+	<bean id="kronosReceivingFileWriterSelStore" class="org.springframework.batch.item.file.FlatFileItemWriter" scope="step">
+		<property name="resource"><value>file:${kronos.src.folder.path}Photo_VolumeDriver_#{jobParameters['FILE_CREATION_DATE']}.txt</value></property>
+			<property name="appendAllowed" value="true" />
+			<!-- <property name="shouldDeleteIfExists" value="true" /> -->
+			<property name="lineAggregator">
+				<bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+				<property name="delimiter" value="," />
+				<property name="fieldExtractor">
+		  		<bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+				<property name="names" value="units, storeNumber, matrixCode, date, slotAndCount" />
+			</bean>
+		</property>
+	  </bean>
+	</property>
+	</bean>
+	
+		<!-- FOR Selected Store STEP 4 As Kronos WEb Order is not a part of Phase 2 Development so below code we are using as dummy-->
+	
+	<bean id="kronosWebOrderDataReaderSelStore" scope="step" class="com.walgreens.batch.central.reader.KronosWebOrderReader">
+		<property name="beginDate" value="#{jobParameters['BEGIN_DATE']}"></property>
+		<property name="endDate" value="#{jobParameters['END_DATE']}"></property>
+	</bean>
+	
+	
+	<bean id="kronosWebOrderFileWriterSelStore" class="org.springframework.batch.item.file.FlatFileItemWriter" scope="step">
+		<property name="resource"><value>file:${kronos.src.folder.path}Photo_VolumeDriver_#{jobParameters['FILE_CREATION_DATE']}.txt</value></property>
+			<property name="appendAllowed" value="true" />
+			<property name="lineAggregator">
+				<bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+				<property name="delimiter" value="," />
+				<property name="fieldExtractor">
+		  		<bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+				<property name="names" value="units, storeNumber, matrixCode, date, slotAndCount" />
+			</bean>
+		</property>
+	  </bean>
+	</property>
+	</bean>
+	<!-- FOR Selected Store STEP 4 As Kronos WEb Order is not a part of Phase 2 Development so below code we are using as dummy-->
+	  
+
+										<!-- FOR All Store STEP 1 -->
+	
+	<bean id="kronosStoreOpenCloseReaderAllStore" scope="step" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+	<property name="dataSource" ref="omniDataSource" />
+	<property name="sql" value="#{PhotoOmniBatchsql['WEEKLY_STORE_OPENCLOSE_TIME_ALL_STORE']}" />
+	<property name="rowMapper">
+		<bean class="com.walgreens.batch.central.rowmapper.LocationDataRowMapper" />
+	</property>
+	</bean>
+	
+	<bean id="kronosStoreOpenCloseWriterAllStore" class="com.walgreens.batch.central.writer.KronosStoreOpenCloseWriter" scope="step"></bean>
+	
+										<!-- FOR All Store STEP 2 -->
+	
+	<bean id="kronosCompleteOrderDataReaderAllStore" scope="step" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="omniDataSource" />
+		<property name="sql" value="#{PhotoOmniBatchsql['KRONOS_COMPLETED_ORDER_ALL_STORE']}" />
+		<property name="preparedStatementSetter">
+		 <bean class="org.springframework.batch.core.resource.ListPreparedStatementSetter" scope ="step">
+			<property name="parameters">
+				<list>
+					<value>#{jobParameters['BEGIN_DATE']}</value>
+					<value>#{jobParameters['END_DATE']}</value>
+					<value>#{jobParameters['BEGIN_DATE']}</value>
+					<value>#{jobParameters['END_DATE']}</value>
+					<value>#{jobParameters['BEGIN_DATE']}</value>
+					<value>#{jobParameters['END_DATE']}</value>
+					<value>#{jobParameters['BEGIN_DATE']}</value>
+					<value>#{jobParameters['END_DATE']}</value>
+				</list>
+			</property>
+		 </bean>
+		</property>
+		<property name="rowMapper"><bean class="com.walgreens.batch.central.rowmapper.KronosDataRowMapper" />
+		</property>
+	</bean>
+	<bean id="kronosCompleteOrderDataProcessorAllStore" class="com.walgreens.batch.central.processor.KronosCompleteOrderDataProcessor" scope="step"></bean>
+	
+	<bean id="kronosCompleteFileWriterAllStore" class="org.springframework.batch.item.file.FlatFileItemWriter" scope="step">
+		<property name="resource"><value>file:${kronos.src.folder.path}Photo_VolumeDriver_#{jobParameters['FILE_CREATION_DATE']}.txt</value></property>
+		<property name="appendAllowed" value="true" />
+		<property name="lineAggregator">
+			<bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+			<property name="delimiter" value="," />
+			<property name="fieldExtractor">
+	  		<bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+			<property name="names" value="units, storeNumber, matrixCode, date, slotAndCount" />
+			</bean>
+		</property>
+	  </bean>
+	</property>
+	</bean>
+	
+									<!-- FOR All Store STEP 3 -->
+	
+	<bean id="kronosReceivingOrderDataReaderAllStore" scope="step" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="omniDataSource" />
+		<property name="sql" value="#{PhotoOmniBatchsql['KRONOS_RECEIVING_ORDER_ALL_STORE']}" />
+		<property name="preparedStatementSetter">
+		 <bean class="org.springframework.batch.core.resource.ListPreparedStatementSetter" scope ="step">
+			<property name="parameters">
+				<list>
+					<value>#{jobParameters['BEGIN_DATE']}</value>
+					<value>#{jobParameters['END_DATE']}</value>
+					<value>#{jobParameters['BEGIN_DATE']}</value>
+					<value>#{jobParameters['END_DATE']}</value>
+					<value>#{jobParameters['BEGIN_DATE']}</value>
+					<value>#{jobParameters['END_DATE']}</value>
+					<value>#{jobParameters['BEGIN_DATE']}</value>
+					<value>#{jobParameters['END_DATE']}</value>
+				</list>
+			</property>
+		 </bean>
+		</property>
+		<property name="rowMapper"><bean class="com.walgreens.batch.central.rowmapper.KronosDataRowMapper" />
+		</property>
+	</bean>
+	
+	<bean id="kronosReceivingOrderDataProcessorAllStore" class="com.walgreens.batch.central.processor.KronosReceivingOrderDataProcessor" scope="step"></bean>
+	
+	<bean id="kronosReceivingFileWriterAllStore" class="org.springframework.batch.item.file.FlatFileItemWriter" scope="step">
+		<property name="resource"><value>file:${kronos.src.folder.path}Photo_VolumeDriver_#{jobParameters['FILE_CREATION_DATE']}.txt</value></property>
+			<property name="appendAllowed" value="true" />
+			<!-- <property name="shouldDeleteIfExists" value="true" /> -->
+			<property name="lineAggregator">
+				<bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+				<property name="delimiter" value="," />
+				<property name="fieldExtractor">
+		  		<bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+				<property name="names" value="units, storeNumber, matrixCode, date, slotAndCount" />
+			</bean>
+		</property>
+	  </bean>
+	</property>
+	</bean>
+	
+		<!-- FOR All Store STEP 4 As Kronos WEb Order is not a part of Phase 2 Development so below code we are using as dummy-->
+	
+	<bean id="kronosWebOrderDataReaderAllStore" scope="step" class="com.walgreens.batch.central.reader.KronosWebOrderReader">
+		<property name="beginDate" value="#{jobParameters['BEGIN_DATE']}"></property>
+		<property name="endDate" value="#{jobParameters['END_DATE']}"></property>
+	</bean>
+	
+	
+	<bean id="kronosWebOrderFileWriterAllStore" class="org.springframework.batch.item.file.FlatFileItemWriter" scope="step">
+		<property name="resource"><value>file:${kronos.src.folder.path}Photo_VolumeDriver_#{jobParameters['FILE_CREATION_DATE']}.txt</value></property>
+			<property name="appendAllowed" value="true" />
+			<property name="lineAggregator">
+				<bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+				<property name="delimiter" value="," />
+				<property name="fieldExtractor">
+		  		<bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+				<property name="names" value="units, storeNumber, matrixCode, date, slotAndCount" />
+			</bean>
+		</property>
+	  </bean>
+	</property>
+	</bean>
+	<!-- FOR All Store STEP 4 As Kronos WEb Order is not a part of Phase 2 Development so below code we are using as dummy-->
+	
+	<!-- FOR Selected Store/ All Store STEP -->
+	<bean id="kronosFileMovingTasklet" class="com.walgreens.batch.central.tasklet.KronosFileMovingAndDeleteTasklet" scope="step">
+	</bean>
+	
+	<!-- FOR Selected Store/ All Store STEP  -->
+	 <bean id="KronosExactTask" class="com.walgreens.batch.central.tasklet.KronosExactTask" scope="step">
+	 	<property name="fileCreationDate" value="#{jobParameters['FILE_CREATION_DATE']}"></property>
+	 </bean>
+	 
+	 <!-- FOR Selected Store/ All Store STEP  -->
+	 <bean id="kronosTriggerTask" class="com.walgreens.batch.central.tasklet.KronosTriggerTask" scope="step">
+	 	<property name="fileCreationDate" value="#{jobParameters['FILE_CREATION_DATE']}"></property>
+	 </bean>
+	 
+	</beans>	
+		

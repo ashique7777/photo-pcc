@@ -1,0 +1,34 @@
+<div class="error-container" ng-show="showErrorMessage">
+	<section class="alert wag-alert alert-danger" role="alert">
+		<span class="icon-Alert"></span>
+		<span><strong>Error:</strong>{{errorMessage}}</span>
+	</section>
+</div>
+<form ng-submit="uploadFile()" method="post" enctype="multipart/form-data" name="fileInfo" class="silverCanisterChangedReport">
+ <div class="row">Upload the Silver Recovery Data in the *.csv format</div>
+<div class="row">
+  <div class="col-md-4 nopadding">
+  	<div class="input-group">
+        <span class="input-group-addon" >
+          Vendor name
+        </span>
+        <input type="text" class="form-control" ng-click="hideErrorMessage()" ng-model="silverCanChngdReport.name" id="vendorName"  />
+    </div>
+  </div>
+  <div class="col-md-6 file-to-upload">
+  	 <div class="input-group">
+	  	 <span class="input-group-addon" >
+	          Select file to upload
+	     </span>
+	     <input type="text" class="form-control" ng-model="silverCanChngdReport.fileName" readonly="readonly"/>
+	     <input type="file" class="form-control" style="display: none;" ng-model-instant id="fileToUpload" multiple onchange="angular.element(this).scope().setFiles(this)" accept=".csv,.xsl,.xml,.mpp,application/multipart" value=""/>
+     	 <label for="fileToUpload"><button type="button" class="btn btn-info btn-xs wag-btn-primary-sm">Browse</button></label>
+     </div>
+     
+  </div>
+  <div class="col-md-2">
+	<button type="submit" class="btn btn-info pull-right btn-xs wag-btn-primary-sm" ng-show="showFilter" >Submit</button>
+  </div>
+  </div>
+</form>
+

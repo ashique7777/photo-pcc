@@ -1,0 +1,88 @@
+<div class="padding10">
+	<div class="row btn-filter">
+		<div class="pull-left"><strong>Order Details</strong></div>
+		<div class="pull-right"><strong>Order ID: 009405</strong></div>
+	</div>
+	<div class="row customer-block">
+		<div class="col-sm-3 col-md-3 grayBg">
+			<div class="row info-block">
+				Name : {{orderData.customerdata.name}}<br />
+				Address : {{orderData.customerdata.address}}<br />
+				<button class="btn btn-xs btn-success paddingT7L11">
+				<i class="glyphicon glyphicon-pencil"></i> Edit Customer Info</button>
+			</div>
+			<div class="row info-block">
+				Name : {{orderData.customerdata.name}}<br />
+				Address : {{orderData.customerdata.address}}<br />
+				<button class="btn btn-success btn-xs paddingT7L11">
+				<i class="glyphicon glyphicon-eye-open"></i> View Customer History</button>		
+			</div>
+		</div>
+	<div class="col-md-9 col-sm-9 padding10 ">
+		<div class="loading" ng-hide="orderData.envelopdata.hideLoader">
+			<div class="loadingImg"><img src="res/images/ajax-loader.gif" alt="Loading..." /><br />Loading Please Wait</div>
+			<div class="loadingOverlay"></div>
+		</div>
+		<div class="row">
+			<span class="label label-default pull-left queue-total-row" ng-show="orderData.totalRecord">Total Row: {{orderData.totalRecord}}</span>
+			<div class="pull-right">
+				<pagination  previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" total-items="orderData.totalRecord" items-per-page="orderData.envelopdata.length" boundary-links="true" ng-model="orderData.currrentPage" class="pagination-sm nomargin" max-size="5" rotate="false" ng-click="orderDetails.changeOrderPagination(page)" ></pagination>			
+			</div>
+		</div>
+		<div class="bg-warning info-message">Select Envelope Id to view Envelope Details</div>
+		<table class="table table-condensed table-bordered table-hover table-striped workqueue-table">
+			<thead>
+				<tr class="info">
+					<th width="3%">&nbsp;</th>
+					<td colspan="6">
+						<table class=" inner-table" width="100%">
+							<th width="10%">Envelope ID</th>
+							<th width="45%">Envelope Description</th>
+							<th width="7%">Status</th>
+							<th width="15%">Promise Time</th>
+							<th width="10%">Retail Price</th>
+							<th width="10%">Amount Paid</th>
+						</table>
+					</td>
+				</tr>
+			</thead>
+			<tbody>
+				 <tr ng-repeat="data in orderData.envelopdata">
+					<td width="3%"><input type="radio"  name="envDetails" ng-click="showEnvDetails(data.id)" ng-model="envelopeID" value="{{data.id}}"></td>
+					<td colspan="6">
+						<table class=" inner-table" width="100%">
+							<tr class="cPointer" popover-placement="top" popover="{{data.envelopedescription}}" popover-trigger="mouseenter" popover-append-to-body="true" ui-sref="orderdetails.details({envId:data.id})">
+							<!--ui-sref="orderdetails.details({envId:data.id})"-->
+							<!-- ui-sref="orderdetails.envelope.details({envId:data.id})"-->
+								<td width="10%">{{data.id}}</td>
+								<td width="45%">{{data.envelopedescription}}</td>
+								<td width="7%">{{data.Status}}</td>			
+								<td width="15%">{{data.promisetime}}</td>			
+								<td width="10%">{{data.retailsprice}}</td>			
+								<td width="10%">{{data.amountpaid}}</td>		
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<div ui-view></div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12">
+				<div class="pull-right">
+					<button class="btn btn-default btn-xs paddingT7L11">
+					<i class="glyphicon glyphicon-pencil"></i> Update Order</button>
+
+					<button class="btn btn-default btn-xs paddingT7L11">
+					<i class="glyphicon glyphicon-print"></i> Reprint Label</button>		
+
+					<button class="btn btn-default btn-xs paddingT7L11">
+					<i class="glyphicon glyphicon-print"></i> Reprint Claimcheck</button>	
+				</div>				
+			</div>
+		
+		</div>
+	</div>
+	</div>
+</div>

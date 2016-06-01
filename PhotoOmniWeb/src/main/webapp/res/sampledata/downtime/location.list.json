@@ -1,0 +1,7 @@
+{
+  "location":[
+    { "id": 1, "text": "Region" },
+    { "id": 2, "text": "District" },
+    { "id": 3, "text": "Store" }
+  ]
+}

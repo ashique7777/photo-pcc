@@ -1,0 +1,92 @@
+<ul class="list-group marginbottom5">
+  <li class="list-group-item">
+    <div class="row">
+    
+     <div ng-repeat="error in errorMessageText">
+      	<div ng-show="showErrorMessage" class="error-container">
+			<section class="alert wag-alert alert-danger" role="alert">
+				<span class="icon-Alert"></span>
+				<span><strong>Error:</strong> {{error}}</span>
+				
+			</section>
+	  	</div>
+      </div>
+      
+      <!-- <div ng-show="showErrorMessage" class="error-container row">
+			<section class="alert wag-alert alert-danger col-sm-12 pull-left" role="alert">
+				<div class="col-sm-1 pull-left">
+					<span class="icon-Alert"></span>
+					<span><strong>Error:</strong></span>
+				</div>
+				<div class="pull-left">
+					<div ng-repeat="error in errorMessageText">{{error}}</div>
+				</div>
+			</section>
+	  	</div> -->
+      
+	  <div ng-show="showNoDataFound" class="error-container paddingTopBottom3">
+	 		<section class="alert wag-alert alert-info" role="alert">
+				<span class="icon-Info text-primary"></span>
+				<span><strong></strong> No data found for the search criteria </span>
+			</section>
+	 </div>
+      <div class="col-md-3">
+		<div class="radio radio-primary pull-left marginbottom0">
+			<input type="radio" name="filtertype" id="filtertype1"  ng-model="payOnFilter.filtertypePay" value="ediupc" ng-click="hideErrorMessage()"/>
+			<label for="filtertype1"></label>
+		</div>
+	  
+        <div class="input-group">
+          <span class="input-group-addon fontSize80">EDIUPC</span>
+          <input type="text" class="form-control" ng-model="payOnFilter.ediupcValue" ng-click="hideErrorMessage()"/>
+         </div>
+      </div>
+	  <span class="icon-Question icon-Question-reg-edit text-primary wag-popover-box" popover-placement="top" popover={{pofHelpText}} popover-trigger="mouseenter"></span>
+       <!--<span class="glyphicon glyphicon-question-sign" popover-placement="top" popover="Help text goes here" popover-trigger="mouseenter"></span>-->
+
+    </div>  
+  </li>
+  <li class="list-group-item">  
+    <div class="row">
+      <div class="col-md-3">
+		<div class="radio radio-primary pull-left marginbottom0">
+			<input type="radio" name="filtertype" id="filtertype2" ng-model="payOnFilter.filtertypePay" value="default" />
+			<label for="filtertype2"></label>
+		</div>
+		
+	
+        <div class="input-group payon">
+           <span class="input-group-addon fontSize80" ng-class="ediUPCStatus ? 'wag-text-disabled-grey' : ''">Start Date</span>
+           <input type="text" ng-disabled="ediUPCStatus" ng-class="ediUPCStatus ? 'wag-text-disabled-grey' : ''" class="form-control start fontSize80" datepicker-popup={{format}} placeholder="MM/DD/YYYY" ng-model="payOnFilter.startDate" is-open="workspace.openedStart" ng-click="open($event,'start')" max-date="endMaxDate" close-text="Close"/>
+        </div>
+      </div>     
+      <div class="col-md-3">
+        <div class="input-group payon">
+        <span class="input-group-addon fontSize80" ng-class="ediUPCStatus ? 'wag-text-disabled-grey' : ''">End Date</span>
+          <input type="text" ng-disabled="ediUPCStatus" placeholder="MM/DD/YYYY" ng-class="ediUPCStatus ? 'wag-text-disabled-grey' : ''" class="form-control end fontSize80" datepicker-popup={{format}} ng-model="payOnFilter.endDate" is-open="workspace.openedEnd"  ng-click="open($event,'end')" max-date="endMaxDate" close-text="Close"/>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="input-group">
+          <span class="input-group-addon fontSize80" >Store Number</span>
+          <input type="text" class="form-control fontSize80" ng-hide="storeNumberDisable" ng-disabled="ediUPCStatus" ng-model="payOnFilter.storeNumber" ng-click="hideErrorMessage()"/>
+          <input type="text" class="form-control fontSize80" ng-show="storeNumberDisable" ng-model="payOnFilter.storeNumber" ng-click="hideErrorMessage" readonly="readonly"/>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="input-group ">
+          <span class="input-group-addon fontSize80 line-break-class" >Vendor Name</span>
+          <select class="form-control fontSize80" ng-disabled="ediUPCStatus" ng-model="workspace.vendorObjPof" ng-options="list.description for list in workspace.uniqueVendorList">
+          	<option value="">Select</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </li>
+</ul>
+<div class="row filter-buttons nopadding">
+	<div class="col-md-12 nopadding">
+		<button class="btn btn-info pull-right btn-xs wag-btn-primary-sm" ng-show="showFilter" ng-click="updateData($event,'payOnFilter')" >Generate Report</button>
+	</div>
+</div>

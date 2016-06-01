@@ -1,0 +1,483 @@
+SET SERVEROUTPUT ON;
+-- UPDATE / ADD DEVICES IN OM_KIOSK_DEVICE_DETAIL
+
+DECLARE
+  CURSOR c_kioskdevice
+  IS
+	SELECT OM_PF_DEVICE_DTL_TMP.PF_STORE_NO ,
+	  OM_PF_DEVICE_DTL_TMP.PF_DEVICE_IP ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_SOFTWARE_VERSION,' ') PF_SOFTWARE_VERSION ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_TEMPLATE_VERSION,' ') PF_TEMPLATE_VERSION ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_HARDWARE_MODEL,' ') PF_HARDWARE_MODEL ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_SCANNER_MODEL,' ') PF_SCANNER_MODEL ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_IMEMORIES_VERSION,' ') PF_IMEMORIES_VERSION ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_FIRMWARE_VERSION,' ') PF_FIRMWARE_VERSION ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_REGION_VERSION,' ') PF_REGION_VERSION ,
+	  NVL(DECODE(UPPER(OM_PF_DEVICE_DTL_TMP.PF_FB_ACTIVE),'ENABLED',1,0),0) PF_FB_ACTIVE ,
+	  NVL(DECODE(UPPER(OM_PF_DEVICE_DTL_TMP.PF_WAG_ACTIVE),'ENABLED',1,0),0) PF_WAG_ACTIVE ,
+	  NVL(DECODE(UPPER(OM_PF_DEVICE_DTL_TMP.PF_MPL_STORE),'TRUE',1,0),0) PF_MPL_STORE ,
+	  NVL(DECODE(UPPER(OM_PF_DEVICE_DTL_TMP.PF_IMEMORIES_ACTIVE),'ENABLED',1,'TRUE',1,0),0) PF_IMEMORIES_ACTIVE ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_TOMO_VERSION,' ') PF_TOMO_VERSION ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_ATUO_UPDATE_CONFIG_VERSION,' ') PF_ATUO_UPDATE_CONFIG_VERSION ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_WG_UPDATE_VERSION,' ') PF_WG_UPDATE_VERSION ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_CONTENT_VERSION,' ') PF_CONTENT_VERSION ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_LAUNCHPAD_VERSION,' ') PF_LAUNCHPAD_VERSION ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_OS_VERSION,' ') PF_OS_VERSION ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_INSTANT_PRINTER_ATT,' ') PF_INSTANT_PRINTER_ATT ,
+	  NVL(DECODE(UPPER(OM_PF_DEVICE_DTL_TMP.PF_WIN7_ACTIVATED),'LICENSED',1,'TRUE',1,0),0) PF_WIN7_ACTIVATED ,	  
+	  NVL(PF_DATE_ADDED,TO_DATE('01-01-0001 01:01:01','MM-DD-YYYY HH:MI:SS')) PF_DATE_ADDED ,
+	  NVL(PF_DATE_MODIFIED,TO_DATE('01-01-0001 01:01:01','MM-DD-YYYY HH:MI:SS')) PF_DATE_MODIFIED ,
+	  NVL(PF_LAST_REBOOT,TO_DATE('01-01-0001 01:01:01','MM-DD-YYYY HH:MI:SS')) PF_LAST_REBOOT ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_MINILAB_MODEL,' ') PF_MINILAB_MODEL ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_PHASER_MODEL,' ') PF_PHASER_MODEL ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_POSTER_MODEL,' ') PF_POSTER_MODEL ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_MASTER_VERSION,' ') PF_MASTER_VERSION ,
+	  NVL(PF_C_DRIVE_SIZE_MB,0) PF_C_DRIVE_SIZE_MB ,
+	  NVL(PF_C_DRIVE_SPACE_MB,0) PF_C_DRIVE_SPACE_MB ,
+	  NVL(PF_D_DRIVE_SIZE_MB,0) PF_D_DRIVE_SIZE_MB ,
+	  NVL(PF_D_DRIVE_SPACE_MB,0) PF_D_DRIVE_SPACE_MB ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_RECEIPT_PRINTER,' ') PF_RECEIPT_PRINTER ,
+	  NVL(OM_PF_DEVICE_DTL_TMP.PF_LC_VERSION,' ') PF_LC_VERSION ,
+	  OM_LOCATION.SYS_LOCATION_ID
+	FROM OM_PF_DEVICE_DTL_TMP, OM_LOCATION
+	WHERE OM_PF_DEVICE_DTL_TMP.PF_STORE_NO = OM_LOCATION.LOCATION_NBR;
+
+
+  -- DEFINE THE RECORD
+  rec_kioskdevice c_kioskdevice%ROWTYPE;
+  -- DEFINE VARIABLES
+  v_sysdeviceid NUMBER := 0;
+  v_devicetype OM_KIOSK_DEVICE_DETAIL.DEVICE_TYPE%TYPE := 'KIOSK';
+  v_id OM_KIOSK_DEVICE_DETAIL.CREATE_USER_ID%TYPE := 'SYSTEM' ;
+  v_device_ip OM_PF_DEVICE_DTL_TMP.PF_DEVICE_IP%TYPE;
+  v_store_nbr OM_PF_DEVICE_DTL_TMP.PF_STORE_NO%TYPE;
+  v_counter NUMBER := 0;
+  v_commitinterval NUMBER := 20;
+  v_active_cd NUMBER := 1;
+  v_err_msg VARCHAR2(200) := '';
+  v_err_code VARCHAR2(10) := '';
+  
+BEGIN
+  OPEN c_kioskdevice;
+  LOOP
+    FETCH c_kioskdevice INTO rec_kioskdevice;
+    EXIT WHEN c_kioskdevice%NOTFOUND OR c_kioskdevice%NOTFOUND IS NULL;
+    --DBMS_OUTPUT.PUT_LINE ('Processing the record --> ' || 'Store Number=' || rec_kioskdevice.PF_STORE_NO || ',DEvice IP Address=' || rec_kioskdevice.PF_DEVICE_IP);
+    BEGIN
+        -- CHECK IF RECORD EXISTS
+        SELECT SYS_DEVICE_INSTANCE_ID INTO v_sysdeviceid 
+		FROM OM_KIOSK_DEVICE_DETAIL 
+		WHERE SYS_LOCATION_ID = rec_kioskdevice.SYS_LOCATION_ID
+		AND DEVICE_IP=rec_kioskdevice.PF_DEVICE_IP; 
+        
+        -- UPDATE KIOSK DEVICES
+		UPDATE OM_KIOSK_DEVICE_DETAIL 
+		SET SYS_LOCATION_ID = rec_kioskdevice.SYS_LOCATION_ID, 
+			DEVICE_TYPE = v_devicetype, 
+			DEVICE_IP = rec_kioskdevice.PF_DEVICE_IP, 
+			SOFTWARE_VERSION = rec_kioskdevice.PF_SOFTWARE_VERSION, 
+			TEMPLATE_VERSION = rec_kioskdevice.PF_TEMPLATE_VERSION, 
+			HARDWARE_MODEL = rec_kioskdevice.PF_HARDWARE_MODEL, 
+			SCANNER_MODEL = rec_kioskdevice.PF_SCANNER_MODEL, 
+			IMEMORIES_VERSION = rec_kioskdevice.PF_IMEMORIES_VERSION, 
+			FIRMWARE_VERSION = rec_kioskdevice.PF_FIRMWARE_VERSION, 
+			REGION_VERSION = rec_kioskdevice.PF_REGION_VERSION, 
+			FB_ACTIVE = rec_kioskdevice.PF_FB_ACTIVE, 
+			WAG_ACTIVE = rec_kioskdevice.PF_WAG_ACTIVE, 
+			MPL_STORE = rec_kioskdevice.PF_MPL_STORE, 
+			IMEMORIES_ACTIVE = rec_kioskdevice.PF_IMEMORIES_ACTIVE, 
+			TOMO_VERSION = rec_kioskdevice.PF_TOMO_VERSION, 
+			AUTO_UPDATE_CONFIG_VERSION = rec_kioskdevice.PF_ATUO_UPDATE_CONFIG_VERSION, 
+			WG_UPDATE_VERSION = rec_kioskdevice.PF_WG_UPDATE_VERSION, 
+			CONTENT_VERSION = rec_kioskdevice.PF_CONTENT_VERSION, 
+			LAUNCHPAD_VERSION = rec_kioskdevice.PF_LAUNCHPAD_VERSION, 
+			OS_VERSION = rec_kioskdevice.PF_OS_VERSION, 
+			INSTANT_PRINTER_ATT = rec_kioskdevice.PF_INSTANT_PRINTER_ATT, 
+			WIN7_ACTIVATED_CD = rec_kioskdevice.PF_WIN7_ACTIVATED , 
+			LAST_REBOOT = rec_kioskdevice.PF_LAST_REBOOT, 
+			MINILAB_MODEL = rec_kioskdevice.PF_MINILAB_MODEL, 
+			PHASER_MODEL = rec_kioskdevice.PF_PHASER_MODEL, 
+			POSTER_MODEL = rec_kioskdevice.PF_POSTER_MODEL, 
+			MASTER_VERSION = rec_kioskdevice.PF_MASTER_VERSION, 
+			C_DRIVE_SIZE_MB = rec_kioskdevice.PF_C_DRIVE_SIZE_MB, 
+			C_DRIVE_SPACE_MB = rec_kioskdevice.PF_C_DRIVE_SPACE_MB, 
+			D_DRIVE_SIZE_MB = rec_kioskdevice.PF_D_DRIVE_SIZE_MB, 
+			D_DRIVE_SPACE_MB = rec_kioskdevice.PF_D_DRIVE_SPACE_MB, 
+			RECEIPT_PRINTER_MODEL = rec_kioskdevice.PF_RECEIPT_PRINTER, 
+			LC_VERSION = rec_kioskdevice.PF_LC_VERSION, 
+			CREATE_USER_ID = v_id, 
+			CREATE_DTTM = rec_kioskdevice.PF_DATE_ADDED, 
+			UPDATE_USER_ID = v_id, 
+			UPDATE_DTTM = rec_kioskdevice.PF_DATE_MODIFIED, 
+			ACTIVE_CD = v_active_cd
+		WHERE  SYS_DEVICE_INSTANCE_ID = v_sysdeviceid;
+
+		--DBMS_OUTPUT.PUT_LINE ('Updated Device with Device IP:' || rec_kioskdevice.PF_DEVICE_IP);          
+        EXCEPTION
+        -- INSERT MACHINE
+        WHEN NO_DATA_FOUND THEN
+		BEGIN
+        
+		INSERT INTO OM_KIOSK_DEVICE_DETAIL 
+		( 
+			SYS_DEVICE_INSTANCE_ID , 
+			SYS_LOCATION_ID , 
+			DEVICE_TYPE , 
+			DEVICE_IP , 
+			SOFTWARE_VERSION , 
+			TEMPLATE_VERSION , 
+			HARDWARE_MODEL , 
+			SCANNER_MODEL , 
+			IMEMORIES_VERSION , 
+			FIRMWARE_VERSION , 
+			REGION_VERSION , 
+			FB_ACTIVE , 
+			WAG_ACTIVE , 
+			MPL_STORE , 
+			IMEMORIES_ACTIVE , 
+			TOMO_VERSION , 
+			AUTO_UPDATE_CONFIG_VERSION , 
+			WG_UPDATE_VERSION , 
+			CONTENT_VERSION , 
+			LAUNCHPAD_VERSION , 
+			OS_VERSION , 
+			INSTANT_PRINTER_ATT , 
+			WIN7_ACTIVATED_CD , 
+			LAST_REBOOT , 
+			MINILAB_MODEL , 
+			PHASER_MODEL , 
+			POSTER_MODEL , 
+			MASTER_VERSION , 
+			C_DRIVE_SIZE_MB , 
+			C_DRIVE_SPACE_MB , 
+			D_DRIVE_SIZE_MB , 
+			D_DRIVE_SPACE_MB , 
+			RECEIPT_PRINTER_MODEL , 
+			LC_VERSION , 
+			CREATE_USER_ID , 
+			CREATE_DTTM , 
+			UPDATE_USER_ID , 
+			UPDATE_DTTM , 
+			ACTIVE_CD
+		) 
+		VALUES 
+		(
+			OM_KIOSK_DEVICE_DETAIL_SEQ.NEXTVAL,
+			rec_kioskdevice.SYS_LOCATION_ID,
+			v_devicetype, 
+			rec_kioskdevice.PF_DEVICE_IP, 
+			rec_kioskdevice.PF_SOFTWARE_VERSION, 
+			rec_kioskdevice.PF_TEMPLATE_VERSION, 
+			rec_kioskdevice.PF_HARDWARE_MODEL, 
+			rec_kioskdevice.PF_SCANNER_MODEL, 
+			rec_kioskdevice.PF_IMEMORIES_VERSION, 
+			rec_kioskdevice.PF_FIRMWARE_VERSION, 
+			rec_kioskdevice.PF_REGION_VERSION, 
+			rec_kioskdevice.PF_FB_ACTIVE, 
+			rec_kioskdevice.PF_WAG_ACTIVE, 
+			rec_kioskdevice.PF_MPL_STORE, 
+			rec_kioskdevice.PF_IMEMORIES_ACTIVE, 
+			rec_kioskdevice.PF_TOMO_VERSION, 
+			rec_kioskdevice.PF_ATUO_UPDATE_CONFIG_VERSION, 
+			rec_kioskdevice.PF_WG_UPDATE_VERSION, 
+			rec_kioskdevice.PF_CONTENT_VERSION, 
+			rec_kioskdevice.PF_LAUNCHPAD_VERSION, 
+			rec_kioskdevice.PF_OS_VERSION, 
+			rec_kioskdevice.PF_INSTANT_PRINTER_ATT, 
+			rec_kioskdevice.PF_WIN7_ACTIVATED, 
+			rec_kioskdevice.PF_LAST_REBOOT, 
+			rec_kioskdevice.PF_MINILAB_MODEL, 
+			rec_kioskdevice.PF_PHASER_MODEL, 
+			rec_kioskdevice.PF_POSTER_MODEL, 
+			rec_kioskdevice.PF_MASTER_VERSION, 
+			rec_kioskdevice.PF_C_DRIVE_SIZE_MB, 
+			rec_kioskdevice.PF_C_DRIVE_SPACE_MB, 
+			rec_kioskdevice.PF_D_DRIVE_SIZE_MB, 
+			rec_kioskdevice.PF_D_DRIVE_SPACE_MB, 
+			rec_kioskdevice.PF_RECEIPT_PRINTER, 
+			rec_kioskdevice.PF_LC_VERSION, 
+			v_id, 
+			rec_kioskdevice.PF_DATE_ADDED, 
+			v_id, 
+			rec_kioskdevice.PF_DATE_MODIFIED, 
+			v_active_cd
+		);
+
+        --DBMS_OUTPUT.PUT_LINE ('Added Device with Device IP:' || rec_kioskdevice.PF_DEVICE_IP);     
+
+	    EXCEPTION	
+			WHEN OTHERS THEN
+				v_err_msg := SUBSTR(SQLERRM, 1 , 200);
+				v_err_code := SQLCODE ;
+				--DBMS_OUTPUT.PUT_LINE ('An error was encountered - ' || v_err_code || ' -ERROR- ' || v_err_msg);	
+		
+			INSERT INTO OM_PF_DEVICE_DTL_BAD 
+			( 
+				PF_STORE_NO , 
+				PF_DEVICE_IP , 
+				PF_SOFTWARE_VERSION , 
+				PF_TEMPLATE_VERSION , 
+				PF_HARDWARE_MODEL , 
+				PF_SCANNER_MODEL , 
+				PF_IMEMORIES_VERSION , 
+				PF_FIRMWARE_VERSION , 
+				PF_REGION_VERSION , 
+				PF_FB_ACTIVE , 
+				PF_WAG_ACTIVE , 
+				PF_MPL_STORE , 
+				PF_IMEMORIES_ACTIVE , 
+				PF_TOMO_VERSION , 
+				PF_ATUO_UPDATE_CONFIG_VERSION , 
+				PF_WG_UPDATE_VERSION , 
+				PF_CONTENT_VERSION , 
+				PF_LAUNCHPAD_VERSION , 
+				PF_OS_VERSION , 
+				PF_INSTANT_PRINTER_ATT , 
+				PF_WIN7_ACTIVATED , 
+				PF_DATE_ADDED , 
+				PF_DATE_MODIFIED , 
+				PF_LAST_REBOOT , 
+				PF_MINILAB_MODEL , 
+				PF_PHASER_MODEL , 
+				PF_POSTER_MODEL , 
+				PF_MASTER_VERSION , 
+				PF_C_DRIVE_SIZE_MB , 
+				PF_C_DRIVE_SPACE_MB , 
+				PF_D_DRIVE_SIZE_MB , 
+				PF_D_DRIVE_SPACE_MB , 
+				PF_RECEIPT_PRINTER , 
+				PF_LC_VERSION , 
+				EXCEPTION_CODE , 
+				EXCEPTION_MSSG , 
+				EXCEPTION_DTTM 
+			) 
+			VALUES  
+			(  
+				rec_kioskdevice.PF_STORE_NO , 
+				rec_kioskdevice.PF_DEVICE_IP , 
+				rec_kioskdevice.PF_SOFTWARE_VERSION , 
+				rec_kioskdevice.PF_TEMPLATE_VERSION , 
+				rec_kioskdevice.PF_HARDWARE_MODEL , 
+				rec_kioskdevice.PF_SCANNER_MODEL , 
+				rec_kioskdevice.PF_IMEMORIES_VERSION , 
+				rec_kioskdevice.PF_FIRMWARE_VERSION , 
+				rec_kioskdevice.PF_REGION_VERSION , 
+				rec_kioskdevice.PF_FB_ACTIVE , 
+				rec_kioskdevice.PF_WAG_ACTIVE , 
+				rec_kioskdevice.PF_MPL_STORE , 
+				rec_kioskdevice.PF_IMEMORIES_ACTIVE , 
+				rec_kioskdevice.PF_TOMO_VERSION , 
+				rec_kioskdevice.PF_ATUO_UPDATE_CONFIG_VERSION , 
+				rec_kioskdevice.PF_WG_UPDATE_VERSION , 
+				rec_kioskdevice.PF_CONTENT_VERSION , 
+				rec_kioskdevice.PF_LAUNCHPAD_VERSION , 
+				rec_kioskdevice.PF_OS_VERSION , 
+				rec_kioskdevice.PF_INSTANT_PRINTER_ATT , 
+				rec_kioskdevice.PF_WIN7_ACTIVATED , 
+				rec_kioskdevice.PF_DATE_ADDED , 
+				rec_kioskdevice.PF_DATE_MODIFIED , 
+				rec_kioskdevice.PF_LAST_REBOOT , 
+				rec_kioskdevice.PF_MINILAB_MODEL , 
+				rec_kioskdevice.PF_PHASER_MODEL , 
+				rec_kioskdevice.PF_POSTER_MODEL , 
+				rec_kioskdevice.PF_MASTER_VERSION , 
+				rec_kioskdevice.PF_C_DRIVE_SIZE_MB , 
+				rec_kioskdevice.PF_C_DRIVE_SPACE_MB , 
+				rec_kioskdevice.PF_D_DRIVE_SIZE_MB , 
+				rec_kioskdevice.PF_D_DRIVE_SPACE_MB , 
+				rec_kioskdevice.PF_RECEIPT_PRINTER , 
+				rec_kioskdevice.PF_LC_VERSION , 
+				v_err_code , 
+				v_err_msg , 
+				SYSDATE) ;
+
+		 v_counter := v_counter + 1;
+        END;      
+	    WHEN OTHERS THEN
+			v_err_msg := SUBSTR(SQLERRM, 1 , 200);
+			v_err_code := SQLCODE ;
+			--DBMS_OUTPUT.PUT_LINE ('An error was encountered - ' || v_err_code || ' -ERROR- ' || v_err_msg);	
+			
+			INSERT INTO OM_PF_DEVICE_DTL_BAD 
+			( 
+				PF_STORE_NO , 
+				PF_DEVICE_IP , 
+				PF_SOFTWARE_VERSION , 
+				PF_TEMPLATE_VERSION , 
+				PF_HARDWARE_MODEL , 
+				PF_SCANNER_MODEL , 
+				PF_IMEMORIES_VERSION , 
+				PF_FIRMWARE_VERSION , 
+				PF_REGION_VERSION , 
+				PF_FB_ACTIVE , 
+				PF_WAG_ACTIVE , 
+				PF_MPL_STORE , 
+				PF_IMEMORIES_ACTIVE , 
+				PF_TOMO_VERSION , 
+				PF_ATUO_UPDATE_CONFIG_VERSION , 
+				PF_WG_UPDATE_VERSION , 
+				PF_CONTENT_VERSION , 
+				PF_LAUNCHPAD_VERSION , 
+				PF_OS_VERSION , 
+				PF_INSTANT_PRINTER_ATT , 
+				PF_WIN7_ACTIVATED , 
+				PF_DATE_ADDED , 
+				PF_DATE_MODIFIED , 
+				PF_LAST_REBOOT , 
+				PF_MINILAB_MODEL , 
+				PF_PHASER_MODEL , 
+				PF_POSTER_MODEL , 
+				PF_MASTER_VERSION , 
+				PF_C_DRIVE_SIZE_MB , 
+				PF_C_DRIVE_SPACE_MB , 
+				PF_D_DRIVE_SIZE_MB , 
+				PF_D_DRIVE_SPACE_MB , 
+				PF_RECEIPT_PRINTER , 
+				PF_LC_VERSION , 
+				EXCEPTION_CODE , 
+				EXCEPTION_MSSG , 
+				EXCEPTION_DTTM 
+			) 
+			VALUES  
+			(  
+				rec_kioskdevice.PF_STORE_NO , 
+				rec_kioskdevice.PF_DEVICE_IP , 
+				rec_kioskdevice.PF_SOFTWARE_VERSION , 
+				rec_kioskdevice.PF_TEMPLATE_VERSION , 
+				rec_kioskdevice.PF_HARDWARE_MODEL , 
+				rec_kioskdevice.PF_SCANNER_MODEL , 
+				rec_kioskdevice.PF_IMEMORIES_VERSION , 
+				rec_kioskdevice.PF_FIRMWARE_VERSION , 
+				rec_kioskdevice.PF_REGION_VERSION , 
+				rec_kioskdevice.PF_FB_ACTIVE , 
+				rec_kioskdevice.PF_WAG_ACTIVE , 
+				rec_kioskdevice.PF_MPL_STORE , 
+				rec_kioskdevice.PF_IMEMORIES_ACTIVE , 
+				rec_kioskdevice.PF_TOMO_VERSION , 
+				rec_kioskdevice.PF_ATUO_UPDATE_CONFIG_VERSION , 
+				rec_kioskdevice.PF_WG_UPDATE_VERSION , 
+				rec_kioskdevice.PF_CONTENT_VERSION , 
+				rec_kioskdevice.PF_LAUNCHPAD_VERSION , 
+				rec_kioskdevice.PF_OS_VERSION , 
+				rec_kioskdevice.PF_INSTANT_PRINTER_ATT , 
+				rec_kioskdevice.PF_WIN7_ACTIVATED , 
+				rec_kioskdevice.PF_DATE_ADDED , 
+				rec_kioskdevice.PF_DATE_MODIFIED , 
+				rec_kioskdevice.PF_LAST_REBOOT , 
+				rec_kioskdevice.PF_MINILAB_MODEL , 
+				rec_kioskdevice.PF_PHASER_MODEL , 
+				rec_kioskdevice.PF_POSTER_MODEL , 
+				rec_kioskdevice.PF_MASTER_VERSION , 
+				rec_kioskdevice.PF_C_DRIVE_SIZE_MB , 
+				rec_kioskdevice.PF_C_DRIVE_SPACE_MB , 
+				rec_kioskdevice.PF_D_DRIVE_SIZE_MB , 
+				rec_kioskdevice.PF_D_DRIVE_SPACE_MB , 
+				rec_kioskdevice.PF_RECEIPT_PRINTER , 
+				rec_kioskdevice.PF_LC_VERSION , 
+				v_err_code , 
+				v_err_msg , 
+				SYSDATE
+			) ;
+		v_counter := v_counter - 1;
+	END;
+	v_counter := v_counter + 1;
+    --DBMS_OUTPUT.PUT_LINE ('Counter :' || v_counter);
+    IF (v_counter = v_commitinterval) THEN        
+        COMMIT;
+        --DBMS_OUTPUT.PUT_LINE ('Committed ' || v_counter || ' records');  
+        v_counter := 0;
+    END IF;
+       
+  END LOOP;
+  -- COMMIT CURSOR RECORDS
+  COMMIT;
+  --DBMS_OUTPUT.PUT_LINE ('Committed ' || v_counter || ' records');  
+  -- INSERT RECORDS THAT DO NOT MATCH JOIN CONDITION OF THE CURSOR QUERY
+
+	INSERT
+	INTO OM_PF_DEVICE_DTL_BAD
+	  (
+		PF_STORE_NO ,
+		PF_DEVICE_IP ,
+		PF_SOFTWARE_VERSION ,
+		PF_TEMPLATE_VERSION ,
+		PF_HARDWARE_MODEL ,
+		PF_SCANNER_MODEL ,
+		PF_IMEMORIES_VERSION ,
+		PF_FIRMWARE_VERSION ,
+		PF_REGION_VERSION ,
+		PF_FB_ACTIVE ,
+		PF_WAG_ACTIVE ,
+		PF_MPL_STORE ,
+		PF_IMEMORIES_ACTIVE ,
+		PF_TOMO_VERSION ,
+		PF_ATUO_UPDATE_CONFIG_VERSION ,
+		PF_WG_UPDATE_VERSION ,
+		PF_CONTENT_VERSION ,
+		PF_LAUNCHPAD_VERSION ,
+		PF_OS_VERSION ,
+		PF_INSTANT_PRINTER_ATT ,
+		PF_WIN7_ACTIVATED ,
+		PF_DATE_ADDED ,
+		PF_DATE_MODIFIED ,
+		PF_LAST_REBOOT ,
+		PF_MINILAB_MODEL ,
+		PF_PHASER_MODEL ,
+		PF_POSTER_MODEL ,
+		PF_MASTER_VERSION ,
+		PF_C_DRIVE_SIZE_MB ,
+		PF_C_DRIVE_SPACE_MB ,
+		PF_D_DRIVE_SIZE_MB ,
+		PF_D_DRIVE_SPACE_MB ,
+		PF_RECEIPT_PRINTER ,
+		PF_LC_VERSION ,
+		EXCEPTION_CODE ,
+		EXCEPTION_MSSG ,
+		EXCEPTION_DTTM
+	  )
+	SELECT DEVICE.PF_STORE_NO ,
+	  DEVICE.PF_DEVICE_IP ,
+	  DEVICE.PF_SOFTWARE_VERSION ,
+	  DEVICE.PF_TEMPLATE_VERSION ,
+	  DEVICE.PF_HARDWARE_MODEL ,
+	  DEVICE.PF_SCANNER_MODEL ,
+	  DEVICE.PF_IMEMORIES_VERSION ,
+	  DEVICE.PF_FIRMWARE_VERSION ,
+	  DEVICE.PF_REGION_VERSION ,
+	  DEVICE.PF_FB_ACTIVE ,
+	  DEVICE.PF_WAG_ACTIVE ,
+	  DEVICE.PF_MPL_STORE ,
+	  DEVICE.PF_IMEMORIES_ACTIVE ,
+	  DEVICE.PF_TOMO_VERSION ,
+	  DEVICE.PF_ATUO_UPDATE_CONFIG_VERSION ,
+	  DEVICE.PF_WG_UPDATE_VERSION ,
+	  DEVICE.PF_CONTENT_VERSION ,
+	  DEVICE.PF_LAUNCHPAD_VERSION ,
+	  DEVICE.PF_OS_VERSION ,
+	  DEVICE.PF_INSTANT_PRINTER_ATT ,
+	  DEVICE.PF_WIN7_ACTIVATED ,
+	  DEVICE.PF_DATE_ADDED ,
+	  DEVICE.PF_DATE_MODIFIED ,
+	  DEVICE.PF_LAST_REBOOT ,
+	  DEVICE.PF_MINILAB_MODEL ,
+	  DEVICE.PF_PHASER_MODEL ,
+	  DEVICE.PF_POSTER_MODEL ,
+	  DEVICE.PF_MASTER_VERSION ,
+	  DEVICE.PF_C_DRIVE_SIZE_MB ,
+	  DEVICE.PF_C_DRIVE_SPACE_MB ,
+	  DEVICE.PF_D_DRIVE_SIZE_MB ,
+	  DEVICE.PF_D_DRIVE_SPACE_MB ,
+	  DEVICE.PF_RECEIPT_PRINTER ,
+	  DEVICE.PF_LC_VERSION ,
+	  '000' ,
+	  'Master records not found' ,
+	  SYSDATE
+	  FROM OM_PF_DEVICE_DTL_TMP DEVICE
+	  WHERE NOT EXISTS
+	  ( SELECT 1
+	    FROM OM_PF_DEVICE_DTL_TMP, OM_LOCATION
+	    WHERE OM_PF_DEVICE_DTL_TMP.PF_STORE_NO = OM_LOCATION.LOCATION_NBR
+		AND OM_PF_DEVICE_DTL_TMP.PF_STORE_NO = DEVICE.PF_STORE_NO
+	  );
+END;
+/

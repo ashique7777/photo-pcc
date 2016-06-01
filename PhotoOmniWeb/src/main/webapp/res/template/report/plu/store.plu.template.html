@@ -1,0 +1,117 @@
+<style type="text/css">
+.pluTable {
+  position: relative;
+  border: 1px solid #D2D5D7;
+  padding-top: 37px;
+  background: transparent;
+}
+.pluTable.positioned {
+  position: absolute;
+  box-shadow: 0 0 15px #333;
+}
+.container {
+  overflow-y: auto;
+  max-height: 155.5px;
+  margin: 0;
+  padding: 0;
+  width: 100%; 
+}
+table {
+  border-spacing: 0;
+}
+td + td {
+  border-left:1px solid #D2D5D7;
+}
+td, th {
+  border-bottom:1px solid #D2D5D7;
+  color: #000;
+  padding: 10px 25px;
+}
+th {
+  height: 0;
+  line-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  color: transparent;
+  border: none;
+  white-space: nowrap;
+}
+th div{
+  position: absolute;
+  background: transparent;
+  color: #000;
+  padding: 11px 25px;
+  top: 0;
+  line-height: normal;
+  border-left: 1px solid #D2D5D7;
+  margin-left: -25px;
+}
+th:first-child div{
+  border: none;
+}
+.plu table tbody { border-top: 1px solid #D2D5D7; }
+.selectWidth { width: 30%; }
+.textWidth { width: 70%; }
+</style>
+<div class="modal-custom-backdrop"></div>
+<div class="spopupOuterContainer col-sm-7 col-md-4 plu" ui-keydown="{'pageup':'goToReport($event);'}">
+	<div class="popupMainContainer panel panel-primary slide">
+		<div class="panel-heading">
+	  		<h3 class="panel-title">PLU Search
+	  		<a href="#" ng-click="goToReport($event);"  class="pull-right glyphicon glyphicon-remove"></a></h3>
+		</div>
+			  
+		<div class="row margintop6" style="width: 80%; margin: 0 auto;">
+		
+			<div class="error-container" ng-show="showErrorContainer">
+				<section class="alert wag-alert alert-danger" role="alert">
+				<span class="icon-Alert"></span>
+				<span><strong>Error: </strong>PLU input field should be numeric only.</span>
+				</section>
+			</div>
+			<span class="normal" id="PLULabel">PLU</span>&nbsp;
+			<input type="text" ng-model="workspace.plu.PluKey" ng-required="workspace.plu.PluKey" class="inputField" name="PLU" id="PLU"  maxlength="4" value="" ng-click="hideMessage()"/>&nbsp;
+			<button class="btn btn-info btn-xs wag-btn-primary-sm" ng-click="getPlU()" >PLU LookUp</button>
+		</div>
+	  	<div class="panel-body pop-content" ng-show="showTableData">
+			<div class="row paddingtopbottom5" ng-show="showtable">
+				<wgpagination class="pull-right" start-index="1" total-page-count="{{workspace.data.totalPages}}" id="{{$index}}" show-table-data="showTableData" ng-click="changePLUPagination()"></wgpagination>
+			</div>
+			<section class="pluTable" ng-show = "showtable">
+			  <div class="container">
+			    <table>
+			      <thead>
+			        <tr class="header selectWidth">
+			          <th>
+			            Select
+			            <div>Select</div>
+			          </th>
+			          <th class="textWidth">
+			            PLU
+			            <div>PLU</div>
+			          </th>
+			        </tr>
+			      </thead>
+			      <tbody>
+			        <tr ng-repeat="data in workspace.data.pluNumber track by $index"  tooltip-animation="false" ng-show="showDataTD">
+						<td class="selectWidth">
+							<section class="checkbox checkbox-primary">
+								<input type="checkbox" name="checkbox2" id={{$index}} value="option" ng-checked="isSelected(data)" ng-click="enableDisableAddButton($event, data);">
+								 <label class="custom-check" for={{$index}}></label>
+							</section>
+						</td>
+						<td class="textWidth">{{data}}</td>
+	  				</tr>
+	  				<tr ng-if = "!workspace.data.pluNumber.length" ng-show ="showtable">
+		  					<td colspan="2">No Records Found for the Search Criteria.</td>
+	      			</tr>	
+			      </tbody>
+			    </table>
+			  </div>
+			</section>
+			<div class="buttons-table" ng-show ="showtable" style="margin-top: 10px;">
+				<button class="btn btn-info btn-xs wag-btn-primary-sm" ng-click="addPLU($event)" >Add Selected PLU</button>
+	  		</div>	  	
+	  	</div>
+	</div>
+</div>

@@ -1,0 +1,89 @@
+<div class="row padding10">
+<!--  <div class="col-md-12 nopadding panel panel-default">
+	<div class="btn-filter" ng-click="filterToggle();">
+		Filter
+		<div class="pull-right">
+			<i class="glyphicon glyphicon-plus" ng-show="!showFilter"></i>
+			<i class="glyphicon glyphicon-minus" ng-show="showFilter"></i>
+		</div>
+	</div>-->
+	 <div ng-show="showSuccessMessage " class="error-container">
+			<section class="alert wag-alert alert-success" role="alert">
+				<span class="icon-ConfirmCircle"></span>
+				<span><strong>Success:</strong>{{successMessage}}</span>
+			</section>
+	 </div>
+	 <div ng-show="showNoDataFound" class="error-container">
+ 		<section class="alert wag-alert alert-info" role="alert">
+			<span class="icon-Info text-primary"></span>
+			<span><strong></strong> No data found for the search criteria </span>
+		</section>
+ 	</div>
+
+	<div ng-show="showFilter" class="paddingTopBottom10">
+	   	<div class="row">
+	   	<!-- Show error message -->
+	  	<div ng-repeat="error in errorMessageText">
+		    <div ng-show="showErrorMessage" class="error-container">
+				<section class="alert wag-alert alert-danger" role="alert">
+					<span class="icon-Alert"></span>
+					<span><strong>Error:</strong> {{error}}</span>
+				</section>
+		  	</div>
+		</div>
+		  <div class="col-md-6 paddingTopBottom3">
+			<div class="input-group">
+			  <span class="input-group-addon" >
+				Start Date 
+			  </span>
+			  <input type="text" class="form-control start" placeholder="MM/DD/YYYY" datepicker-popup={{format}} ng-model="printSignFilter.startDate" is-open="workspace.openedStart"  ng-click="open($event,'start')"  max-date="endMaxDate"/>
+			</div>
+		  </div>
+		  <div class="col-md-6 paddingTopBottom3">
+			<div class="input-group">
+			  <span class="input-group-addon" >
+				End Date 
+			  </span>
+			  <input type="text" class="form-control end" placeholder="MM/DD/YYYY" datepicker-popup={{format}} ng-model="printSignFilter.endDate" is-open="workspace.openedEnd"  ng-click="open($event,'end')"  max-date="endMaxDate"/>
+			</div>
+		  </div>
+		   <div class="col-md-6 paddingTopBottom3">
+			<div class="input-group">
+			  
+			 <span class="input-group-addon"> Email </span>
+				<input class="form-control ng-pristine ng-valid ng-touched" type="text" ng-model="printSignFilter.emailIds" ng-click="hideErrorMessage()">
+				<span class="input-group-addon"> @walgreens.com </span>
+			</div>
+			<div class="col-sm-12 col-md-12 nopadding align-center">
+				<span>Enter user name (multiple separated by commas)</span>
+			</div>
+		  </div>
+		
+		 <div class="col-sm-12 col-md-6 paddingTopBottom3">
+        <div class="input-group event-lookup">
+          <span class="input-group-addon" >
+           Event Name
+          </span>
+          <div class="form-control nopadding">
+          	<div class="col-sm-6 nopadding margin5">
+          		<input type="text" class="form-control" ng-model="printSignFilter.searchResult" disabled/>
+          	</div>
+          	<div class="col-sm-3 nopadding margin5">
+          		<input type="text" class="form-control" ng-model="printSignFilter.lookupData" ng-click="hideErrorMessage()"/>
+          	</div>
+          	<div class="col-sm-2 nopadding marginLR5">
+          		<button class="btn btn-info pull-right btn-xs wag-btn-primary-sm margin5" ng-click="lookup($event)" id="lookup">Lookup</button>
+          	</div>            
+          </div>
+        </div>    
+        </div>  
+		<div class="row filter-buttons">
+			<div class="col-md-12 pull-right">
+				<button class="btn btn-info pull-right btn-xs wag-btn-primary-sm" ng-click="updateData($event,'printSign')" id="submit">Submit</button>
+			</div>
+		</div>
+		 
+	</div>		
+  </div>
+ </div>
+ 

@@ -1,0 +1,97 @@
+<!-- commented to remove total row :: 03-24-2015 -->
+<!-- <div class="row paddingTopBottom3">
+<div class="col-sm-12 col-md-12 nopadding">
+ <span class="label label-default" ng-show="workspace.data.totalRecord">Total Row: {{workspace.data.totalRecord}}</span>
+</div>
+</div> -->
+<div ng-hide="showErrorMessage">
+	<div class="row" ng-show="showTable">
+		<div class="col-sm-6">
+			<strong>Store : {{workspace.data.storeWithAddress}}</strong>
+		</div>
+		<div class="col-sm-6">
+			<span class="pull-right"><strong>Start Date : {{exceptionReport.startDate | date:'MM/dd/yyyy'}} to End Date : {{exceptionReport.endDate | date:'MM/dd/yyyy'}}</strong></span>
+		</div>
+	</div>
+	<div class="row paddingTopBottom3">
+		 <div class="col-sm-12" ng-show="showTable">
+		 	<div class="pull-right">
+				<wgpagination start-index="1" total-page-count="{{totalPageCount}}" id="{{$index}}" show-table-data="showTableData" ng-click="changeStorePagination('exceptionReport',$index)"></wgpagination>
+		 	</div>
+		 	<button class="btn btn-default btn-xs marginTopMin20 paddingT7L11 pull-left" ng-click="printDiv()" ng-class="printStatus ? 'wag-btn-disabled-sm' : ''">Print</button>
+		 </div>
+	</div>
+	<div id="Print" class="col-md-12">
+		<div class="scrollableTableXY">
+			<table class="table table-condensed table-hover table-bordered sortableTable fontSize80" ng-show="showTable">
+			<!-- modified by shikha -->
+			<!-- <div ng-show="printable" class="printable" data-ng-init="printPopulate()"> -->
+				<thead>
+					  <tr>
+						<th ng-click="sort('exceptionReport','empName','', $index)">
+							<span class="pull-left">Employee Name</span>
+							<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['empName'].order && !colSortOrder['empName'].firstLoad ? 'selected' : ''"></span>
+							<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['empName'].order && !colSortOrder['empName'].firstLoad ?' selected' : ''"></span>
+						</th>
+						<th colspan="2">Total Exceptions</th>
+						<th colspan="2">Refused</th>
+						<th colspan="2">Remake</th>
+						<th colspan="2">Cancel</th>
+						<th colspan="2">Un-sellable</th>
+						<th colspan="2">Sold for free</th>
+						<th colspan="2">Price Modify</th>
+						<th colspan="2">Missing</th>
+						
+					  </tr>
+					  <tr>
+						<td></td>
+						<td>count</td><td>$</td>
+						<td>count</td><td>$</td>
+						<td>count</td><td>$</td>
+						<td>count</td><td>$</td>
+						<td>count</td><td>$</td>
+						<td>count</td><td>$</td>
+						<td>count</td><td>$</td>
+						<td>count</td><td>$</td>
+						
+					  </tr>
+					</thead>
+					<tbody>
+				
+					  <tr ng-repeat="data in workspace.data.empResponseList" class="cPointer">
+					  	<td>{{data.empName}}</td>
+					  	 
+						<td>{{data.totalExceptions.count}}</td>
+						<td>{{data.totalExceptions.dollars}}</td>
+						
+						<td>{{data.refused.count}}</td>
+						<td>{{data.refused.dollars}}</td>
+						
+						<td>{{data.remake.count}}</td>
+						<td>{{data.remake.dollars}}</td>
+						
+						<td>{{data.cancel.count}}</td>
+						<td>{{data.cancel.dollars}}</td>
+						
+						<td>{{data.unSellable.count}}</td>
+						<td>{{data.unSellable.dollars}}</td>
+						
+						<td>{{data.soldForFree.count}}</td>
+						<td>{{data.soldForFree.dollars}}</td>
+									
+						<td>{{data.priceModify.count}}</td>
+						<td>{{data.priceModify.dollars}}</td>
+						
+						<td>{{data.missing.count}}</td>
+						<td>{{data.missing.dollars}}</td>
+					  </tr>
+					</tbody>
+			</table>
+			<!-- modified by shikha -->
+			</div>
+		</div>
+	<div ng-show="printable" class="printable">
+		<div ng-include="workspace.printTemplate"></div>	 
+	</div>
+	</div>
+</div>

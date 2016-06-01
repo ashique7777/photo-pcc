@@ -1,0 +1,89 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:3.1.1"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'eclipse-wtp'
+apply plugin: 'com.jfrog.artifactory'
+
+version = '2.0'
+
+// Uses JDK 7
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+
+// 1. Get dependencies from Walgreens Artifactory
+// 2. Get dependencies from Maven central repository
+repositories {
+    mavenCentral()
+    maven {
+        url "http://wagwiki.walgreens.com/artifactory/retail_photo_release_libs"
+    }
+}
+
+artifactory {
+    resolve {
+        contextUrl = 'http://wagwiki.walgreens.com/artifactory'
+        repository {
+            repoKey = 'repo'
+            username = 'bss-read'
+            password = '{DESede}D+CBhduNKsE6n/gXBTt9Vw=='
+            maven = true
+        }
+    }
+}
+
+dependencies {
+	compile 'org.springframework:spring-core:4.0.0.RELEASE'
+	compile 'junit:junit:4.12'
+	compile 'jstl:jstl:1.2'
+    compile 'org.springframework:spring-core:4.0.0.RELEASE'
+	compile 'org.springframework:spring-web:4.0.0.RELEASE'
+	compile 'org.springframework:spring-webmvc:4.0.0.RELEASE'
+	compile 'org.springframework:spring-jdbc:4.0.0.RELEASE'
+	compile 'org.springframework.security:spring-security-web:3.2.5.RELEASE'
+	compile 'org.springframework.security:spring-security-config:3.2.5.RELEASE'
+	compile 'org.springframework.security:spring-security-taglibs:3.2.5.RELEASE'
+	compile 'org.springframework.security:spring-security-core:3.1.4.RELEASE'
+	compile 'ch.qos.logback:logback-classic:1.1.2'
+	compile 'org.slf4j:jcl-over-slf4j:1.7.10'
+	compile 'ch.qos.logback:logback-access:1.1.2'
+	compile 'org.codehaus.jackson:jackson-core-asl:1.1.0'	
+	providedCompile 'javax.servlet:javax.servlet-api:3.0.1'	
+	compile 'com.google.guava:guava:13.0.1'
+	compile 'javax.mail:mail:1.4.5'
+	compile 'com.googlecode.libphonenumber:libphonenumber:4.1'
+	compile 'com.github.fge:json-schema-validator:2.0.0'
+	compile 'com.github.fge:json-schema-core:1.0.1'
+	compile 'joda-time:joda-time:2.7'
+	compile 'com.fasterxml.jackson.core:jackson-databind:2.2.3'
+	compile 'com.fasterxml.jackson.core:jackson-core:2.2.3'
+	compile 'com.fasterxml.jackson.core:jackson-annotations:2.3.2'	
+	compile 'com.googlecode.json-simple:json-simple:1.1.1'
+	compile 'javax.servlet.jsp:javax.servlet.jsp-api:2.2.1'
+	compile 'org.apache.poi:poi:3.5-beta3'
+	compile 'net.sf.ehcache:ehcache-core:2.4.2'
+	compile 'net.sf.supercsv:super-csv:2.3.1'
+	compile 'org.springframework:spring-context-support:4.0.0.RELEASE'	
+	compile(group: 'com.walgreens.photoomni', name: 'poms-common', version: '2.0', changing:true)
+	compile 'org.springframework.security.extensions:spring-security-saml2-core:1.0.1.RELEASE'
+	compile 'commons-beanutils:commons-beanutils:1.9.2'	
+	compile 'org.springframework.data:spring-data-redis:1.6.0.RELEASE'
+
+	//**** Do not Delete ****// 
+	// Updated jedis-2.7.3.jar with Connection.class and published in Walgreens Artifactory
+	compile 'wag.redis.clients:jedis:2.7.3'
+	//**** Do not Delete ****//
+}
+
+configurations {
+	compile.exclude group: 'commons-logging'
+    compile.exclude group: 'redis.clients'
+} 

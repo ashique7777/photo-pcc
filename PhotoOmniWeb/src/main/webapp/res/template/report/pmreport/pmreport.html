@@ -1,0 +1,53 @@
+
+<div class="row">
+
+      <div class="col-md-3 paddingTopBottom3">
+        <div class="input-group">
+          <span class="input-group-addon" >
+            Start Date 
+          </span>
+          <input type="text" class="form-control" placeholder="MM/DD/YYYY" datepicker-popup="dd-MM-yyyy" ng-model="viewFilter.startDate" is-open="workspace.openedStart"  ng-click="open($event,'start')" />
+        </div>
+      </div>
+      <div class="col-md-3 paddingTopBottom3">
+        <div class="input-group">
+          <span class="input-group-addon" >
+            End Date 
+          </span>
+          <input type="text" class="form-control" placeholder="MM/DD/YYYY" datepicker-popup="dd-MM-yyyy" ng-model="viewFilter.endDate" is-open="workspace.openedEnd"  ng-click="open($event,'end')" />
+        </div>
+      </div>
+        <div class="col-md-3 paddingTopBottom3">
+        <div class="input-group ">
+          <span class="input-group-addon" >
+            View
+          </span>
+          <div dropdown class="form-control">
+            <button class="dropdown-toggle buttonDropdown" dropdown-toggle>
+              {{machineFilter.location}}
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              <li ng-repeat="list in workspace.viewType" ><a ng-click="setLocation(list.text,list.id,$event);" >{{list.text}}</a></li>
+            </ul>
+          </div>
+        </div>      
+       </div>
+       <div class="row filter-buttons">
+	<div class="col-md-12 pull-right">
+		<button class="btn btn-info pull-right btn-xs" ng-click=" " >Export To Excel </button>
+		
+	</div>
+</div>
+     
+    
+            </ul>
+          </div>
+        </div>      
+       </div>
+    
+           
+             
+     
+    
+
+ 

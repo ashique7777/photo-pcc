@@ -1,0 +1,88 @@
+<div class="row padding10">
+	<div class="col-md-8 col-sm-12 col-xs-12 nopadding">
+		<div class="row grayBg shadowAll earliest-promise-section">
+			<div class="col-md-5 col-sm-5 col-xs-5">
+				<label for="earliest-promise-time">Earliest Promise Time:</label>
+				<select name="earliest-promise-time" id="earliest-promise-time" class="form-control input-xs">
+					<option ng-repeat="opt in promiseTimeOptions.data" value="{{opt.value}}">{{opt.text}}</option>
+				</select>
+	
+			</div>
+			<div class="col-md-2 col-sm-2 col-xs-2"><span class="redBg">Rolls: 45 min</span></div>
+			<div class="col-md-2 col-sm-2 col-xs-2"><span class="yelloBg">Digital: 29 min</span></div>
+			<div class="col-md-3 col-sm-3 col-xs-3">Avg. Processing Time: 0 min</div>
+		</div>
+		
+		<div class="posRelative">
+			<div class="loading" ng-hide="hideWorkqueueLoader">
+				<div class="loadingImg"><img src="res/images/ajax-loader.gif" alt="Loading..." /><br />Loading Please Wait</div>
+				<div class="loadingOverlay"></div>
+			</div>
+		
+			<span class="label label-default pull-left queue-total-row" ng-show="workqueue.totalRecord">Total Row: {{workqueue.totalRecord}}</span>
+			<div class="pull-right">
+				<pagination  previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" total-items="workqueue.totalRecord" items-per-page="workqueue.data.length" boundary-links="false" ng-model="workqueue.currrentPage" class="pagination-sm nomargin" max-size="5" rotate="false" ng-click="workspaces.changeStorePagination($index)"></pagination>
+			</div>
+			<table class="table table-condensed table-bordered table-hover table-striped workqueue-table">
+				<thead>
+					<tr class="btn-info">
+						<th colspan="4">{{workspaceList.workqueue.text}}</th>
+					</tr>
+					<tr class="info">
+						<th>Customer</th>
+						<th>Envelope Number</th>
+						<th>Envelope Description</th>
+						<th  class="text-center">Task</th>
+					</tr>
+				</thead>
+				<tbody>
+					 <tr ng-repeat="data in workqueue.data">
+						<td>{{data.customer}}</td>
+						<td><a href="javascript:void(0);" ui-sref="orderdetails({envNo:data.envelopenumber})">{{data.envelopenumber}}</a></td>
+						<td>{{data.envelopedescription}}</td>			
+						<td class="text-center"><button class="btn btn-xs {{data.btnclass}} paddingT7L11"><i class="glyphicon"></i>{{data.task}}</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="col-md-4 col-sm-12 col-xs-12 workspace-tabs">
+		<div class="row">
+			<tabset>
+				<tab ng-repeat="tabData in workspaces.tabbox" ng-controller="workspaceTabCtrl" ng-init="tabData=tabData" heading="{{tabData.text}}">
+					<div class="posRelative">
+						<div class="loading" ng-hide="tab.hideLoader">
+							<div class="loadingImg"><img src="res/images/ajax-loader.gif" alt="Loading..." /><br />Loading Please Wait</div>
+							<div class="loadingOverlay"></div>
+						</div>
+						<ul>
+							<li ng-repeat="tab in tab.data" class="cPointer" popover-placement="top" popover="{{tab.text}}" popover-trigger="mouseenter" ui-sref="workspace.details({itemType:tabData.itemType, itemId:tab.id})">
+								{{tab.text}}
+							</li>
+						</ul>
+					</div>
+				</tab>
+			</tabset>
+		</div>
+		
+		<div class="row tickets-panel gray-border">
+			<div class="ticket-header btn-info">{{workspaceList.tickets.text}}</div>
+			<div class="posRelative">
+				<div class="loading" ng-hide="tickets.hideLoader">
+					<div class="loadingImg"><img src="res/images/ajax-loader.gif" alt="Loading..." /><br />Loading Please Wait</div>
+					<div class="loadingOverlay"></div>
+				</div>
+				<div class="gray-border grayBg paddingT7L11 content">
+					<ul>
+						<li ng-repeat="ticket in tickets.data">{{ticket.text}}</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div ui-view></div>
+
+
+
+

@@ -1,0 +1,71 @@
+<div class="row">
+	<div class="col-md-12 alert alert-info" style="font-size:0.85em;padding-top:5px;padding-bottom:5px;margin-bottom:5px;">
+		Please select a search criteria from the drop down and enter a value in the Value text field to search for matching records.
+		Click 'Add Criteria' button ONLY if you want to add multiple search criteria.<br/>
+		*Ex. KIOSK IP 124.25.35.21, Last Reboot MM-DD-YYYY. 
+	</div>
+</div>
+<div class="row kioskFilter"  style="margin-left:-13px;">
+      <div class="col-md-4 paddingTopBottom3"><!-- modified for filter criteria -->
+        <div class="input-group">
+          <span class="input-group-addon" >
+            Search Criteria
+          </span>
+          <select class="form-control" ng-model="tempKioskFilter.criteria">
+          	<option ng-repeat="opt in workspace.kioskFilterOptions" value="{{opt.CODE_ID}}">{{opt.DECODE}}</option>
+          </select>
+         </div>
+      </div>
+      
+      <!-- added for filter operator -->
+      
+      <div class="col-md-4 paddingTopBottom3" >
+        <div class="input-group">
+          <span class="input-group-addon" >
+            Operator
+          </span>
+          <select class="form-control" ng-model="tempKioskFilter.operator" ng-disabled="tempKioskFilter.criteria == ''">
+          	<option value="=">=</option>
+          	<option value=">">></option>
+          	<option value="<"><</option>
+          	<option value="LIKE">Like</option>
+          </select>
+       </div>
+      </div>
+      
+      <!-- added for filter operator -->
+      
+      <div class="col-md-4 paddingTopBottom3" >
+        <div class="input-group">
+          <span class="input-group-addon" >
+            Value 
+          </span>
+          <input class="form-control valueField" ng-model="tempKioskFilter.value"  ng-disabled="tempKioskFilter.criteria == ''"/>
+        </div>
+      </div>
+ </div>
+ <!-- show in add to dashboard popup only start -->
+ <div class="row" ng-show="addDashboardPop">
+	<div class="col-md-3" >
+		<div class="checkbox"><label><input type="checkbox" value="true"  ng-model="workspace.kioskFilters.autorefresh" /> Auto Refresh</label></div>
+	</div>
+	<div class="col-md-3" >
+          <div class="checkbox"><label><input type="checkbox" value="true"  ng-model="workspace.kioskFilters.autopopulate" /> Auto Populate</label></div>
+	</div>
+</div>
+ <!-- show in add to dashboard popup only end -->
+ 
+<div class="row nopadding kioskFilter">
+	<div class="col-md-9 kioskFilter nopadding" >
+		<div class="col-md-12 searchCriteria">
+			<p style="font-size: 0.99em;">Search Criteria : {{workspace.kioskReadableString}}</p>
+		</div>
+	</div>
+	<div class="col-md-3 kioskFilter nopadding">
+		<button class="btn btn-info btn-xs wag-btn-primary-sm pull-right" ng-show="showFilter" ng-hide="addDashboardPop" ng-click="updateData($event,'kioskFilter')" ng-disabled="workspace.showKioskButtonOption">Generate Report</button>
+		<button class="btn btn-default btn-xs pull-right margin5" ng-show="showFilter && workspace.printExportFilter" ng-click="workspace.addKioskCriteria($event)"  style="margin-right:10px;" ng-disabled="workspace.showKioskButtonOption">Add Criteria</button>
+		<button class="btn btn-default btn-xs pull-right margin5" ng-show="showFilter && workspace.printExportFilter" ng-click="workspace.resetKioskCriteria($event)" >Reset</button>
+	</div>
+	
+	
+</div>

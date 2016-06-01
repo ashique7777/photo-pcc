@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="true" xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"	
+	xmlns:int="http://www.springframework.org/schema/integration"
+  	xmlns:int-file="http://www.springframework.org/schema/integration/file"
+  	xmlns:int-sftp="http://www.springframework.org/schema/integration/sftp"
+  	xmlns:int-stream="http://www.springframework.org/schema/integration/stream"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+						http://www.springframework.org/schema/util 
+						http://www.springframework.org/schema/util/spring-util-3.0.xsd
+						http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+  						http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file-2.0.xsd
+  						http://www.springframework.org/schema/integration/sftp http://www.springframework.org/schema/integration/sftp/spring-integration-sftp-2.1.xsd
+  						http://www.springframework.org/schema/integration/stream http://www.springframework.org/schema/integration/stream/spring-integration-stream-2.1.xsd">
+						
+						
+	<!-- SFTP CONFIGURATION -->
+
+	<!-- Automatic login start -->
+	<util:properties id="props">
+		<prop key="StrictHostKeyChecking">no</prop>
+		<prop key="PreferredAuthentications">publickey,keyboard-interactive,password</prop>
+	</util:properties>
+	<!-- Automatic login ends -->
+	
+	<bean id="targetDir" class="java.util.concurrent.atomic.AtomicReference">
+		<constructor-arg value="default" />
+	</bean>
+	
+	<bean id="fileNameGenerator" class="org.springframework.integration.file.DefaultFileNameGenerator" />
+   <!-- SFTP CONFIGURATION ENDS -->
+   
+   
+   <!-- SFTP for some module start -->
+	<bean id="sftpSessionFactory"
+		class="org.springframework.integration.sftp.session.DefaultSftpSessionFactory">
+		<property name="host" value="${sftp.host.name}" />
+		<property name="user" value="${sftp.user.name}" />
+		<property name="password" value="${sftp.password}" />
+		<property name="port" value="${sftp.port.number}" />
+		<property name="sessionConfig" ref="props" />
+	</bean>
+	
+
+	<int:channel id="outputChannel" />
+
+	<int-sftp:outbound-channel-adapter id="sftpOutboundAdapter"
+	 session-factory="sftpSessionFactory" 
+	 channel="outputChannel"
+	charset="UTF-8" 
+	remote-directory-expression="@targetDir.get()"
+	remote-filename-generator="fileNameGenerator" />
+
+	
+	<!-- SFTP for some module Ends -->
+	
+	
+	
+	<!-- Kronos SFTP CONFIGURATION -->
+
+	<bean id="sftpSessionFactory1"
+		class="org.springframework.integration.sftp.session.DefaultSftpSessionFactory">
+		<property name="host" value="${kronos.sftp.host.name}" />
+		<property name="user" value="${kronos.sftp.user.name}" />
+		<property name="password" value="${kronos.sftp.password}" />
+		<property name="port" value="${kronos.sftp.port.number}" />
+		<property name="sessionConfig" ref="props" />
+	</bean>
+		
+	<int:channel id="kronosOutputChannel" />
+
+	<int-sftp:outbound-channel-adapter id="sftpOutboundAdapter1"
+	 session-factory="sftpSessionFactory1" 
+	 channel="kronosOutputChannel"
+	charset="UTF-8" 
+	remote-directory-expression="@targetDir.get()"
+	remote-filename-generator="fileNameGenerator" />
+	
+	<!-- Kronos SFTP CONFIGURATION -->
+	
+	<!-- POF SFTP CONFIGURATION : Start -->
+
+	<bean id="sftpSessionFactoryPof"
+		class="org.springframework.integration.sftp.session.DefaultSftpSessionFactory">
+		<property name="host" value="${pof.sftp.host.name}" />
+		<property name="user" value="${pof.sftp.user.name}" />
+		<property name="password" value="${pof.sftp.password}" />
+		<property name="port" value="${pof.sftp.port.number}" />
+		<property name="sessionConfig" ref="props" />
+	</bean>
+		
+	<int:channel id="pofOutputChannel" />
+
+	<int-sftp:outbound-channel-adapter id="sftpOutboundAdapterPof"
+	 session-factory="sftpSessionFactoryPof" 
+	 channel="pofOutputChannel"
+	charset="UTF-8" 
+	remote-directory-expression="@targetDir.get()"
+	remote-filename-generator="fileNameGenerator" />
+	
+	<!-- POF SFTP CONFIGURATION : End -->
+	
+	
+
+	<!-- Email Writer Configuration Start -->
+	<bean id="emailWriter"
+		class="org.springframework.batch.item.mail.javamail.MimeMessageItemWriter">
+		<property name="javaMailSender" ref="mailSender"></property>
+	</bean>
+	<!-- Email Writer Configuration ends -->
+
+<!-- Batch Properties File Config : Start -->
+	<bean id="batchProperties"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:PhotoOmniBatch.properties" />
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_NEVER" />
+		<property name="ignoreResourceNotFound" value="true" />
+	</bean>
+	<!-- Batch Properties File Config : End -->
+	
+	<!-- Mail sender bean definitions starts -->
+	<bean id="sendMailService" class="com.walgreens.batch.central.mail.SendMailService" />
+
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="javasmtp.walgreens.com" />
+		<property name="port" value="25" />
+		<property name="username" value="xxx@walgreens.com" />
+		<property name="password" value="no password" />
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="customeMailMessage" class="org.springframework.mail.SimpleMailMessage">
+		<!-- <property name="from" value="sangeeta.manna@walgreens.com" /> -->
+	</bean>
+	<bean id="deploymentProcessDecider" class="com.walgreens.batch.central.decider.DeploymentProcessDecider" ></bean>
+	
+	
+	<!-- Mail sender bean definitions ends -->
+	
+	<util:properties id="PhotoOmniBatch" location="classpath:PhotoOmniBatch.properties"/>
+	<util:properties id="PhotoOmniBatchsql" location="classpath:PhotoOmniBatchSQL.properties"/>
+
+</beans>

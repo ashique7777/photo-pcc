@@ -1,0 +1,176 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+	<!-- Import Common Job : Start -->
+	<import resource="classpath:spring/batch/jobs/job_Common.xml" />
+	<!-- Import Common Job : End -->
+
+	<batch:job id="T_A_DAILY_JOB">
+
+		<batch:step id="timeAttendanceFolderCheck" next="timeAttendanceUpdatePreFlag">
+			<batch:tasklet ref="tAndaFolderCheckTasklet">
+			</batch:tasklet>
+		</batch:step>
+
+		<batch:step id="timeAttendanceUpdatePreFlag" next="timeAttendanceArchiveTasklet">
+			<batch:tasklet ref="TandAUpdatePreFlagTasklet">
+			</batch:tasklet>
+		</batch:step>
+
+		<batch:step id="timeAttendanceArchiveTasklet" next="readPropVal">
+			<batch:tasklet ref="TandAFileArchiveTasklet">
+			</batch:tasklet>
+		</batch:step>
+
+		<batch:step id="readPropVal" next="timeAttendanceDecision">
+			<batch:tasklet>
+				<batch:chunk reader="taPropValueReader" writer="taPropValueWriter"
+					commit-interval="1">
+					<batch:listeners>
+						<batch:listener ref="TimeAttendanceReportListener"></batch:listener>
+					</batch:listeners>
+				</batch:chunk>
+			</batch:tasklet>
+		</batch:step>
+
+		<batch:decision id="timeAttendanceDecision" decider="timeAttendanceDecider">
+			<batch:next on="COMPLETED" to="flatFileCreationForSpecifStores" />
+			<batch:next on="FAILED" to="flatFileCreation" />
+		</batch:decision>
+
+		<batch:step id="flatFileCreationForSpecifStores" next="tAndafileTransmission">
+			<batch:tasklet>
+				<batch:chunk reader="taItemReaderForSpecficStores"
+					writer="taItemWriterDelegator" commit-interval="100">
+					<batch:listeners>
+						<batch:listener ref="taItemWriterListner"></batch:listener>
+					</batch:listeners>
+				</batch:chunk>
+			</batch:tasklet>
+		</batch:step>
+
+		<batch:step id="flatFileCreation" next="tAndafileTransmission">
+			<batch:tasklet>
+				<batch:chunk reader="taItemReader" writer="taItemWriterDelegator"
+					commit-interval="100">
+					<batch:listeners>
+						<batch:listener ref="taItemWriterListner"></batch:listener>
+					</batch:listeners>
+				</batch:chunk>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="tAndafileTransmission">
+			<batch:tasklet ref="TandAFileTransmissionTasklet">
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+
+	<bean id="taItemWriterListner"
+		class="com.walgreens.batch.central.listner.TandAItemWriterListner">
+		<property name="jdbcTemplate" ref="omniJdbcTemplate" />
+	</bean>
+
+	<bean id="taItemReader"
+		class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="omniDataSource" />
+		<property name="sql"
+			value="#{PhotoOmniBatchsql['TIME_AND_ATTENDANCE_POPULATE_DATA']}" />
+		<property name="rowMapper">
+			<bean class="com.walgreens.batch.central.rowmapper.TARowMapper" />
+		</property>
+	</bean>
+
+	<bean id="taItemReaderForSpecficStores"
+		class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="omniDataSource" />
+		<property name="sql"
+			value="#{PhotoOmniBatchsql['TIME_AND_ATTENDANCE_POPULATE_DATA_SPECIFIC_STORE']}" />
+		<property name="rowMapper">
+			<bean class="com.walgreens.batch.central.rowmapper.TARowMapper" />
+		</property>
+	</bean>
+	<!-- ItemReader for file creation -->
+
+	<bean id="TandAFileTransmissionTasklet"
+		class="com.walgreens.batch.central.tasklet.TandAFileTransmissionTasklet">
+	</bean>
+
+	<bean id="taItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
+
+		<property name="resource" value="file:${tanda.work.folder.path}PhotoPM.csv" />
+		<property name="shouldDeleteIfExists" value="true" />
+		<property name="footerCallback" ref="taItemWriterDelegator"></property>
+		<property name="lineAggregator">
+
+			<!-- An Aggregator which converts an object into delimited list of strings -->
+			<bean
+				class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+				<property name="delimiter" value="," />
+				<property name="fieldExtractor">
+					<!-- Extractor which returns the value of beans property through reflection -->
+					<bean
+						class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+						<property name="names"
+							value="employeeID,effectiveDATE,payCodeName,dollarPMAmount,undefined,storeNumber,commentText,storeFeedCode" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="taItemWriterDelegator" class="com.walgreens.batch.central.writer.TAItemWriter">
+		<property name="delegate" ref="taItemWriter"></property>
+	</bean>
+	<!-- ItemWriter for file creation -->
+	<!-- T & A Batch configuration Ends -->
+	<!-- T & A deployment process configuration starts -->
+	<bean id="timeAttendanceDecider" class="com.walgreens.batch.central.decider.TAStepDecider" />
+
+	<bean id="taPropValueReader"
+		class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="omniDataSource" />
+		<property name="sql" value="#{PhotoOmniBatchsql['GET_PROP_VALUE']}" />
+		<property name="rowMapper">
+			<bean class="com.walgreens.batch.central.rowmapper.PropertyValueRowMapper" />
+		</property>
+	</bean>
+	<bean id="taPropValueWriter" class="com.walgreens.batch.central.writer.PropertyValueWriter"
+		scope="step" />
+	<bean id="TimeAttendanceReportListener"
+		class="org.springframework.batch.core.listener.ExecutionContextPromotionListener">
+		<property name="keys" value="propValue" />
+	</bean>
+
+	<!-- Tasklet to check whether the folder exists or not -->
+	<bean id="tAndaFolderCheckTasklet"
+		class="com.walgreens.batch.central.tasklet.TandAFolderCheckTasklet"
+		scope="step">
+	</bean>
+
+	<!-- Tasklet to move the EXACT renamed file from Exact to Archive folder -->
+	<bean id="TandAFileArchiveTasklet"
+		class="com.walgreens.batch.central.tasklet.TandAFileArchiveTasklet"
+		scope="step">
+	</bean>
+
+	<!-- Tasklet to update indicators in DB for exact file -->
+	<bean id="TandAUpdatePreFlagTasklet"
+		class="com.walgreens.batch.central.tasklet.TandAUpdatePreFlagTasklet"
+		scope="step">
+	</bean>
+	<!-- T & A deployment process configuration ends -->
+
+
+</beans>	
+		

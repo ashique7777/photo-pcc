@@ -1,0 +1,56 @@
+<div class="row paddingTopBottom3" ng-show="showTable">
+	<div class="col-sm-12 col-md-12 nopadding">
+		<div class="row paddingTopBottom3">
+			<div class="col-md-3 col-sm-6 nopadding"><span><b>Status : {{silverCanisterReport.status}}</b></span></div>
+			<div class="col-md-3 col-sm-6 nopadding"><span><b>Location : {{silverCanisterReport.location}}</b></span></div>
+			<div class="col-md-6 col-sm-12 nopadding" ng-show="silverCanisterReport.status == 'Completed'"><span class="pull-right"><b>Start Date : {{silverCanisterReport.startDate | date:'MM-dd-yyyy'}} To End Date : {{silverCanisterReport.endDate | date:'MM-dd-yyyy' }}</b></span></div>
+		</div>
+		<div class="pull-right">		
+	   		<!-- <pagination  previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" total-items="store.totalRecord" items-per-page="itemCount" boundary-links="true" ng-model="store.currentPage" class="pagination-sm nomargin" max-size="5" rotate="false" ng-click="changeStorePagination('machine',$index,store.storeNumber)" ></pagination> -->
+			<wgpagination start-index="1" total-page-count="{{totalPageCount}}" id="{{$index}}" show-table-data="showTableData" ng-click="changeStorePagination('silverCan',$index,store.storeNumber)"></wgpagination>
+	  	</div>
+	  	<div class="pull-left">
+			<!-- <button class="btn btn-default btn-xs marginTopMin20 paddingT7L11" ng-click="printDiv('printableDiv')" >Print</button> -->
+	   		<button class="btn btn-default btn-xs marginTopMin20 paddingT7L11" ng-click="exportSilverCanRptToExcel()">Export</button>
+		</div>
+	</div>
+</div>
+<div id="printableDiv">
+	 <table  class="table table-condensed table-hover table-bordered sortableTable fontSize80">
+		<thead>
+		  <tr>
+			<th rowspan="2" ng-click="sort('silverCan','Store','', $index)">
+				<span class="pull-left">Store</span>
+				<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['Store'].order && !colSortOrder['Store'].firstLoad ? 'selected' : ''"></span>
+				<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['Store'].order && !colSortOrder['Store'].firstLoad ?' selected' : ''"></span>
+			</th>
+			<th rowspan="2" ng-click="sort('silverCan','LastCanisterChangeDate','', $index)">
+				<span class="pull-left">Last Canister Change Date</span>
+				<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['LastCanisterChangeDate'].order && !colSortOrder['LastCanisterChangeDate'].firstLoad ? 'selected' : ''"></span>
+				<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['LastCanisterChangeDate'].order && !colSortOrder['LastCanisterChangeDate'].firstLoad ?' selected' : ''"></span>
+			</th>
+			<th rowspan="2">Rolls Count</th>
+			<th rowspan="2">Prints Count</th>
+			<th rowspan="2">Paper(Sq. Inches)</th>
+			<th colspan="2">Silver Content(Ounces)</th>
+			<th rowspan="2">Total Silver</th>
+		  </tr>
+		  <tr>
+			<th>Rolls</th>
+			<th>Prints</th>
+		  </tr>
+		</thead>
+		<tbody>
+		  <tr  ng-repeat="data in workspace.data.SilverCanisterReportRepList" >
+			<td>{{data.SilverCanisterDetails.Store}}</td>
+			<td>{{data.SilverCanisterDetails.LastCanisterChangeDate}}</td>
+			<td>{{data.SilverCanisterDetails.RollsCount}}</td>
+			<td>{{data.SilverCanisterDetails.PrintsCount}}</td>
+			<td>{{data.SilverCanisterDetails.PaperSquereInch}}</td>
+			<td>{{data.SilverCanisterDetails.SilverContentRolls}}</td>
+			<td>{{data.SilverCanisterDetails.SilverContentPrints}}</td>			
+			<td>{{data.SilverCanisterDetails.TotalSilver}}</td>
+		  </tr>
+		</tbody>
+  </table>
+</div>

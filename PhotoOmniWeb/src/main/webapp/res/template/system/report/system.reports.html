@@ -1,0 +1,56 @@
+<!-- Sub-Navigation Starts -->
+<div class="row sub-nav">
+		<ul class="nav nav-tabs tabrow system-report">
+			<li class="btn-group"><button type="button" dropdown-toggle ng-disabled="disabled">Downtime</button></li>
+			<li class="btn-group"><button type="button" dropdown-toggle ng-disabled="disabled">Label Printer</button></li>
+			<li class="btn-group"><button type="button" dropdown-toggle ng-disabled="disabled">Store Info</button></li>
+			<li class="btn-group"><button type="button" dropdown-toggle ng-disabled="disabled">Bin</button></li>
+			<li class="btn-group"><button type="button" dropdown-toggle ng-disabled="disabled">Store Capability</button></li>
+			<li class="btn-group" ng-class="{active: ($state.includes('reports')) }">
+				<button type="button" ui-sref="reports()" ng-class="{active: ($state.includes('reports')) }">
+				Reports</button>
+			</li>
+		</ul>	
+</div>
+<!-- Sub-Navigation Ends -->
+
+
+<div class="row padding10">
+  <div class="col-md-12 nopadding system-reports bordered-nav">
+	<div class="loading" ng-hide="reportlist.hideLoader">
+		<div class="loadingImg"><img src="res/images/ajax-loader.gif" alt="Loading..." /><br />Loading Please Wait</div>
+		<div class="loadingOverlay"></div>
+	</div>
+	<tabset>
+		<tab ui-sref="reports()" active="mainReportActive">
+			<tab-heading>Reports{{setActive}}</tab-heading>
+			<div class="panel-body nopadding">
+				<div class="list-group reports">
+				  <a href="javascript:void(0);" ui-sref="reports.detail({'reportId':report.id})" ng-click="setActive(report.id)" class="list-group-item" ng-repeat="report in reportlist">
+					{{report.text}}
+				  </a>
+				</div>
+			</div>
+		</tab>
+			
+        <tab ng-repeat="reportworkspace in reportworkspaces  track by $index"
+             active="reportworkspace.active" ng-click="setActive(reportworkspace.id);">
+            <tab-heading >{{reportworkspace.text}} <a ng-click="removeTab($index)" href=''>
+            <i class="glyphicon glyphicon-remove"></i></a></tab-heading>
+            
+                <div ng-controller="singleReportWorkspaceCtrl" ng-init="reportworkspace=reportworkspace">
+                  <!-- Keep store-table template dynamic as it may change depend upon server response -->
+                  <div ng-show="reportworkspace.storeTemplate" ng-include="reportworkspace.storeTemplate"></div>
+				  
+                  <div ng-hide="(reportworkspace.storeTemplate || reportworkspace.storeTemplate !='')">
+                    <small>No Template / DataSet Defined for {{reportworkspace.text}}</small>
+                  </div>
+                </div>
+                
+        </tab>
+    </tabset>
+  <div ui-view></div>
+  </div>
+</div>  
+
+

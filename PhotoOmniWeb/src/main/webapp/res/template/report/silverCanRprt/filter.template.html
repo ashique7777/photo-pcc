@@ -1,0 +1,69 @@
+<div ng-repeat="error in errorMessageText">
+    <div ng-show="showErrorContainer" class="error-container">
+		<section class="alert wag-alert alert-danger" role="alert">
+			<span class="icon-Alert"></span>
+			<span><strong>Error:</strong> {{error}}</span>
+		</section>
+  	</div>
+</div>
+<div ng-show="showNoDataFound" class="error-container">
+	<section class="alert wag-alert alert-info" role="alert">
+		<span class="icon-Info text-primary"></span>
+		<span><strong></strong> No data found for the search criteria </span>
+	</section>
+</div>
+<div class="row">
+  <div class="col-md-4 paddingTopBottom3">
+    <div class="input-group">
+      <span class="input-group-addon" ng-class="completionStatus ? 'wag-text-disabled-grey' : ''">
+        Start Date 
+      </span>
+      <input type="text" ng-disabled="completionStatus" placeholder="{{format}}" ng-class="completionStatus ? 'wag-text-disabled-grey' : ''" class="form-control start" datepicker-popup={{format}} ng-model="silverCanisterReport.startDate" is-open="workspace.openedStart"  ng-click="open($event,'start')" max-date="endMaxDate"/>
+    </div>
+  </div>
+  <div class="col-md-4 paddingTopBottom3">
+    <div class="input-group">
+      <span class="input-group-addon" ng-class="completionStatus ? 'wag-text-disabled-grey' : ''">
+        End Date 
+      </span>
+      <input type="text" ng-disabled="completionStatus" ng-class="completionStatus ? 'wag-text-disabled-grey' : ''" class="form-control end" placeholder="{{format}}" datepicker-popup={{format}} ng-model="silverCanisterReport.endDate" is-open="workspace.openedEnd"  ng-click="open($event,'end')"  max-date="endMaxDate"/>
+    </div>
+  </div>
+  <div class="col-md-4 paddingTopBottom3" ng-click="hideErrorMessage()">
+       <div class="input-group">
+          <span class="input-group-addon" >
+           Status 
+         </span>
+         <select class="form-control" ng-model="silverCanisterReport.status">
+          	<option value="In progress">In process</option>
+			<option value="Completed">Completed</option>
+      	</select>
+       </div>
+     </div>
+</div>
+<div class="row">
+	<div class="col-md-4 paddingTopBottom3">
+    <div class="input-group ">
+      <span class="input-group-addon" >
+        Location 
+      </span>
+      <select class="form-control" ng-model="workspace.locationObj" ng-options="list.text for list in workspace.locationType" ng-click="hideErrorMessage()">
+          	<option value="">Chain</option>
+      </select>
+    </div>      
+   </div>
+	<div class="col-md-4 paddingTopBottom3">
+      <div class="input-group">
+        <span class="input-group-addon" >
+          Number
+        </span>
+        <input type="text" class="form-control" ng-model="silverCanisterReport.number" id="storeId" ng-disabled="locationStatus" ng-click="hideErrorMessage()" ng-class="locationStatus ? 'wag-text-disabled-grey' : ''" />
+      </div>
+    </div>
+     
+</div>
+<div class="row filter-buttons nopadding">
+	<div class="col-md-12 nopadding">
+		<button class="btn btn-info pull-right btn-xs wag-btn-primary-sm" ng-show="showFilter" ng-click="updateData($event,'silverCanisterReport')" >Generate Report</button>
+	</div>
+</div>

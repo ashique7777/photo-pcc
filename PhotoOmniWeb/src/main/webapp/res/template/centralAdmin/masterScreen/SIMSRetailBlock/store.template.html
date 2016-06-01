@@ -1,0 +1,68 @@
+<div class="row paddingTopBottom3" ng-hide="!showTableData">
+	<div class="col-sm-12 col-md-12 nopadding">
+		
+		<div class="pull-right">		
+			<wgpagination start-index="1" total-page-count="{{totalPageCount}}" id="{{$index}}" show-table-data="showTableData" ng-click="simsSortPagination('','pagination')"></wgpagination>
+	  	</div>
+	  	<div class="pull-left">
+	   		<button class="btn btn-default btn-xs marginTopMin20 paddingT7L11" ng-click="exportSIMSBlock()">Export</button>
+	   		<!-- <button class="btn btn-default btn-xs marginTopMin20 paddingT7L11 wag-btn-default-sm" ng-click="printDiv('printableDiv')">Print</button> -->
+		</div>
+	</div>
+</div>
+<div class="row"><b>{{workspace.errorString}}</b></div>
+<div class="sims" ng-hide="!showTableData">
+	 <table  class="table table-condensed table-hover table-bordered sortableTable fontSize80">
+		<thead>
+		  	<tr>
+		  		<th style="width: 10px;"></th>
+				<th ng-click="simsSortPagination('storeNumber')">
+					<span class="pull-left">Store Number</span>
+					<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['storeNumber'].order && !colSortOrder['storeNumber'].firstLoad ? 'selected' : ''"></span>
+					<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['storeNumber'].order && !colSortOrder['storeNumber'].firstLoad ?' selected' : ''"></span>
+				</th>
+				<th ng-click="simsSortPagination('retailBlock')">
+					<span class="pull-left">Retail Block</span>
+					<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['retailBlock'].order && !colSortOrder['retailBlock'].firstLoad ? 'selected' : ''"></span>
+					<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['retailBlock'].order && !colSortOrder['retailBlock'].firstLoad ?' selected' : ''"></span>
+				</th>
+				<th>Description</th>
+		  	</tr>
+		</thead>
+		<tbody>
+		  	<tr ng-repeat="data in simsBlockFilter.dataList.simRetailBlockReportResp track by $index" >
+		  		<td>
+		  			<section class="checkbox custom-checkbox checkbox-primary">
+						<input type="checkbox" name="checkbox4" id="{{data.storeNumber}}" value="{{data.storeNumber}}" ng-model="simsBlockFilter.checkedOrNot[data.storeNumber]" ng-change="selectedRow(data.storeNumber)">
+						<label class="custom-check" for={{data.storeNumber}}></label>
+					</section>
+		  		</td>
+				<td><a class="cursor" ng-click="singleRetailUpdate(data.storeNumber)">{{data.storeNumber}}</a></td>
+				<td>{{data.retailBlock}}</td>
+				<td>{{data.description}}</td>
+		  	</tr>
+		</tbody>
+  </table>
+</div>
+<div class="row" ng-show="showTableData">
+	<button class="btn btn-info pull-right btn-xs pull-right" ng-class="selectedStores ? 'wag-btn-disabled-sm' : 'wag-btn-primary-sm'" ng-click="clearAllSelection()" ng-disabled="selectedStores">Clear</button>
+	<button class="btn btn-info pull-right btn-xs pull-right marginRight" ng-class="selectedStores ? 'wag-btn-disabled-sm' : 'wag-btn-primary-sm'" ng-click="updateRetailBlock($event)" ng-disabled="selectedStores">Update Retail Block</button>
+</div>
+<div class="ng-hide" id="printableDiv">
+	 <table  class="table table-condensed table-hover table-bordered sortableTable fontSize80">
+		<thead>
+		  	<tr>
+				<th>Store Number</th>
+				<th>Retail Block</th>
+				<th>Description</th>
+		  	</tr>
+		</thead>
+		<tbody>
+		  	<tr ng-repeat="data in simsBlockFilter.dataList.simRetailBlockReportResp track by $index" >
+				<td>{{data.storeNumber}}</a></td>
+				<td>{{data.retailBlock}}</td>
+				<td>{{data.description}}</td>
+		  	</tr>
+		</tbody>
+  </table>
+</div>

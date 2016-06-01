@@ -1,0 +1,35 @@
+<!-- commented to remove total row :: 03-24-2015 -->
+<!-- <div class="row paddingTopBottom3">
+    <div class="col-sm-12 col-md-12 nopadding">
+    	<span class="label label-default" ng-show="sWindow.storeData.data.length > 0">Total Row: {{sWindow.storeData.data.length}}</span>
+    <div class="pull-right"></div>
+</div> -->
+<!-- <div class="row paddingTopBottom3">
+	<div class="col-sm-12 col-md-12 nopadding">
+		<div class="pull-right">
+	      	<button class="btn btn-default btn-xs marginTopMin20 paddingT7L11 wag-btn-default-sm" ng-click="printDashboard(sWindow)">Print</button>
+	       	<button class="btn btn-default btn-xs marginTopMin20 paddingT7L11 wag-btn-default-sm" ng-click="exportDashboard(sWindow)">Export</button>
+		</div>
+	</div>
+</div> -->
+<table class="table table-condensed table-hover table-bordered">
+	<thead>
+		<tr>
+			<th width="40%">Channel</th>
+			<th>Placed Order Revenue</th>
+			<th>Sold Order Revenue</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="data in sWindow.storeData.data">
+	        <td>{{data.CHANNEL}}</td>
+	        <td>{{data.PLACED_ORDER_REVENUE | currency : "$"}}</td>
+	        <td>{{data.SOLD_ORDER_REVENUE | currency : "$"}}</td>
+		</tr>
+	</tbody>
+</table>
+<div class="col-sm-12 col-md-12 nopadding">
+	<div class="pull-right" ng-if="sWindow.storeData.asOfDate.length">
+   		<span style="color: #FF0000;">(As Of {{sWindow.storeData.asOfDate}})</span>
+	</div>
+</div>

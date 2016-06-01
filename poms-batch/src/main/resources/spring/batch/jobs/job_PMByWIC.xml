@@ -1,0 +1,143 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+  		
+	<!-- Import Common Job : Start -->
+	<import resource="classpath:spring/batch/jobs/job_Common.xml" />
+	<!-- Import Common Job : End -->	
+		
+	<!--Pm_WIC Custom Report Start -->  
+	
+	 	
+	<bean id="PMWICCustomReportListener"
+		class="org.springframework.batch.core.listener.ExecutionContextPromotionListener">
+		<property name="keys" value="refDataKey,refDataKey2,refDataKey3" />
+	</bean>
+	
+	<batch:job id="PMWICcustomreportJob">
+	
+		<batch:step id="PMWICcustomreportJobstep1" next="PMWICcustomreportJobstep2">
+			<batch:tasklet>
+				<batch:chunk reader="CSVReportItemReader" processor="CSVReportItemProcessor" writer="CSVCustomWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="PMWICCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		
+       <batch:step id="PMWICcustomreportJobstep2" next="PMWICcustomreportJobstep3">
+			<batch:tasklet>
+				<batch:chunk reader="CSVFileItemReader" writer="CSVFileCustomWriter"
+					commit-interval="5">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="PMWICCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		
+        <batch:step id="PMWICcustomreportJobstep3" next="PMWICcustomreportJobstep5">
+			<batch:tasklet>
+				<batch:chunk reader="PMByWICEmailCustomReader" processor="PMByWICEmailItemProcessor" writer="emailWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="PMWICCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		
+        <batch:step id="PMWICcustomreportJobstep5">
+			<batch:tasklet>
+				<batch:chunk reader="PMByWICCustomReader" writer="PMByWICItemWriter"
+					commit-interval="1">
+				</batch:chunk>
+			</batch:tasklet>
+		</batch:step>
+		
+	</batch:job>
+	
+	    <bean id="CSVReportItemReader" class="com.walgreens.batch.central.reader.CSVReportItemReader" scope="step">
+	    	<property name="ReportId" value = "#{jobParameters['ReportId']}"/>
+	    	<property name="jobSubmitTime" value = "#{jobParameters['jobSubmitTime']}"/>
+	    </bean> 
+	    <bean id="CSVReportItemProcessor" class="com.walgreens.batch.central.processor.CSVReportItemProcessor">
+	    </bean>
+	    <bean id="CSVCustomWriter" class="com.walgreens.batch.central.writer.CSVCustomWriter"></bean>
+	
+	    <bean id="CSVFileItemReader"  scope ="step" class="com.walgreens.batch.central.reader.CSVFileItemReader"></bean>
+	    <bean id="CSVFileCustomWriter" class="com.walgreens.batch.central.writer.CSVFileCustomWriter"></bean>
+	    
+	    <bean id="PMByWICEmailCustomReader" scope ="step" class="com.walgreens.batch.central.reader.PMByWICEmailCustomReader"></bean>
+		<bean id="PMByWICEmailItemProcessor" class="com.walgreens.batch.central.processor.PMByWICEmailItemProcessor"></bean>
+	    
+		<bean id="PMByWICCustomReader" scope ="step" class="com.walgreens.batch.central.reader.PMByWICCustomReader"></bean>
+	    <bean id="PMByWICItemWriter" class="com.walgreens.batch.central.writer.PMByWICItemWriter"></bean>
+	    <bean id="reportBOFactory" class="com.walgreens.batch.central.factory.ReportBOFactory"></bean> 
+	    
+	<!-- Pm_WIC Custom Report end -->
+	<!-- Pm By WIC Monthly Report Start -->  
+	<bean id="PMWICMonthlyReportListener"
+		class="org.springframework.batch.core.listener.ExecutionContextPromotionListener">
+		<property name="keys" value="refDataKey,refDataKey2,refDataKey3" />
+	</bean>
+	
+	<batch:job id="PMByWICMonthlyreportJob">
+	
+		<batch:step id="PMByWICMpnthlyreportJobstep1" next="PMByWICMpnthlyreportJobstep2">
+			<batch:tasklet>
+				<batch:chunk reader="CSVReportItemReader" processor="CSVReportItemProcessor" writer="CSVMonthlyWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="PMWICMonthlyReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		
+       <batch:step id="PMByWICMpnthlyreportJobstep2" next="PMByWICMpnthlyreportJobstep4">
+			<batch:tasklet>
+				<batch:chunk reader="CSVFileItemReader" writer="CSVFileMonthlyWriter"
+					commit-interval="5">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="PMWICMonthlyReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		
+        <batch:step id="PMByWICMpnthlyreportJobstep4">
+			<batch:tasklet>
+				<batch:chunk reader="PMByWICEmailMonthlyReader" processor="PMByWICEmailItemProcessor" writer="emailWriter"
+					commit-interval="1">
+				</batch:chunk>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	
+	    <bean id="MonthlyCSVReportItemReader" class="com.walgreens.batch.central.reader.CSVReportItemReader" scope ="step"></bean> 
+	    <bean id="MonthlyCSVReportItemProcessor" class="com.walgreens.batch.central.processor.CSVReportItemProcessor">
+	    </bean>
+	    <bean id="CSVMonthlyWriter" class="com.walgreens.batch.central.writer.CSVMonthlyWriter"></bean>
+	
+	    <bean id="MonthlyCSVFileItemReader" class="com.walgreens.batch.central.reader.CSVFileItemReader"></bean>
+	    <bean id="CSVFileMonthlyWriter" class="com.walgreens.batch.central.writer.CSVFileMonthlyWriter"></bean>
+	    
+	    <bean id="PMByWICEmailMonthlyReader" class="com.walgreens.batch.central.reader.PMByWICEmailMonthlyReader"></bean>
+		<bean id="MonthlyPMByWICEmailItemProcessor" class="com.walgreens.batch.central.processor.PMByWICEmailItemProcessor"></bean>
+	    
+	 <!-- Pm_WIC Custom Report end -->
+</beans>

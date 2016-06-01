@@ -1,0 +1,105 @@
+<div class="spopupOuterContainer exceptionReportPopUp col-sm-12" ui-keydown="{'pageup':'cancel();'}">
+	<div class="popupMainContainer panel panel-primary slide">
+	  <div class="panel-heading">
+	  <h3 class="panel-title">Order Details
+	  <span  ng-click="cancel();"  class="pull-right glyphicon glyphicon-remove cl-bt"></span></h3>
+	  </div>
+	  
+
+	  <div class="panel-body pop-content">
+		  <div class="row paddingTopBottom10" ng-show="showSendOut">
+		  	  <div class="row paddingTopBottom10">
+			  	<div class="col-sm-4 nopadding"><strong>Envelope Number : {{workspace.itemId | numberFixedLen:6}}</strong></div>
+			  </div>
+			  <div class="row">
+			  	<div class="col-sm-6 nopadding"><strong>Vendor Name : {{exceptionPopupHeader.vendorName}}</strong></div>
+			  	<div class="col-sm-6 nopadding"><strong>Vendor Phone : {{exceptionPopupHeader.vendorPhone}}</strong></div>
+			  </div>
+		  	  <div class="row">
+			  	<div class="col-sm-6 nopadding"><strong>Shipment Status : {{exceptionPopupHeader.shipmentStatus}}</strong></div>
+			  	<div class="col-sm-6 nopadding"><strong>Vendor Tracking Site : {{exceptionPopupHeader.vendorTrackingSite}}</strong></div>
+		  	  </div>
+		  </div>
+		  <div class="row paddingTopBottom10" ng-show="showMobInt">
+		  	<div class="col-sm-6 nopadding"><strong>Envelope Number : {{workspace.itemId | numberFixedLen:6}}</strong></div>
+		  	<div class="col-sm-6 nopadding"><strong>Web ID : {{exceptionPopupHeader.wedID}}</strong></div>
+		  </div>
+		  <div class="row paddingTopBottom10" ng-show="showKioImem">
+		  	<div class="col-sm-6 nopadding"><strong>Envelope Number : {{workspace.itemId | numberFixedLen:6}}</strong></div>
+		  	<div class="col-sm-6 nopadding"><strong>Kiosk ID : {{exceptionPopupHeader.kioskID}}</strong></div>
+		  </div>
+			<tabset>
+			    <tab heading="Product Details">
+			    	 <table class="table table-condensed table-hover table-bordered prodDetails">
+					    <thead>
+				          <tr class="active">
+				            <th>Order Details</th>
+				            <th>Quantity</th>
+				            <th>Per Unit Price</th>
+				            <th>Price</th>
+				          </tr>
+				        </thead>
+				        <tbody>
+				        	<tr><!-- Product row -->
+				        		<td style="text-align:center;border-right=0;" colspan="1"><strong>{{prodDetail.orderDesc}}</strong></td>
+				        		<td style="border-left=0;" colspan="2"></td>
+				        		<td><strong>{{prodDetail.finalPrice | currency}}</strong></td>
+				        	</tr>
+				        <tbody ng-repeat="product in prodDetail.orderLineDtlsFinalList">
+				        	<tr>
+				        		<td style="text-align:center"><strong>{{product.productDesc}}</strong></td>
+				        		<td>{{product.quantity}}</td>
+				        		<!-- modified by shikha for order_line_price change -->
+				        		<td>{{product.perUnitPrice | currency}}</td>
+				        		<td><strong>{{product.orderLinePrice | currency}}</strong></td>
+				        		
+				        		<tr ng-repeat="productDiscount in product.orderLinePromotionList">
+				        			<td style="text-align:left;" colspan="3"><i>{{productDiscount.orderLinePromotionDesc}}</i></td>
+				        			<td><i>{{productDiscount.orderLinePromotionAmt | currency}}</i></td>
+				        		</tr>
+				        	</tr>
+				        </tbody>
+				        	<!-- <tr ng-repeat="productDiscount in prodDetail.orderLinePromotionList">
+				        		<td style="text-align:center" colspan="3"><i>{{productDiscount.orderLinePromotionDesc}}</i></td>
+				        		<td>{{productDiscount.orderLinePromotionAmt | currency}}</td>
+				        	</tr> -->
+				        	<tr ng-repeat="orderDiscount in prodDetail.orderPromotionList">
+				        		<td style="text-align:center;border-right=0;" colspan="1"><i>{{orderDiscount.orderPromotionDesc}}</i></td>
+				        		<td style="border-left=0;" colspan="2"></td>
+				        		<td><i>{{orderDiscount.orderPromotionAmt | currency}}</i></td>
+				        	</tr>
+				        	
+				        	<tr class="info">
+				        		<td colspan="3"><strong>Total</strong></td>
+				        		<td><strong>{{prodDetail.finalPrice | currency}}</strong></td>
+				        	</tr>
+						</tbody>
+					</table>
+			    </tab>
+			    <tab heading="Envelope History">
+			    	<table class="table table-condensed table-hover table-bordered" >
+					    <thead>
+				          <tr class="active">
+				            <th>Date/Time</th>
+				            <th>Action</th>
+				            <th>User</th>
+				            <th>Reason for Transfer</th>
+				            <th>Comments</th>
+				          </tr>
+				        </thead>
+				        <tbody>
+				        	<tr ng-repeat="hist in envHistDetails">
+				        		<td>{{hist.dateTime | date:"MM/dd/yyyy h:mma"}}</td>
+				        		<td>{{hist.action}}</td>
+				        		<td>{{hist.user}}</td>
+				        		<td>{{hist.reasonForTransfer}}</td>
+				        		<td>{{hist.comments}}</td>
+				        	</tr>
+						</tbody>
+					</table>
+			    </tab>
+			</tabset>
+	  	</div>
+	</div>
+</div>
+

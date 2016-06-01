@@ -1,0 +1,70 @@
+<div class="row">
+	<div ng-repeat="error in errorMessageText">
+	    <div ng-show="showErrorMessage" class="error-container">
+			<section class="alert wag-alert alert-danger" role="alert">
+				<span class="icon-Alert"></span>
+				<span><strong>Error:</strong> {{error}}</span>
+			</section>
+	  	</div>
+	</div>
+</div>
+<div ng-show="showNoDataFound" class="error-container">
+ 		<section class="alert wag-alert alert-info" role="alert">
+			<span class="icon-Info text-primary"></span>
+			<span><strong></strong> No data found in the table </span>
+		</section>
+ </div>
+<div class="row">
+      <div class="col-md-4 paddingTopBottom3">
+        <div class="input-group">
+          <span class="input-group-addon" >
+            Start Date 
+          </span>
+          <input type="text" class="form-control cursor start" datepicker-popup={{format}} ng-model="cannedReport.startDate" is-open="workspace.openedStart"  ng-click="open($event,'start')" max-date="endMaxDate"/>
+        </div>
+      </div>
+      <div class="col-md-4 paddingTopBottom3">
+        <div class="input-group">
+          <span class="input-group-addon" >
+            End Date 
+          </span>
+          <input type="text" class="form-control cursor end" datepicker-popup={{format}} ng-model="cannedReport.endDate" is-open="workspace.openedEnd"  ng-click="open($event,'end')" max-date="endMaxDate"/>
+        </div>
+      </div>
+      <div class="col-md-4 paddingTopBottom3">
+        <div class="input-group">
+          <span class="input-group-addon" >
+            Order Type 
+          </span>
+          <select class="form-control" ng-model="workspace.orderTypeObj">
+          	<option value="">{{workspace.orderList[0].orderTypeName}}</option>
+          	<option value={{workspace.orderList[1]}}>{{workspace.orderList[1].orderTypeName}}</option>
+          </select>
+          
+        </div>
+      </div>
+    </div>
+    <div class="row">
+    	   <div class="col-md-4 paddingTopBottom3">
+	        <div class="input-group ">
+	          <span class="input-group-addon" >
+	          Input Channel
+	          </span>
+	          <select class="form-control" ng-model="workspace.inputChannelObj">
+	          	<option value="">{{workspace.inputList[2].inputChannelName}}</option>
+	          	<option value={{workspace.inputList[1]}}>{{workspace.inputList[1].inputChannelName}}</option>
+	          	<option value={{workspace.inputList[3]}}>{{workspace.inputList[3].inputChannelName}}</option>
+	          	<option value={{workspace.inputList[0]}}>{{workspace.inputList[0].inputChannelName}}</option>
+	          </select>
+	        </div>      
+	       </div>
+	      
+
+<div class="row filter-buttons">
+	<div class="col-md-12 pull-right">
+		<button class="btn btn-info pull-right btn-xs wag-btn-primary-sm" ng-show="showFilter" ng-hide="addDashboardPop" ng-click="updateData($event,'cannedFilter')" >Generate Report</button>
+		<!-- show in add to dashboard popup only start -->
+		<!-- <button class="btn btn-info pull-right btn-xs" ng-show="addDashboardPop" ng-click="addToDashboard($event,'machineFilter')" >Add to Dashboard</button> -->
+		 <!-- show in add to dashboard popup only end -->
+	</div>
+</div>

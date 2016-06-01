@@ -1,0 +1,78 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+	http://www.springframework.org/schema/cache
+	http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+	<context:component-scan base-package="org.springframework.batch.admin.statusnotification" />
+
+	<context:annotation-config />
+
+	<!-- application properties -->
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="searchSystemEnvironment" value="true" />
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+		<property name="locations">
+			<list>
+				<value>classpath:batch-default.properties</value>
+				<value>classpath:batch-oracle.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Initialization for  data source -->
+    <bean id="omniDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${batch.jdbc.driver}" />
+		<property name="url" value="${batch.jdbc.url}" />
+		<property name="username" value="${batch.jdbc.user}" />
+		<property name="password" value="${batch.jdbc.password}" />	
+	</bean> 
+
+	<!-- Initialization for JDBC templates -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="omniDataSource" />
+	</bean>
+	
+	<!-- Start of Email Notification Scheduler Configuration -->
+	<bean class="org.springframework.scheduling.concurrent.ScheduledExecutorTask" id="ScheduledExecuterTask">
+		<property name="delay" value="${email.timer.initial.delay}" />
+		<property name="period" value="${email.timer.period}" />
+		<property name="runnable" ref="StatusNotificationRunnable" />
+	</bean>
+
+	<bean class="org.springframework.scheduling.concurrent.ScheduledExecutorFactoryBean">
+		<property name="scheduledExecutorTasks">
+			<list>
+				<ref bean="ScheduledExecuterTask" />
+			</list>
+		</property>
+	</bean>
+	<!-- End of Email Notification Scheduler Configuration -->
+
+  <!-- Start Send Mail Configuration -->
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${email.sender.host}" />
+		<property name="port" value="${email.sender.port}" />
+		<property name="username" value="${email.sender.username}" />
+		<property name="password" value="${email.sender.password}" />
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+			</props>
+		</property>
+	</bean>
+  <!-- END Send Mail Configuration -->
+  
+</beans>

@@ -1,0 +1,314 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+  		
+	<!-- Import Common Job : Start -->
+	<import resource="classpath:spring/batch/jobs/job_Common.xml" />
+	<!-- Import Common Job : End -->		
+		
+	<bean id="POFListnerEmail" class="org.springframework.batch.core.listener.ExecutionContextPromotionListener">
+		<property name="keys" value="refPofEmailKey" />
+	</bean>
+	 <bean id="POFListenerDat" class="org.springframework.batch.core.listener.ExecutionContextPromotionListener">
+		<property name="keys" value="refPofDATFileKey" />
+	</bean>
+	
+	<bean id="POFListenerIRS" class="org.springframework.batch.core.listener.ExecutionContextPromotionListener">
+		<property name="keys" value="refPofIRSFileKey" />
+	</bean> 
+	
+	<bean id="POFListnerSysDateSize" class="org.springframework.batch.core.listener.ExecutionContextPromotionListener">
+		<property name="keys" value="pofSysDateVal" />
+	</bean>
+	<bean id="decider" class="com.walgreens.batch.central.decider.PayOnFulFillmentMailStepDecider" />
+			 
+						
+	 	<batch:job id="PayOnFulfillmentJob" restartable="false">
+	 		
+	 		<!--  This step is executed for place the backup file in archive folder (JIRA - 639) :start-->   
+			 <batch:step id="PayOnFulfillmentBackUpJob" next="PayOnFulfillmentJobstep1">
+				<batch:tasklet ref="backUpToArchive">
+				</batch:tasklet>
+			</batch:step> 
+			<!--  This step is executed for place the backup file in archive folder (JIRA - 639) :End--> 
+	 		 
+	 		 
+			<batch:step id="PayOnFulfillmentJobstep1" next="PayOnFulfillmentJobstep2">
+				<batch:tasklet>
+					<batch:chunk reader="PayOnFulfillmentItemReader"  writer="PayOnFulfillmentCustomWriter"
+						commit-interval="10">
+					</batch:chunk>
+					 <batch:listeners>
+					 <batch:listener ref="POFListnerSysDateSize"></batch:listener>
+				</batch:listeners> 
+				</batch:tasklet>
+			</batch:step> 
+					 
+			 <batch:step id="PayOnFulfillmentJobstep2" next="decision" >
+				<batch:tasklet>
+					<batch:chunk reader="POFVendorPaymentItemReader"  writer="POFVendorPaymentCustomWriter"
+						commit-interval="10">
+					</batch:chunk>
+					<batch:listeners>
+					<batch:listener ref="POFListnerEmail" />
+					 <batch:listener ref="POFListnerSysDateSize"></batch:listener>
+				</batch:listeners>
+				</batch:tasklet>
+			</batch:step>
+			 <batch:decision id="decision" decider="decider">
+	        	 <batch:next on="COMPLETED" to="PayOnFulfillmentJobstep3" />
+	        	 <batch:next on="FAILED" to="PayOnFulfillmentJobstep4" />
+	         </batch:decision>
+			<batch:step id="PayOnFulfillmentJobstep3" next="PayOnFulfillmentJobstep4">
+				<batch:tasklet>
+					<batch:chunk reader="POFEmailCustomReader" processor="POFEmailItemProcessor" writer="emailWriter" commit-interval="1">
+					</batch:chunk>
+					<batch:listeners>
+						<batch:listener ref="POFListnerEmail" />
+					</batch:listeners>
+				</batch:tasklet>
+			</batch:step> 
+			
+			<batch:step id="PayOnFulfillmentJobstep4" next="PayOnFulfillmentJobstep5">
+				<batch:tasklet>
+					<batch:chunk reader="POFUserApproveItemReader"  writer="POFUserApproveCustomWriter"
+						commit-interval="1">
+					</batch:chunk>
+				</batch:tasklet>
+			</batch:step>  
+			
+			 <batch:step id="PayOnFulfillmentJobstep5" next="PayOnFulfillmentJobstep6">
+				<batch:tasklet>
+					<batch:chunk reader="POFDATFileItemReader" processor="POFDATFileProcessor" writer="POFDATFileCustomWriter"
+						commit-interval="1">
+					</batch:chunk>
+					<batch:listeners>
+					<batch:listener ref="POFListenerDat" />
+				</batch:listeners>
+				</batch:tasklet>
+			</batch:step>
+			
+			<batch:step id="PayOnFulfillmentJobstep6" next="PayOnFulfillmentJobstep7">
+				<batch:tasklet>
+					<batch:chunk reader="POFDATFileReader" writer="POFDATFileWriter"
+						commit-interval="1">
+					</batch:chunk>
+					<batch:listeners>
+					<batch:listener ref="POFListenerDat" />
+				</batch:listeners>
+				</batch:tasklet>
+			</batch:step>  
+			
+			<batch:step id="PayOnFulfillmentJobstep7" next="PayOnFulfillmentJobstep8">
+				<batch:tasklet>
+					<batch:chunk reader="POFDATFileCloseReader" writer="POFDATFileCustomCloseWriter"
+						commit-interval="1000">
+					</batch:chunk>
+					</batch:tasklet>
+			</batch:step> 												
+			
+						
+	 	 	<batch:step id="PayOnFulfillmentJobstep8" next="PayOnFulfillmentJobstep9">
+				<batch:tasklet>
+					<batch:chunk reader="POFIRSFileItemReader" processor="POFIRSFileProcessor" writer="POFIRSFileCustomWriter"
+						commit-interval="1">
+					</batch:chunk>
+					<batch:listeners>
+					<batch:listener ref="POFListenerIRS" />
+				</batch:listeners>
+				</batch:tasklet>
+			</batch:step>
+			 	
+			 	
+			 	
+			<batch:step id="PayOnFulfillmentJobstep9" next="PayOnFulfillmentJobstep10">
+				<batch:tasklet>
+					<batch:chunk reader="POFIRSFileExecuteReader" writer="POFIRSFileExecuteWriter"
+						commit-interval="1">
+					</batch:chunk>
+					<batch:listeners>
+					<batch:listener ref="POFListenerIRS" />
+				</batch:listeners>
+				</batch:tasklet>
+			</batch:step>  
+			
+			<batch:step id="PayOnFulfillmentJobstep10" next="PayOnFulfillmentJobstep11">
+				<batch:tasklet>
+					<batch:chunk reader="POFIRSFileCloseReader" writer="POFIRSFileCustomCloseWriter"
+						commit-interval="1000">
+					</batch:chunk>
+				</batch:tasklet>
+			</batch:step> 
+																											
+			
+			<!-- <batch:step id="PayOnFulfillmentJobstep11" >
+				<batch:tasklet ref="sftpJobTasklet">
+				</batch:tasklet>
+			</batch:step>  -->
+			
+			<!-- <batch:step id="PayOnFulfillmsentJobstep12" >
+				<batch:tasklet>
+					<batch:chunk reader="POFDeleteOldArcvItemReader" writer="POFDeleteOldArcvCustomWriter"
+						commit-interval="100">
+					</batch:chunk>
+				</batch:tasklet>
+			</batch:step>	  -->
+			
+			<batch:step id="PayOnFulfillmentJobstep11" next ="PayOnFulfillmentJobstep12" >
+				<batch:tasklet ref="fileMoveTOArchive">
+				</batch:tasklet>
+			</batch:step>
+			
+			<batch:step id="PayOnFulfillmentJobstep12">
+				<batch:tasklet ref="fileMoveTOeXactOutBndFeedFolder">
+				</batch:tasklet>
+			</batch:step>
+			
+	  </batch:job> 
+	
+	   		  <!--	FOR STEP 0  -->
+	   	  <bean id="backUpToArchive" class="com.walgreens.batch.central.tasklet.POFBackUpToArchiveTasklet" scope="step"></bean>
+	   	  
+			  <!--	FOR STEP 1  -->
+		  <bean id="PayOnFulfillmentItemReader" class="com.walgreens.batch.central.reader.PayOnFulfillmentItemReader" scope="step">
+			   	 <property name="pofSysDateVal" value = "#{jobParameters['pofSysDateVal']}"></property>	 
+		  </bean> 
+		  <bean id="PayOnFulfillmentCustomWriter" class="com.walgreens.batch.central.writer.PayOnFulfillmentItemWriter"></bean>
+		
+	  	 		<!-- 	FOR STEP 2 -->
+	  	  <bean id="POFVendorPaymentItemReader" class="com.walgreens.batch.central.reader.POFVendorPaymentItemReader">
+	  	  </bean> 
+		  <bean id="POFVendorPaymentCustomWriter" class="com.walgreens.batch.central.writer.POFVendorPaymentCustomWriter"></bean>
+		  
+		 		<!--  FOR STEP 3 Email -->
+		  <bean id="POFEmailCustomReader" class="com.walgreens.batch.central.reader.POFEmailCustomReader">
+		  </bean>
+			<bean id="POFEmailItemProcessor" class="com.walgreens.batch.central.processor.POFEmailItemProcessor">
+		    </bean> 
+			  		  	
+	   			<!-- FOR STEP 4 -->
+	  
+	  	<bean id="POFUserApproveItemReader" class="com.walgreens.batch.central.reader.POFProcessAuditRecordReader">
+		</bean>
+		<bean id="POFUserApproveCustomWriter" class="com.walgreens.batch.central.writer.POFUserApproveCustomWriter"></bean> 
+		 
+		
+		<!-- FOR STEP 5 - (.DAT File Creation) -->
+		
+	  	<bean id="POFDATFileItemReader" class="com.walgreens.batch.central.reader.POFDatFileItemReader">
+	  	</bean>
+	  	<bean id="POFDATFileProcessor" class="com.walgreens.batch.central.processor.POFDatFileProcessor">
+	  	</bean>
+		<bean id="POFDATFileCustomWriter" class="com.walgreens.batch.central.writer.POFDatFileWriter">
+		</bean>	
+		
+	  	 <!-- FOR STEP 6  (.DAT File Write) -->
+	  	 
+	  	<bean id="POFDATFileReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+	  	 
+	  	  <property name="dataSource" ref="omniDataSource" />
+	  	  <property name="sql">
+	        <value>
+	            <![CDATA[
+	               SELECT LOC.LOCATION_NBR   AS LOCATION_NBR,ODR_VC_REP.ENVELOPE_NBR   AS ENVELOPE_NBR,VENDOR.BILLING_ACCOUNT_ID   AS MARKET_VENDOR_NUMBER,ODR_VC_REP.EDI_UPC   AS EDI_UPC,
+				 ODR_VC_REP.REPORTING_DTTM  AS TIME_DONE_SOLD_DTTM,1  AS QUANTITY,SUM(ODR_VC_REP.SOLD_AMOUNT)  AS ITEM_SOLD_AMT,SUM(ODR_VC_REP.VENDOR_PAYMENT_AMOUNT) AS ITEM_VENDOR_COST,
+				  '012'   AS DEPT_NUMBER FROM OM_PAY_ON_ORDER_VC_REP ODR_VC_REP,OM_VENDOR VENDOR, OM_LOCATION LOC WHERE ODR_VC_REP.STATUS_CD     = 'D' AND ODR_VC_REP.SYS_VENDOR_ID   = VENDOR.SYS_VENDOR_ID
+				   AND ODR_VC_REP.SYS_LOCATION_ID = LOC.SYS_LOCATION_ID AND VENDOR.BILLING_ACCOUNT_ID IS NOT NULL AND ODR_VC_REP.ORDER_PLACED_DTTM  >=  (Sysdate -?)
+				    GROUP BY LOC.LOCATION_NBR,ODR_VC_REP.ENVELOPE_NBR, VENDOR.BILLING_ACCOUNT_ID, ODR_VC_REP.EDI_UPC,ODR_VC_REP.REPORTING_DTTM
+	            ]]>
+	        </value>
+	    </property>  
+	    <property name="preparedStatementSetter" ref="statementSetter" /> 
+     	<property name="rowMapper">
+			<bean class="com.walgreens.batch.central.rowmapper.POFDatRowmapper" />
+		</property>
+			
+	  	</bean>
+		<bean id="POFDATFileWriter" class="com.walgreens.batch.central.writer.POFDATFileCustomWriter"></bean>
+		
+		<bean id="statementSetter"
+	        class="org.springframework.batch.core.resource.ListPreparedStatementSetter" scope ="step">
+	        <property name="parameters">
+	            <list>
+	                <value>#{jobParameters['pofSysDateVal']}</value>
+  	            </list>
+	        </property>
+   	   </bean>  
+		<!-- FOR STEP 7 (.DAT File Close) -->
+		
+		 <bean id="POFDATFileCloseReader" class="com.walgreens.batch.central.reader.POFDatFileCloseItemReader">
+		 	</bean>
+		<bean id="POFDATFileCustomCloseWriter" class="com.walgreens.batch.central.writer.POFDatFileCloseWriter">
+		</bean>	
+																											
+		<!-- FOR STEP 8 (.IRS File Creation) -->
+		
+	  	<bean id="POFIRSFileItemReader" class="com.walgreens.batch.central.reader.POFIRSFileItemReader">
+	  	</bean>
+	  	<bean id="POFIRSFileProcessor" class="com.walgreens.batch.central.processor.POFIRSFileProcessor">
+	  	</bean> 
+		<bean id="POFIRSFileCustomWriter" class="com.walgreens.batch.central.writer.POFIRSFileWriter">
+		</bean>	
+		
+	  	<!--  FOR STEP 9  (.IRS File Write) -->
+	  	 
+	  	<bean id="POFIRSFileExecuteReader" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+	  	  <property name="dataSource" ref="omniDataSource" />
+	  	<property name="sql">
+	        <value>
+	            <![CDATA[
+	               SELECT LOC.LOCATION_NBR   AS LOCATION_NBR,LOC.LOCATION_TYPE   AS LOCATION_TYPE,Odr_Vc_Rep.Order_Nbr    AS Order_Id,PROD.Product_Nbr   AS Product_Id,
+				 Odr_Vc_Rep.Quantity   AS Quantity,1   AS Envelope_Quantity,Vendor.Vendor_Nbr  AS Vendor_Id, Odr_Vc_Rep.Reporting_Dttm    AS Time_Done_Sold_Dttm,Odr_Vc_Rep.Vendor_Payment_Amount AS Item_Vendor_Cost,
+				  Odr_Vc_Rep.Sold_Amount   AS Item_Sold_Amt, Odr_Vc_Rep.Edi_Upc   AS Upc_Edi,PROD.DESCRIPTION   AS DESCRIPTION,PROD.WIC  AS WIC,PROD.Upc  AS Upc
+				   FROM Om_Pay_On_Order_Vc_Rep Odr_Vc_Rep, Om_Vendor Vendor, OM_LOCATION LOC, OM_PRODUCT PROD WHERE Odr_Vc_Rep.Status_Cd = 'I' AND Odr_Vc_Rep.Sys_Vendor_Id      = Vendor.Sys_Vendor_Id
+				    AND Odr_Vc_Rep.Sys_Location_Id    = LOC.Sys_Location_Id AND Odr_Vc_Rep.Sys_Product_Id     = PROD.Sys_Product_Id AND Vendor.Billing_Account_Id    IS NOT NULL
+				     And Odr_Vc_Rep.Order_Placed_Dttm >=  (Sysdate -?)
+	            ]]>
+	        </value>
+	    </property>
+	    <property name="preparedStatementSetter" ref="statementSetter" />
+       	<property name="rowMapper">
+		 <bean class="com.walgreens.batch.central.rowmapper.POFIrsRowmapper" />
+		</property>
+	  	</bean>
+		<bean id="POFIRSFileExecuteWriter" class="com.walgreens.batch.central.writer.POFIRSFileCustomWriter"></bean>
+		
+				
+		<!-- FOR STEP 10 (.IRS File Close) -->
+	
+	 	<bean id="POFIRSFileCloseReader" class="com.walgreens.batch.central.reader.POFIRSFileCloseItemReader">
+	  		</bean>
+			<bean id="POFIRSFileCustomCloseWriter" class="com.walgreens.batch.central.writer.POFIRSFileCloseWriter">
+		</bean>	 
+		
+		<!--   FOR STEP 11 -->
+		<!-- <bean id="sftpJobTasklet" class="com.walgreens.batch.central.tasklet.POFSftpTasklet">
+	  		<property name="sftpChannel" ref="pofOutputChannel" />
+	  		<property name="targetDirVar" ref="targetDir"></property>
+	  	</bean> -->
+	 
+		 				
+	  	<!-- FOR STEP 12 -->
+	 	<!--  <bean id="POFDeleteOldArcvItemReader" class="com.walgreens.batch.central.reader.POFDeleteArcvItemReader"></bean>
+		 <bean id="POFDeleteOldArcvCustomWriter" class="com.walgreens.batch.central.writer.POFDeleteArcvCustomWriter"></bean>  -->
+		
+		<!--   FOR STEP 11 (Move the files with .eXact_PROCESSED suffix to ARCHIVE folder)-->
+		<bean id="fileMoveTOArchive" class="com.walgreens.batch.central.tasklet.POFArchiveFolderTasklet" scope="step"></bean>
+		
+		<!-- FOR STEP 12 (Move the .IRS & .DAT files generated in WORK folder to eXact OutBound Feed Folder)-->
+		<bean id="fileMoveTOeXactOutBndFeedFolder" class="com.walgreens.batch.central.tasklet.POFFileCopyToeXactFolderTasklet" scope="step"></bean>
+		 
+		 
+	</beans>	
+		

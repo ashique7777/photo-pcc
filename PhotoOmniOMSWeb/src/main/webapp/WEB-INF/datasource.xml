@@ -1,0 +1,113 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+	http://www.springframework.org/schema/cache
+	http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+	<!-- Initialization for OLTP primary data source (OLTP) -->
+	<bean id="OltpPrimaryDS" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="${db.jndi.oltp.primary}" />
+	</bean>
+
+	<!-- Initialization for OLTP secondary data source (OLTP) -->
+	<bean id="OltpSecondaryDS" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="${db.jndi.oltp.secondary}" />
+	</bean>
+
+	<!-- Initialization for Reporting primary data source (Data Guard) -->
+	<bean id="ReportPrimaryDS" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="${db.jndi.report.primary}" />
+	</bean>
+
+	<!-- Initialization for Reporting secondary data source (Data Guard) -->
+	<bean id="ReportSecondaryDS" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="${db.jndi.report.secondary}" />
+	</bean>
+
+	<!-- Start of Data Source check Scheduler Configuration -->
+
+	<!-- Data Source Availability Check Task Declaration -->
+	<bean id="DataSourceAvailabiltyCheckTask"
+		class="com.walgreens.common.datasource.DataSourceAvailabiltyCheckTask">
+		<property name="oltpSourceType" value="${db.ha.oltp.key}" />
+		<property name="reportSourceType" value="${db.ha.report.key}" />
+		<property name="oltpPrimaryDS" ref="OltpPrimaryDS" />
+		<property name="oltpSecondaryDS" ref="OltpSecondaryDS" />
+		<property name="reportPrimaryDS" ref="ReportPrimaryDS" />
+		<property name="reportSecondaryDS" ref="ReportSecondaryDS" />
+	</bean>
+
+	<!-- TimerTask Configuration -->
+	<bean class="com.walgreens.common.datasource.HAConfigRefreshRunnable"
+		id="HAConfigRefreshRunnable">
+		<property name="dsAvailabiltyCheckTask" ref="DataSourceAvailabiltyCheckTask" />
+	</bean>
+
+	<bean class="org.springframework.scheduling.concurrent.ScheduledExecutorTask"
+		id="ScheduledExecuterTask">
+		<property name="delay" value="${timer.initial.delay}" />
+		<property name="period" value="${timer.period}" />
+		<property name="runnable" ref="HAConfigRefreshRunnable" />
+	</bean>
+
+	<bean
+		class="org.springframework.scheduling.concurrent.ScheduledExecutorFactoryBean">
+		<property name="scheduledExecutorTasks">
+			<list>
+				<ref bean="ScheduledExecuterTask" />
+			</list>
+		</property>
+	</bean>
+	<!-- End of Data Source check Scheduler Configuration -->
+
+	<!-- Abstract Routing Data Sources to be used in the application -->
+	<bean id="oltpDS" class="com.walgreens.common.datasource.WalgreensRoutingDataSource">
+		<property name="keyName" value="${db.ha.oltp.key}" />
+		<property name="oltpSourceType" value="${db.ha.oltp.key}" />
+		<property name="reportSourceType" value="${db.ha.report.key}" />		
+		<property name="targetDataSources">
+			<map key-type="java.lang.String">
+				<entry key="primary" value-ref="OltpPrimaryDS" />
+				<entry key="secondary" value-ref="OltpSecondaryDS" />
+			</map>
+		</property>
+		<property name="defaultTargetDataSource" ref="OltpPrimaryDS" />
+	</bean>
+
+	<bean id="reportDS" class="com.walgreens.common.datasource.WalgreensRoutingDataSource">
+		<property name="keyName" value="${db.ha.report.key}" />
+		<property name="oltpSourceType" value="${db.ha.oltp.key}" />
+		<property name="reportSourceType" value="${db.ha.report.key}" />		
+		<property name="targetDataSources">
+			<map key-type="java.lang.String">
+				<entry key="primary" value-ref="ReportPrimaryDS" />
+				<entry key="secondary" value-ref="ReportSecondaryDS" />
+			</map>
+		</property>
+		<property name="defaultTargetDataSource" ref="ReportPrimaryDS" />
+	</bean>
+
+	<!-- Initialization for JDBC templates -->
+	<bean id="omniJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="oltpDS" />
+	</bean>
+
+	<bean id="omniJdbcDatGuard" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="reportDS" />
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="oltpDS"></property>
+	</bean>
+</beans>

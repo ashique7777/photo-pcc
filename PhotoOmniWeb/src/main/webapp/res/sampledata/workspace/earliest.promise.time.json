@@ -1,0 +1,54 @@
+{
+	"data":
+		[
+			{
+			"value": "0",
+			"text" : "All In-Store orders"
+			},
+			{
+			"value": "1",
+			"text" : "Minilab"
+			},
+			{
+			"value": "2",
+			"text" : "Large Format Printer"
+			},
+			{
+			"value": "3",
+			"text" : "Ink Jet Refiller"
+			},
+			{
+			"value": "4",
+			"text" : "Inter-Store Order Sent Out"
+			},
+			{
+			"value": "5",
+			"text" : "Inter-Store Order Sent Received"
+			},
+			{
+			"value": "6",
+			"text" : "24 hour History(Finished/Sold)"
+			},
+			{
+			"value": "7",
+			"text" : "Web Pickup - Actionable Orders"
+			},
+			{
+			"value": "8",
+			"text" : "Web Pickup - Last Week History"
+			},
+			{
+			"value": "9",
+			"text" : "Kiosk Orders"
+			},
+			{
+			"value": "10",
+			"text" : "Noritsu D703-A"
+			},
+			{
+			"value": "11",
+			"text" : "Fuji 330-147"
+			}
+		]
+
+}

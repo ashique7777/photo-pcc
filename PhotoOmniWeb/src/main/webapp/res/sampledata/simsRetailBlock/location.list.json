@@ -1,0 +1,8 @@
+{
+  "location":[
+    { "id": 1, "text": "Region" },
+    { "id": 2, "text": "District" },
+    { "id": 3, "text": "Store" },
+    { "id": 4, "text": "Upload file for multiple stores" }
+  ]
+}

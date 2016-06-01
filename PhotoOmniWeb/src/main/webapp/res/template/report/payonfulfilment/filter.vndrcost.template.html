@@ -1,0 +1,41 @@
+<ul class="list-group marginbottom5">
+  <li class="list-group-item">
+    <div class="row">
+      <div ng-show="showErrorMessage || showErrorMsgForApprovedCost" class="error-container">
+			<section class="alert wag-alert alert-danger" role="alert">
+				<span class="icon-Alert"></span>
+				<span><strong>Error:</strong>{{errorMessageText}}</span>
+			</section>
+	 </div>
+	  <div ng-show="showSuccessMessage " class="error-container">
+			<section class="alert wag-alert alert-success" role="alert">
+				<span class="icon-ConfirmCircle"></span>
+				<span><strong>Success:</strong>{{successMessage}}</span>
+			</section>
+	 </div>
+	 <div ng-show="showNoDataFound" class="error-container">
+ 		<section class="alert wag-alert alert-info" role="alert">
+			<span class="icon-Info text-primary"></span>
+			<span><strong></strong> No data found for the search criteria </span>
+		</section>
+ 	</div>
+      <div class="col-md-4 paddingTopBottom3">
+        <div class="input-group ">
+          <span class="input-group-addon" >Vendor Name</span>
+          <select class="form-control" ng-model="workspace.vendorObj" ng-options="list.description for list in workspace.uniqueVendorList">
+          	<option value="">Select</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-4 paddingTopBottom3">
+        <div class="input-group">
+          <span class="input-group-addon" >Store Number</span>
+          <input type="text" class="form-control" ng-click="hideErrorMessage()" ng-model="payOnFilterVendCost.storeNumber" />
+        </div>
+      </div>
+      <div class="col-md-4 paddingTopBottom3">
+		<button class="btn btn-info pull-right btn-xs wag-btn-primary-sm" ng-show="showFilter" ng-click="updateData($event,'payOnFilterVendCost')" >Search</button>
+	  </div>
+    </div>  
+  </li>
+</ul>

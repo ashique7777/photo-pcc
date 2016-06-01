@@ -1,0 +1,66 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" 
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		http://www.springframework.org/schema/jdbc 
+		http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd">		
+		
+		
+    <bean id="omniDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="${db.oltp.connect.url}" />
+		<property name="username" value="${db.oltp.user}" />
+		<property name="password" value="${db.oltp.password}" />	
+	</bean> 
+	
+	<bean id="reportDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="${db.report.connect.url}" />
+		<property name="username" value="${db.report.user}" />
+		<property name="password" value="${db.report.password}" />	
+	</bean>	
+
+	<!-- Initialization for JDBC template -->
+	<bean id="omniJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="omniDataSource" />
+	</bean>
+	
+	<!-- dataGuardJDBCtemplate -->
+	<bean id="omniJdbcDatGuard" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="reportDataSource" />
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />	
+		
+	<!-- Kronos RESTART Start -->		
+	<bean id="jobOperator"
+        class="org.springframework.batch.core.launch.support.SimpleJobOperator">
+        <property name="jobExplorer" ref="jobExplorer" />
+        <property name="jobRepository" ref="jobRepository" />
+        <property name="jobRegistry" ref="jobRegistry" />
+        <property name="jobLauncher" ref="jobLauncher" />        
+    </bean>	
+    
+	<bean
+	    class="org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor">
+	    <property name="jobRegistry" ref="jobRegistry" />
+	</bean>
+	
+	<bean id="jobRegistry"
+	    class="org.springframework.batch.core.configuration.support.MapJobRegistry" />
+
+	<batch:job-repository id="jobRepository" />
+	
+    <bean id="jobExplorer"
+        class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean">
+        <property name="dataSource" ref="omniDataSource" />
+    </bean> 	
+	<!-- Kronos RESTART End -->
+		
+</beans>

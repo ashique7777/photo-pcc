@@ -1,0 +1,24 @@
+<div class="skwindow {{windowclass}}" id="window{{windowid}}" ng-show="windowVisible" ng-class="{fullscreen: fullscreen , minimize: minimize}" >
+    <div class="panel panel-default" data-id="windowid" > 
+                <div class="panel-heading">
+                   {{title}}
+                    <div class="pull-right action-icons">
+                        <a href="" alt="Minimize" title="Minimize" ng-click="resizeWindow();" ng-show="fullscreen" class="glyphicon glyphicon-minus"></a>
+                        <a href="" alt="Full Screen" title="Full Screen" ng-click="resizeWindow();" ng-hide="fullscreen"  class="fui-window"></a>
+                        <!--<a href="#" alt="Normal Screen" title="Normal Screen" ng-click="resizeWindow();" ng-show="fullscreen" class="fui-windows"></a>-->
+                        <a href="" alt="Remove for this session" title="Remove for this session" ng-hide="(fullscreen || enableRemoveSession=='false')" ng-click="hideWindow(windowid);"  class="glyphicon glyphicon-off"></a>
+                        <a href="" alt="Remove Permanently" title="Remove Permanently" ng-hide="(fullscreen || enableRemovePermanent=='false')" ng-click="removeWindow(windowid);"  class="glyphicon glyphicon-remove close-red"></a>
+						
+                        <a href="" alt="Minimize" title="Minimize" ng-show="fullscreen"  ng-click="resizeWindow();"  class="glyphicon glyphicon-remove-circle"></a>
+                    </div>
+                </div> 
+				
+				<div class="posRelative" >
+					<div class="loading">
+						<div class="loadingImg"><img src="res/images/ajax-loader.gif" alt="Loading..." /><br />Loading Please Wait</div>
+						<div class="loadingOverlay"></div>
+					</div>
+					<div class="panel-body" ng-transclude ></div>
+				</div>
+    </div>
+</div>

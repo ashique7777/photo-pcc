@@ -1,0 +1,53 @@
+{
+  "reports":[
+    { 
+		"id": 100, 
+		"text": "PM Report",
+		"filterTemplate" : "" ,
+		"storeTemplate" : "res/template/system/report/link1.template.html" ,
+		"dataJson" : ""		
+	}, 
+    { 
+		"id": 278, 
+		"text": "Silver Canister Change Report",
+		"filterTemplate" : "" ,
+		"storeTemplate" : "res/template/system/report/link2.template.html" ,
+		"dataJson" : "res/sampledata/system/reports.json"			
+	},
+    { 
+		"id": 3975, 
+		"text": "Exception Report",
+		"filterTemplate" : "" ,
+		"storeTemplate" : "" ,
+		"dataJson" : ""			
+	},
+    { 
+		"id": 4587, 
+		"text": "Late Envelopes Report",
+		"filterTemplate" : "" ,
+		"storeTemplate" : "" ,
+		"dataJson" : ""			
+	},
+    { 
+		"id": 5476, 
+		"text": "Pay on fulfilment Report",
+		"filterTemplate" : "" ,
+		"storeTemplate" : "" ,
+		"dataJson" : ""		 
+	},
+	{ 
+		"id": 4581, 
+		"text": "Web Pickup Bag Audit Report",
+		"filterTemplate" : "" ,
+		"storeTemplate" : "" ,
+		"dataJson" : ""			
+	},
+	{ 
+		"id": 4582, 
+		"text": "Unclaimed envelopes report",
+		"filterTemplate" : "" ,
+		"storeTemplate" : "" ,
+		"dataJson" : ""			
+	}
+  ]
+}

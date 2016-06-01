@@ -1,0 +1,124 @@
+<div class="spopupOuterContainer col-sm-12" ui-keydown="{'pageup':'cancel()'}">
+	<div class="popupMainContainer pMReportpopup exceptionReportPopup panel panel-primary slide">
+	  <div class="panel-heading">
+	  <h3 class="panel-title">Order Details
+	  <a ng-click="cancel()"  class="pull-right glyphicon glyphicon-remove cl-bt"></a></h3>
+	  </div>
+
+	  <div class="panel-body pop-content">
+		  <!-- <div class="row paddingTopBottom10">
+		  	<div class="col-md-4 nopadding">Envelop Number : {{workspace.popupdata.orderInfo.envelopeNumber}}</div>		  	
+		  </div> -->
+		  <div class="row paddingTopBottom10" ng-show="showSendOut">
+		  	  <div class="row paddingTopBottom10">
+			  	<div class="col-sm-4 nopadding"><strong>Envelope Number : {{workspace.popupdata.envelopeNbr | numberFixedLen:6}}</strong></div>
+			  </div>
+			  <div class="row">
+			  	<div class="col-sm-6 nopadding"><strong>Vendor Name : {{workspace.popupdata.envelopePopupHeaderBean.vendorName}}</strong></div>
+			  	<div class="col-sm-6 nopadding"><strong>Vendor Phone : {{workspace.popupdata.envelopePopupHeaderBean.vendorPhone}}</strong></div>
+			  </div>
+		  	  <div class="row">
+			  	<div class="col-sm-6 nopadding"><strong>Shipment Status : {{workspace.popupdata.envelopePopupHeaderBean.shipmentStatus}}</strong></div>
+			  	<div class="col-sm-6 nopadding"><strong>Vendor Tracking Site : {{workspace.popupdata.envelopePopupHeaderBean.vendorTrackingSite}}</strong></div>
+		  	  </div>
+		  </div>
+		  <div class="row paddingTopBottom10" ng-show="showMobInt">
+		  	<div class="col-sm-6 nopadding"><strong>Envelope Number : {{workspace.popupdata.envelopeNbr | numberFixedLen:6}}</strong></div>
+		  	<div class="col-sm-6 nopadding"><strong>Web ID : {{workspace.popupdata.envelopePopupHeaderBean.wedID}}</strong></div>
+		  </div>
+		  <div class="row paddingTopBottom10" ng-show="showKioImem">
+		  	<div class="col-sm-6 nopadding"><strong>Envelope Number : {{workspace.popupdata.envelopeNbr | numberFixedLen:6}}</strong></div>
+		  	<div class="col-sm-6 nopadding"><strong>Kiosk ID : {{workspace.popupdata.envelopePopupHeaderBean.kioskID}}</strong></div>
+		  </div>
+		  <div class="row paddingTopBottom10" ng-show="showInStore">
+		  	<div class="col-sm-6 nopadding"><strong>Envelope Number : {{workspace.popupdata.envelopeNbr | numberFixedLen:6}}</strong></div>
+		  </div>
+		<tabset>
+		    <tab heading="Product Details">
+		    	<div ng-show="prodDtlNoData" class="error-container">
+						<section class="alert wag-alert alert-danger" role="alert">
+							<span class="icon-Alert"></span>
+							<span><strong>Error:</strong> No data found </span>
+						</section>
+				  </div>
+				 <div class="printSignScroll"  ng-hide="prodDtlNoData">
+		    	 <table class="table table-condensed table-hover table-bordered">
+				    <thead>
+			          <tr class="active">
+			            <th>Order Details</th>
+			            <th>Quantity</th>
+			            <th>Per Unit Price</th>
+			            <th>Price</th>			           
+			          </tr>
+			        </thead>
+			        <tbody>
+			        	<tr>
+			        		<td style="text-align:left;border-right=0;" colspan="1"><strong>{{workspace.popupdata.orderInfo.description}}</strong></td>
+				        		<td style="border-left=0;" colspan="2"></td>
+			        		<td><strong>{{workspace.popupdata.orderInfo.finalPrice | currency}}</strong></td>
+			        	</tr>
+			        </tbody>
+			        <tbody ng-repeat="data in workspace.popupdata.orderLineInfo">
+			        	<tr>
+			        		<td>{{data.productDesc}}</td>
+			        		<td>{{data.quantity}}</td>
+			        		<td>{{data.perUnitPrice | currency}}</td>
+			        		<td>{{data.orderLinePrice | currency}}</td>			        		                      
+			        	</tr>
+			        	                       
+                         <tr ng-repeat="promo in data.envOrderLinePrombean">
+                            <td colspan="3"><i>{{promo.promotionDesc}}</i></td>
+                            <td><i>{{promo.discountAmt | currency}}</i></td>
+                         </tr>
+			        	
+					</tbody>
+					 <tbody ng-repeat="orderPromo in workspace.popupdata.orderPromotion">
+			        	<tr>
+			        		<td colspan="3"><i>{{orderPromo.orderPromotnDesc}}</i></td>
+			        		<td><i>{{orderPromo.orderDiscountamt | currency}}</i></td>		        		                    
+			        			
+			        	</tr>	        	 
+					</tbody>
+					<tbody>
+						<tr class="info">
+			        		<td colspan="3"><strong>Total</strong></td>
+			        		<td><strong>{{workspace.popupdata.orderInfo.finalPrice | currency}}</strong></td>
+			        	</tr>
+					</tbody>
+				</table>
+			</div>
+		    </tab>
+		    <tab heading="Envelope History">
+		    	<div ng-show="envHistNoData" class="error-container">
+						<section class="alert wag-alert alert-danger" role="alert">
+							<span class="icon-Alert"></span>
+							<span><strong>Error:</strong> No data found </span>
+						</section>
+				  </div>
+				<div class="printSignScroll" ng-hide="envHistNoData">
+		    	<table class="table table-condensed table-hover table-bordered">
+				    <thead>
+			          <tr class="active">
+			            <th>Date/Time</th>
+			            <th>Action</th>
+			            <th>User</th>
+			            <th>Reason for Transfer</th>
+			            <th>Comments</th>
+			          </tr>
+			        </thead>
+			        <tbody>
+			        	<tr ng-repeat="data in workspace.popupdata.envHistoryList">
+			        		<td>{{data.dateTime | date:"MM/dd/yyyy h:mma"}}</td>
+			        		<td>{{data.action}}</td>
+			        		<td>{{data.user}}</td>
+			        		<td>{{data.reasonForTransfer}}</td>
+			        		<td>{{data.comments}}</td>
+			        	</tr>
+					</tbody>
+				</table>
+			</div>
+		    </tab>
+		</tabset>
+	  </div>
+	</div>
+</div>

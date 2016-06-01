@@ -1,0 +1,58 @@
+<div class="spopupOuterContainer unclaimed-report" ui-keydown="{'pageup':'cancel()'}">
+	<div class="popupMainContainer pMReportpopup panel panel-primary slide">
+		<div class="panel-heading">
+	  		<h3 class="panel-title">Customer Order History
+	  		<a ng-click="cancel();"  class="pull-right glyphicon glyphicon-remove cursor"></a></h3>
+		</div>
+		<div ng-show="showNoDataFound" class="error-container">
+			<section class="alert wag-alert alert-info" role="alert">
+				<span class="icon-Info text-primary"></span>
+				<span><strong></strong> No data found for the search criteria </span>
+			</section>
+		</div>
+		<div ng-hide="showNoDataFound" class="panel-body pop-content">
+		  <table class="table table-condensed table-hover table-bordered">
+			    <thead>
+		          <tr class="active">
+		            <th>#</th>
+		            <th>Envelope#</th>
+		            <th>Type</th>
+		            <th>Envelope Description</th>
+		            <th>Status</th>	
+		            <th>Promise time</th>
+		            <th>Exceptions</th>
+		            <th>Order Date</th>
+		            <th>Finish Date</th>
+		            <th>Sold Date</th>
+		          </tr>
+		          <tr>
+		          	<td colspan="10">Photo orders</td>
+		          </tr>
+		        </thead>
+		        <tbody ng-repeat="data in customerDetailList track by $index" >
+		        	<tr>
+			          	<td colspan="10">
+				          	<span>Order Id: {{data.orderId}}</span>
+				          	<span>Total Envelopes: {{data.totalEnvelope}}</span>
+				          	<span>Customer Name: {{data.customerName}}</span>
+				          	<span>Phone: {{data.phoneNo}}</span>
+				          	<span>Store: {{data.storeNumber}}</span>
+				        </td>
+			        </tr>
+		        	<tr>
+		        		<td>{{$index + 1}}</td>
+						<td>{{data.envelopeNo}}</td>
+						<td>{{data.type}}</td>
+						<td>{{data.envelopeDesc}}</td>
+						<td>{{data.status}}</td>
+						<td>{{data.promiseTime}}</td>
+						<td>{{data.exception}}</td>
+						<td>{{data.orderDate}}</td>
+						<td>{{data.finishDate}}</td>
+						<td>{{data.soldDate}}</td>
+					</tr>
+				</tbody>
+			</table>		    
+		</div>
+	</div>
+</div>

@@ -1,0 +1,65 @@
+<!-- <beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:int-file="http://www.springframework.org/schema/integration/file"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd"> -->
+		
+	<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:int="http://www.springframework.org/schema/integration"
+  	xmlns:int-file="http://www.springframework.org/schema/integration/file"
+  	xmlns:int-sftp="http://www.springframework.org/schema/integration/sftp"
+  	xmlns:int-stream="http://www.springframework.org/schema/integration/stream"	
+  	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+  		http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file-2.0.xsd
+  		http://www.springframework.org/schema/integration/sftp http://www.springframework.org/schema/integration/sftp/spring-integration-sftp-2.1.xsd
+  		http://www.springframework.org/schema/integration/stream http://www.springframework.org/schema/integration/stream/spring-integration-stream-2.1.xsd
+  		http://www.springframework.org/schema/util 
+		http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+		
+
+	<!-- <bean id="report" class="com.central.model.Report" scope="prototype" /> -->
+	
+	<import resource="classpath*:**/spring/batch/jobs/job-report.xml"/>
+	
+	<bean id="batchProperties"   class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	   <property name="locations">
+        <list>
+            <value>classpath:PhotoOmniBatch.properties</value>
+            <value>classpath:test.properties</value>
+        </list>
+    </property>
+	</bean>
+	 <bean id="promotionTestUtils" class="org.springframework.batch.test.JobLauncherTestUtils" >
+	 <property name="job" ref= "ProcessPCSFeedJob"></property>
+	 </bean> 
+	
+	<!-- Store Cloning Job End -->
+	
+	 <bean id="purgeTestUtils" class="org.springframework.batch.test.JobLauncherTestUtils" >
+	 <property name="job" ref= "deleteFilesInArchiveFolders"></property>
+	 </bean> 
+	 
+	 <bean id="tAndaTestUtils" class="org.springframework.batch.test.JobLauncherTestUtils" >
+	 <property name="job" ref= "T_A_DAILY_JOB"></property>
+	 </bean>
+	
+</beans>

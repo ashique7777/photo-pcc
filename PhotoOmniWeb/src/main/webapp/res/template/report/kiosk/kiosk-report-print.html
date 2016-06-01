@@ -1,0 +1,98 @@
+<html ng-app="printReport">
+<head>
+	<meta charset="ISO-8859-1">
+	<title>KIOSK : Report</title>
+	<script src="/PhotoOmniWeb/res/js/vendor/angular.js"></script>
+	<link rel="stylesheet" type="text/css" href="/PhotoOmniWeb/res/css/bootstrap.min.css">
+		<style type="text/css" media="print,screen">
+		.hideMe {
+			display: block;
+		}
+		
+		.PrintClass {
+			display: block;
+		}
+		
+		.NoPrintClass {
+			display: block;
+		}
+	</style>
+</head>
+<body ng-controller="kioskPrintController">
+	<center><h3>KIOSK Report</h3></center>
+	<table class="table table-condensed table-hover table-bordered">
+	<thead>
+	  <tr>
+		<th>Store No.</th>
+		<th>KIOSK IP</th>
+		<th>Software version</th>
+		<th>Template version</th>
+		<th>iMemories version</th>
+		<th>TOMO Version</th>
+		<th>Last Reboot</th>
+		<th>C Drive Space (MB)</th>
+		<th>D Drive Space (MB)</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  <tr ng-repeat="data in workspace.data"  tooltip-animation="false">
+		<td>{{data.storeNumber}}</td>
+		<td>{{data.deviceIp}}</td>
+		<td>{{data.softwareVersion}}</td>
+		<td>{{data.templateVersion}}</td>
+		<td>{{data.imemoriesVersion}}</td>
+		<td>{{data.tomoVersion}}</td>
+		<td>{{data.lastReboot | date : "MM-dd-yyyy"}}</td>
+		<td>{{data.cDriveSpaceMb}}</td>
+		<td>{{data.dDriveSpaceMb}}</td>
+
+	  </tr>
+	</tbody>
+	</table>
+</body>
+</html>
+
+<script>
+angular.module('printReport', []).controller('kioskPrintController', ['$scope','$http',function($scope,$http){
+	
+	var kioskMessageHeader = {
+		"appID": "PHOTOOMNI",
+		"transactionID": transactionID(),
+		"msgSentTimestamp": messageHeaderCurrentTimestamp(),
+		"commandName":"kioskReportDetails",
+		"commandVersion":"1",
+		"origin":"kiosk"
+	}
+	$scope.workspace = {};
+	$scope.rptObj = JSON.parse(sessionStorage.getItem('kioskPrint'));
+	angular.forEach($scope.rptObj.filter,function(obj){
+		delete obj.$$hashKey;
+	})
+	var url = "/PhotoOmniAdminWeb/report/kiosk-print?param="
+		 + JSON.stringify($scope.rptObj) + JSON.stringify(kioskMessageHeader);
+	$http.post(url).then(function(response){
+		$scope.workspace = response.data;
+	})
+}])
+
+var messageHeaderCurrentTimestamp = function(){
+     var str = "";
+     var currentTime = new Date()
+     var year = currentTime.getFullYear()
+     var month = currentTime.getMonth() + 1
+     var day = currentTime.getDate()
+     var hours = currentTime.getHours()
+     var minutes = currentTime.getMinutes()
+     var seconds = currentTime.getSeconds()
+     str += year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
+     return str;
+};
+/* to generate transaction ID for the KIOSK report */
+var transactionID = function guid() {
+    function _p8(s) {
+        var p = (Math.random().toString()+"000000000").substr(2,8);
+        return s ? "-" + p.substr(0,4) + "-" + p.substr(4,4) : p ;
+    }
+    return _p8() + _p8(true) + _p8(true) + _p8();
+};
+</script>

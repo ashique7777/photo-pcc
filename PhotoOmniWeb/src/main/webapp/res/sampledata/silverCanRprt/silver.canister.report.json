@@ -1,0 +1,52 @@
+{  
+   "SilverCanisterReportRepList":[  
+      {  
+         "SilverCanisterDetails":{  
+            "Store":"50003",
+            "LastCanisterChangeDate":"2015-05-07 00:00:00.0",
+            "RollsCount":"10",
+            "PrintsCount":"710",
+            "SilverContentRolls":"14120.0",
+            "SilverContentPrints":"4010080.0",
+            "PaperSquereInch":"2840",
+            "TotalSilver":"4010080.0"
+         }
+      },
+      {  
+         "SilverCanisterDetails":{  
+            "Store":"50003",
+            "LastCanisterChangeDate":"2015-05-07 00:00:00.0",
+            "RollsCount":"10",
+            "PrintsCount":"710",
+            "SilverContentRolls":"14120.0",
+            "SilverContentPrints":"4010080.0",
+            "PaperSquereInch":"2840",
+            "TotalSilver":"4010080.0"
+         }
+      },
+      {  
+         "SilverCanisterDetails":{  
+            "Store":"50003",
+            "LastCanisterChangeDate":"2015-05-07 00:00:00.0",
+            "RollsCount":"10",
+            "PrintsCount":"710",
+            "SilverContentRolls":"14120.0",
+            "SilverContentPrints":"4010080.0",
+            "PaperSquereInch":"2840",
+            "TotalSilver":"4010080.0"
+         }
+      },
+      {  
+         "SilverCanisterDetails":{  
+            "Store":"50004",
+            "LastCanisterChangeDate":"2015-05-07 00:00:00.0",
+            "RollsCount":"10",
+            "PrintsCount":"710",
+            "SilverContentRolls":"28240.0",
+            "SilverContentPrints":"8020160.0",
+            "PaperSquereInch":"2840",
+            "TotalSilver":"8020160.0"
+         }
+      }
+   ]
+}

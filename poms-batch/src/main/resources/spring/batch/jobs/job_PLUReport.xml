@@ -1,0 +1,144 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+  		
+	<!-- Import Common Job : Start -->
+	<import resource="classpath:spring/batch/jobs/job_Common.xml" />
+	<!-- Import Common Job : End -->	
+			
+	 <!-- Daily PLU Job configuration starts  -->
+	
+	 <bean id="DailyPLUJobListener"
+	 	class="org.springframework.batch.core.listener.ExecutionContextPromotionListener">
+		<property name="keys" value="refDataKey"/>
+	 </bean>
+	 
+	 <batch:job id="DailyPLUJob">
+	 	
+	 	<batch:step id="DailyPLUJobStep1" next="DailyPLUJobStep2">
+	 		<batch:tasklet>
+	 			<batch:chunk reader="PLUCSVReportItemReader" processor="PLUCSVReportItemProcessor" writer="PLUCSVCustomWriter"
+	 				commit-interval="1">
+	 			</batch:chunk>
+	 			<batch:listeners>
+					<batch:listener ref="DailyPLUJobListener" />
+				</batch:listeners>
+	 		</batch:tasklet>
+	 	</batch:step>
+	 	
+	 	<batch:step id="DailyPLUJobStep2" next="DailyPLUJobStep3">
+	 		<batch:tasklet>
+	 			<batch:chunk reader="PLUCSVFileItemReader" writer="PLUCSVFileCustomWriter" 
+	 				commit-interval="1">
+	 			</batch:chunk>
+	 			<batch:listeners>
+					<batch:listener ref="DailyPLUJobListener" />
+				</batch:listeners>
+	 		</batch:tasklet>
+	 	</batch:step>
+	 	
+	 	<batch:step id="DailyPLUJobStep3">
+	 		<batch:tasklet>
+	 			<batch:chunk reader="PLUEmailCustomReader" processor="PLUEmailItemProcessor" writer="emailWriter"
+	 				commit-interval="1">
+	 			</batch:chunk>
+	 		</batch:tasklet>
+	 	</batch:step>
+	 	
+	 </batch:job>
+	 
+	<bean id="PLUCSVReportItemReader" class="com.walgreens.batch.central.reader.PLUCSVReportItemReader" scope="step">
+		<property name="ReportId" value = "#{jobParameters['ReportId']}"/>
+		<property name="jobSubmitTime" value = "#{jobParameters['jobSubmitTime']}"/>
+	</bean>
+	<bean id="PLUCSVReportItemProcessor" class="com.walgreens.batch.central.processor.PLUCSVReportItemProcessor"/>
+	<bean id="PLUCSVCustomWriter" class="com.walgreens.batch.central.writer.PLUCSVCustomWriter"/>
+	
+	<bean id="PLUCSVFileItemReader" class="com.walgreens.batch.central.reader.PLUCSVFileItemReader" scope="step"/>
+	<bean id="PLUCSVFileCustomWriter" class="com.walgreens.batch.central.writer.PLUCSVFileCustomWriter"/>
+	
+	<bean id="PLUEmailCustomReader" class="com.walgreens.batch.central.reader.PLUEmailCustomReader" scope="step"/>
+	<bean id="PLUEmailItemProcessor" class="com.walgreens.batch.central.processor.PLUEmailItemProcessor"/>
+	 <!-- Daily PLU Job configuration ends  -->
+	 
+	 <!-- PLU Job configuration starts  -->
+	 
+	<bean id="PLUJobListener"
+	 	class="org.springframework.batch.core.listener.ExecutionContextPromotionListener">
+		<property name="keys" value="refDataKey"/>
+	 </bean>
+	 
+	 <batch:job id="PLUJob">
+	 	
+	 	<batch:step id="PLUJobStep1" next="PLUJobStep2">
+	 		<batch:tasklet>
+	 			<batch:chunk reader="Ad-hocPLUCSVReportItemReader" processor="Ad-hocPLUCSVReportItemProcessor" writer="Ad-hocPLUCSVCustomWriter"
+	 				commit-interval="1">
+	 			</batch:chunk>
+	 			<batch:listeners>
+					<batch:listener ref="PLUJobListener" />
+				</batch:listeners>
+	 		</batch:tasklet>
+	 	</batch:step>
+	 	
+	 	<batch:step id="PLUJobStep2" next="PLUJobStep3">
+	 		<batch:tasklet>
+	 			<batch:chunk reader="Ad-hocPLUCSVFileItemReader" writer="Ad-hocPLUCSVFileCustomWriter" 
+	 				commit-interval="20">
+	 			</batch:chunk>
+	 			<batch:listeners>
+					<batch:listener ref="PLUJobListener" />
+				</batch:listeners>
+	 		</batch:tasklet>
+	 	</batch:step>
+	 	
+	 	<batch:step id="PLUJobStep3" next="PLUJobStep4">
+	 		<batch:tasklet>
+	 			<batch:chunk reader="Ad-hocPLUEmailCustomReader" processor="Ad-hocPLUEmailItemProcessor" writer="emailWriter"
+	 				commit-interval="1">
+	 			</batch:chunk>
+	 			<batch:listeners>
+					<batch:listener ref="PLUJobListener" />
+				</batch:listeners>
+	 		</batch:tasklet>
+	 	</batch:step>
+	 	
+	 	<batch:step id="PLUJobStep4">
+	 		<batch:tasklet>
+	 			<batch:chunk reader="Ad-hocPLUCustomReader" writer="Ad-hocPLUItemWriter"
+	 				commit-interval="1">
+	 			</batch:chunk>
+	 		</batch:tasklet>
+	 	</batch:step>
+	 	
+	 </batch:job>
+	 
+	<bean id="Ad-hocPLUCSVReportItemReader" class="com.walgreens.batch.central.reader.PLUCSVReportItemReader" scope="step">
+		<property name="ReportId" value = "#{jobParameters['ReportId']}"/>
+		<property name="jobSubmitTime" value = "#{jobParameters['jobSubmitTime']}"/>
+	</bean>
+	<bean id="Ad-hocPLUCSVReportItemProcessor" class="com.walgreens.batch.central.processor.PLUCSVReportItemProcessor"/>
+	<bean id="Ad-hocPLUCSVCustomWriter" class="com.walgreens.batch.central.writer.PLUCSVCustomWriter"/>
+	
+	<bean id="Ad-hocPLUCSVFileItemReader" class="com.walgreens.batch.central.reader.PLUCSVFileItemReader" scope="step"/>
+	<bean id="Ad-hocPLUCSVFileCustomWriter" class="com.walgreens.batch.central.writer.PLUCSVFileCustomWriter"/>
+	
+	<bean id="Ad-hocPLUEmailCustomReader" class="com.walgreens.batch.central.reader.PLUEmailCustomReader" scope="step"/>
+	<bean id="Ad-hocPLUEmailItemProcessor" class="com.walgreens.batch.central.processor.PLUEmailItemProcessor"/>
+	
+	<bean id="Ad-hocPLUCustomReader" class="com.walgreens.batch.central.reader.PLUCustomReader" scope="step"/>
+	<bean id="Ad-hocPLUItemWriter" class="com.walgreens.batch.central.writer.PLUItemWriter"/> 
+	
+	 <!-- PLU Job configuration ends  -->
+</beans>

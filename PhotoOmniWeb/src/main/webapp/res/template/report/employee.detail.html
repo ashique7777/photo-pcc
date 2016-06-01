@@ -1,0 +1,112 @@
+	<div class="row">
+	  <h4 class="pull-left">PM Dollars Earned - by product</h4>
+	  <button class="btn btn-info btn-xs wag-btn-primary-sm pull-right back-button" ng-click="cancel()"  ng-hide="printable">
+	  	<!-- <i class="indicator icon-ChevronLeft wag-icon-arrow-gray"></i>
+	  	<i class="indicator icon-ChevronLeft wag-icon-arrow-gray"></i> -->
+	  	<i class="glyphicon glyphicon-chevron-left" aria-hidden="true"></i>
+	  	PM Dollars Earned - By Employee</button>
+	</div>
+		<!-- <div ng-show="showNoProdDataFound" class="error-container">
+	  		<section class="alert wag-alert alert-info" role="alert">
+				<span class="icon-Info text-primary"></span>
+				<span><strong></strong> No data found for the search criteria </span>
+			</section>
+	  	</div> -->
+	  	<div ng-repeat="error in errorMessageText" class="row">
+		    <div ng-show="showProdErrorMessage" class="error-container col-sm-12">
+				<section class="alert wag-alert alert-danger" role="alert">
+					<span class="icon-Alert"></span>
+					<span><strong>Error:</strong> {{error}}</span>
+				</section>
+		  	</div>
+		</div>
+		
+		<div class="row"  ng-hide="printable">
+		  <div class="col-md-4 paddingTopBottom3">
+			<div class="input-group">
+			  <span class="input-group-addon" >
+				Start Date 
+			  </span>
+			  <input type="text" class="form-control start cursor" datepicker-popup={{format}} ng-model="workspace.popStartDate" is-open="workspace.pmByEmp.openedStart" ng-click="open($event,'start')" min-date="startMinDate"/>
+			</div>
+		 </div>
+		 <div class="col-md-4 paddingTopBottom3">
+			<div class="input-group">
+			  <span class="input-group-addon" >
+				End Date 
+			  </span>
+			  <input type="text" class="form-control end cursor" placeholder="MM/DD/YYYY" datepicker-popup={{format}} ng-model="workspace.popEndDate" is-open="workspace.pmByEmp.openedEnd" min-date="startMinDate" ng-click="open($event,'end')" />
+			</div>
+		  </div>
+		  <div class="col-md-4 paddingTopBottom3">
+				<button class="btn btn-info btn-xs wag-btn-primary-sm" ng-click="submitProductData()" >Generate Report</button>
+			</div>
+		</div>
+		
+		<div class="row" ng-show="showProdDataTD"  ng-hide="printable"> 
+	  		<div class="col-sm-12 col-md-6 pull-left nopadding">
+	  			<div class="col-sm-6"><strong>User: {{selectedEmployee}}</strong></div>
+	  			<div class="col-sm-6"><strong>Store: {{storeAddress}}</strong></div>
+	  		</div>
+	  		<div class="col-sm-12 col-md-6">
+	  			<div class="input-group pull-right">
+				  <span>
+					<b>Start Date {{workspace.filterData.startDate | date : "MM/dd/yyyy"}} TO End Date {{workspace.filterData.endDate | date : "MM/dd/yyyy"}}</b>
+				  </span>
+				</div>
+	  		</div>  
+		</div>
+		<div class="row" ng-show="showProdDataTD" style="padding: 0 17px;"> 
+	  		<button class="btn btn-default btn-xs marginTopMin20 paddingT7L11 pull-left print-btn" ng-click="printDiv()">Print</button>
+	  		<!-- <div class="pull-right">
+				<wgpagination start-index="1" total-page-count="{{prodTotalPageCount}}" id="{{$index}}" show-table-data="showPMTableData" ng-click="changeProductPagination()"></wgpagination>
+			 </div> -->
+		</div>
+     <div id="Print" ng-hide="printable">
+	  <div class="panel-body">
+		<table class="table table-condensed table-hover table-bordered sortableTable">
+		
+		    <thead>
+	          <tr class="active">
+	            <th ng-click="sort('productDesc')">
+	            	<span class="pull-left">Product Description</span>
+					<span ng-show="showProdDataTD" class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['productDesc'].order && !colSortOrder['productDesc'].firstLoad ? 'selected' : ''"></span>
+					<span ng-show="showProdDataTD" class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['productDesc'].order && !colSortOrder['productDesc'].firstLoad ?' selected' : ''"></span>
+				</th>
+	            <th>PM per product</th>
+	            <th>PM Entered (Qty)</th>
+	            <!-- <th>PM Goal (Qty)</th> -->
+	            <th>PM Earned (Qty) (Based on sold)</th>
+	            <th>PM Pending (Qty)</th>
+	          </tr>
+	        </thead>
+	        <tbody>
+	        	<tr ng-repeat="data in workspace.product"  ng-show="showProdDataTD">
+					<td ng-hide="data.boldCheck">{{data.productDesc}}</td>
+					<td ng-show="data.boldCheck"><strong>{{data.productDesc}}</strong></td>
+					
+					<td ng-hide="data.boldCheck">{{data.pmPerProduct | currency}}</td>
+					<td ng-show="data.boldCheck"><strong>{{data.pmPerProduct | currency}}</strong></td>
+					
+					<td ng-hide="data.boldCheck">{{data.pmEnteredAmt | currency}} ({{data.pmEnteredQty}})</td>
+					<td ng-show="data.boldCheck"><strong>{{data.pmEnteredAmt | currency}} ({{data.pmEnteredQty}})</strong></td>
+					
+					<!-- <td>{{data.pmEnteredAmt}}</td> -->
+					<td ng-hide="data.boldCheck">{{data.pmEarnedAmt | currency}} ({{data.pmEarnedQty}})</td>
+					<td ng-show="data.boldCheck"><strong>{{data.pmEarnedAmt | currency}} ({{data.pmEarnedQty}})</strong></td>
+					
+					<td ng-hide="data.boldCheck">{{data.pmPendingAmt | currency}} ({{data.pmPendingQty}})</td>
+					<td ng-show="data.boldCheck"><strong>{{data.pmPendingAmt | currency}} ({{data.pmPendingQty}})</strong></td>
+				</tr>
+				<tr ng-show = "showNoProdDataFound">
+	            	<td colspan="5">No Records Found Corresponding to the Search Criterion Entered</td>
+               	</tr>
+			</tbody>
+		</table>
+	  </div>
+	 
+	</div>
+	
+	<div class="printable">
+	  <div ng-include="workspace.printTemplate"></div>
+	</div>

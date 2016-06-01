@@ -1,0 +1,137 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+  		
+	<!-- Import Common Job : Start -->
+	<import resource="classpath:spring/batch/jobs/job_Common.xml" />
+	<!-- Import Common Job : End -->	
+	
+	 <!-- Royalty Report  job configuration Starts-->
+	 
+	 <!--  Bean Creation Starts -->
+	 <bean id = "CSVRoyaltyReportItemReader" class = "com.walgreens.batch.central.reader.CSVRoyaltyReportItemReader" scope="step">
+	 	<property name="ReportId" value = "#{jobParameters['ReportId']}"/>
+	 	<property name="jobSubmitTime" value = "#{jobParameters['jobSubmitTime']}"/>
+	 </bean>
+	 <bean id = "CSVRoyaltyCustomWriter" class = "com.walgreens.batch.central.writer.CSVRoyaltyCustomWriter" ></bean>
+	 <bean id = "CSVRoyaltyReportItemProcessor" class = "com.walgreens.batch.central.processor.CSVRoyaltyReportItemProcessor"></bean>
+	 
+	 <bean id = "CSVRoyaltyFileItemReader" class = "com.walgreens.batch.central.reader.CSVRoyaltyFileItemReader" scope="step"></bean>
+	 <bean id = "CSVFileRoyaltyCustomWriter" class = "com.walgreens.batch.central.writer.CSVFileRoyaltyCustomWriter"></bean>
+	 	 
+	 <bean id = "RoyaltySalesItemWriter" class = "com.walgreens.batch.central.writer.RoyaltySalesItemWriter"></bean>
+	 <bean id = "RoyaltySalesCustomReader" class = "com.walgreens.batch.central.reader.RoyaltySalesCustomReader" scope="step"></bean>
+	 	 
+	 <bean id = "RoyaltySalesReportEmailCustomReader"  class = "com.walgreens.batch.central.reader.RoyaltySalesReportEmailCustomReader" scope="step"></bean>	 	 
+	 <bean id = "RoyaltySalesReportEmailItemProcessor"  class = "com.walgreens.batch.central.processor.RoyaltySalesReportEmailItemProcessor" ></bean>	 
+	 
+	 <!--  Bean Creation Ends -->
+	 
+	 <!--  Job Configuration starts -->
+	 <bean id="RoyaltyCustomReportListener"
+		class="org.springframework.batch.core.listener.ExecutionContextPromotionListener">
+		<property name="keys" value="refDataKey,refDataKey2,refDataKey3" />
+	</bean>
+	
+	<batch:job id="RoyaltyCustomreportJob">
+	
+		<batch:step id="RoyaltycustomreportJobstep1" next="RoyaltycustomreportJobstep2">
+			<batch:tasklet>
+				<batch:chunk reader="CSVRoyaltyReportItemReader" processor="CSVRoyaltyReportItemProcessor" writer="CSVRoyaltyCustomWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="RoyaltyCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="RoyaltycustomreportJobstep2" next="RoyaltycustomreportJobstep4">
+			<batch:tasklet>
+				<batch:chunk reader="CSVRoyaltyFileItemReader" writer="CSVFileRoyaltyCustomWriter"
+					commit-interval="100">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="RoyaltyCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+         <batch:step id="RoyaltycustomreportJobstep4" next="RoyaltyCustomreportJobstep5">
+			<batch:tasklet>
+				<batch:chunk reader="RoyaltySalesReportEmailCustomReader" processor="RoyaltySalesReportEmailItemProcessor" writer="emailWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="RoyaltyCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+        <batch:step id="RoyaltyCustomreportJobstep5">
+			<batch:tasklet>
+				<batch:chunk reader="RoyaltySalesCustomReader" writer="RoyaltySalesItemWriter"
+					commit-interval="1">
+				</batch:chunk>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	 <!--  Job Configuration ends -->
+	 
+	 <!-- Royalty report monthly report starts -->
+	 <bean id = "CSVRoyaltyDailyWriter" class= "com.walgreens.batch.central.writer.CSVRoyaltyMonthlyWriter" ></bean>
+	 <bean id = "CSVFileRoyaltyDailyWriter" class = "com.walgreens.batch.central.writer.CSVFileRoyaltyMonthlyWriter"></bean>
+	 <bean id = "RoyaltySalesReportEmailDailyReader" class = "com.walgreens.batch.central.reader.RoyaltySalesReportEmailMonthlyReader" scope="step"></bean>
+	 <!-- Royalty Report monthly report ends -->
+	 
+	 <!-- Royalty Job creating starts-->
+	 
+	  <bean id="RoyaltyDailyReportListener"
+		class="org.springframework.batch.core.listener.ExecutionContextPromotionListener">
+		<property name="keys" value="refDataKey,refDataKey2,refDataKey3" />
+	</bean>
+	 <batch:job id="RoyaltyReportDailyJob">
+	
+		<batch:step id="RoyaltyDailyreportJobstep1" next="RoyaltyDailyreportJobstep2">
+			<batch:tasklet>
+				<batch:chunk reader="CSVRoyaltyReportItemReader" processor="CSVRoyaltyReportItemProcessor" writer="CSVRoyaltyDailyWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="RoyaltyDailyReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="RoyaltyDailyreportJobstep2" next="RoyaltyDailyreportJobstep3" >
+			<batch:tasklet>
+				<batch:chunk reader="CSVRoyaltyFileItemReader" writer="CSVFileRoyaltyDailyWriter" 
+					commit-interval="100">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="RoyaltyDailyReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+         <batch:step id="RoyaltyDailyreportJobstep3" >
+			<batch:tasklet>
+				<batch:chunk reader="RoyaltySalesReportEmailDailyReader" processor="RoyaltySalesReportEmailItemProcessor" writer="emailWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="RoyaltyDailyReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+
+	</batch:job>
+	 <!--  Royalty Job Creating ends -->
+	 <!-- Royalty Report  job configuration Ends-->
+</beans>

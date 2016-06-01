@@ -1,0 +1,23 @@
+{
+	"totalRecord" : "3",
+	"data":[
+			{
+				"id"					: 63192,
+				"channel"				: "Internet",
+				"placerevenue" 			: "$50,000",
+				"soldrevenue" 			: "$20,000"
+			},
+			{
+				"id"					: 22182,
+				"channel"				: "Mobile",
+				"placerevenue" 			: "$25,000",
+				"soldrevenue" 			: "$6,000"
+			},
+			{
+				"id"					: 232172,
+				"channel"				: "Kiosk",
+				"placerevenue" 			: "$75,000",
+				"soldrevenue" 			: "$50,000"
+			}
+		]
+}

@@ -1,0 +1,45 @@
+<div class="modal-custom-backdrop"></div>
+<div class="spopupOuterContainer col-md-7" ui-keydown="{'pageup':'cancel($event);'}" data-ng-init="prepareDefaultRetailBlock()">
+	<div class="popupMainContainer panel panel-primary slide">
+		<div class="panel-heading">
+			<h3 class="panel-title">Update Retail Block 
+			<span  ng-click="cancel($event);"  class="pull-right glyphicon glyphicon-remove cl-bt"></span></h3>
+		</div>
+		<div class="row">
+			<div ng-show="showUpdateMessage" class="col-sm-12 error-container paddingTopBottom3">
+		 		<section class="alert wag-alert alert-success" role="alert">
+					<span class="icon-ConfirmCircle"></span>
+					<span>{{statusMessage}}</span>
+				</section>
+			</div>
+		</div>
+		<div>
+			<div ng-show="showErrorMessage" class="col-sm-12 error-container paddingTopBottom3">
+		 		<section class="alert wag-alert alert-danger" role="alert">
+					<span class="icon-Alert"></span>
+					<span><strong></strong> *Please select any Retail Block for update </span>
+				</section>
+			</div>
+		</div>
+	 	<div class="row paddingtop5">
+	 		<div class="col-sm-4">
+	 			<span><strong>Store Number: &nbsp;&nbsp;{{storeNumbers}}</strong></span>
+	 		</div>
+	 		<div class="col-sm-5">
+	 			<div class="input-group ">
+			          <span class="input-group-addon fontSize80 line-break-class" >
+			            Retail Block
+			          </span>
+			          <select class="form-control" ng-model="retailBlockObject" ng-options="retail.retailBlock for retail in retailBlockArray" ng-click="hideStatusMessage()">
+			          	<option value="">{{defaultRetailBlock}}</option>
+			          </select>
+			     </div> 
+	 		</div>
+	 	</div>
+	 <div class="row paddingtop5 marginBottom20" style="margin-top: 67px;">
+		<button class="btn btn-info pull-right btn-xs wag-btn-primary-sm pull-right marginRight" ng-click="updateRetailValue()" >Update Retail Block</button>
+		<button class="btn btn-info pull-right btn-xs wag-btn-primary-sm pull-right marginRight" ng-click="cancel($event)" >Close</button>
+	</div>
+	</div>
+</div>
+

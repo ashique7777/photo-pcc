@@ -1,0 +1,7 @@
+{
+  "reasonList":[
+    {  "reason": "machine not working" }, 
+    {  "reason": "other problem1" },
+    {  "reason": "other problem2" }
+  ]
+}

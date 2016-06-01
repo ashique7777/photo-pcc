@@ -1,0 +1,373 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+	<bean id="masterTask" class="com.walgreens.batch.central.PMWICCustomReportTask"></bean>
+
+	<bean id="runjob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="masterTask"></property>
+		<property name="targetMethod" value="run"></property>
+	</bean>
+
+	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="runjob" />
+		<property name="repeatInterval" value="90000" />
+		<property name="startDelay" value="1000" />
+	</bean>
+
+	<bean id="conTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="runjob" />
+		<property name="cronExpression" value="*/10 * * * * ?" />
+	</bean>
+
+
+					<!-- Start For LC Adhoc And Exception Report -->
+
+	<bean id="masterTaskLC"
+		class="com.walgreens.batch.central.LCAdhocAndExceptionCustomReportTask"></bean>
+
+	<bean id="runjobLC"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="masterTaskLC"></property>
+		<property name="targetMethod" value="run"></property>
+	</bean>
+
+	<bean id="simpleTriggerLC" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="runjobLC" />
+		<property name="repeatInterval" value="900000" />
+		<property name="startDelay" value="1000" />
+	</bean>
+
+	<bean id="conTriggerLC"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="runjobLC" />
+		<property name="cronExpression" value="*/10 * * * * ?" />
+	</bean>
+				
+				<!-- End For LC Adhoc And Exception Report -->
+				
+				<!-- Start For LC Daily Report -->
+				
+	<bean id="masterTaskForDaily" class="com.walgreens.batch.central.LCDailyCustomReportTask"></bean>
+
+	<bean id="runjobDaily"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="masterTaskForDaily"></property>
+		<property name="targetMethod" value="run"></property>
+	</bean>
+
+	<bean id="simpleTriggerDaily" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="runjobDaily" />
+		<property name="repeatInterval" value="1800000" /><!-- 30min -->
+		<property name="startDelay" value="1000" /> <!-- 2min -->
+	</bean>
+
+	<bean id="conTriggerDaily"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="runjobDaily" />
+		<property name="cronExpression" value="*/10 * * * * ?" />
+		</bean>
+				<!-- End For LC Daily Report -->
+				
+				<!-- Start For Print Sign Report -->
+				
+	<bean id="masterTaskPS" class="com.walgreens.batch.central.PrintSignsCustomReportTask"></bean>
+
+	<bean id="runjobPS"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="masterTaskPS"></property>
+		<property name="targetMethod" value="run"></property>
+	</bean>
+
+	<bean id="simpleTriggerPS" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="runjobPS" />
+		<property name="repeatInterval" value="600000" /><!-- 10min -->
+		<property name="startDelay" value="1000" /><!-- 1min -->
+	</bean>
+
+	<bean id="conTriggerPS"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="runjobPS" />
+		<property name="cronExpression" value="*/10 * * * * ?" />
+	</bean>
+				<!-- End For Print Sign Report -->
+				
+				
+		<!-- Start For MachineDowntime Report -->
+
+	<bean id="masterTaskMachine"
+		class="com.walgreens.batch.central.MachineDownTimeReportTask"></bean>
+
+	<bean id="runjobMachine"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="masterTaskMachine"></property>
+		<property name="targetMethod" value="run"></property>
+	</bean>
+
+	<bean id="simpleTriggerMachine" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="runjobMachine" />
+		<property name="repeatInterval" value="60000" /> <!-- 120000 -->
+		<property name="startDelay" value="1000" />
+	</bean>
+
+	<bean id="conTriggerMachine"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="runjobMachine" />
+		<property name="cronExpression" value="*/10 * * * * ?" />
+	</bean>			
+				<!-- End For MachineDowntime Report -->
+
+	<!-- Start of Royalty Report Master Job -->
+	<bean id="MasterTaskRoyaltyReport" class="com.walgreens.batch.central.RoyaltyReportCustomTask"></bean>
+
+
+	<bean id="runJobRoyaltyReport"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="MasterTaskRoyaltyReport"></property>
+		<property name="targetMethod" value="run"></property>
+	</bean>
+
+	<bean id="simpleTriggerRoyalty" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="runJobRoyaltyReport" />
+		<property name="repeatInterval" value="99999999999" /> <!-- 120000 -->
+		<property name="startDelay" value="1000" />
+	</bean>
+
+	<bean id="conTriggerRoyalty"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="runJobRoyaltyReport" />
+		<property name="cronExpression" value="*/10 * * * * ?" />
+	</bean>
+	<!-- End of Royalty Report Master job -->	
+		
+			<!-- Start of PM Master Job -->	
+		<bean id = "MasterTaskPM" class = "com.walgreens.batch.central.PromotionalMoneyTask" ></bean>
+	
+		
+		<bean id="runJobPM" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+			<property name="targetObject" ref="MasterTaskPM"></property>
+			<property name="targetMethod" value="run"></property>
+		</bean>
+	
+		<bean id="simpleTriggerPM" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+			<property name="jobDetail" ref="runJobPM" />
+			<property name="repeatInterval" value="60000" /> <!-- 120000 -->
+			<property name="startDelay" value="1000" />
+		</bean>
+	
+		<bean id="conTriggerPM"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+			<property name="jobDetail" ref="runJobPM" />
+			<property name="cronExpression" value="*/10 * * * * ?" />
+		</bean>
+			<!-- End of PM Master Job -->
+			
+			<!-- Start of MBPM Master Job -->	
+			<bean id = "MasterTaskMBPM" class = "com.walgreens.batch.central.PromotionalMoneyTask" ></bean>
+	
+		
+		<bean id="runJobMBPM" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+			<property name="targetObject" ref="MasterTaskMBPM"></property>
+			<property name="targetMethod" value="run"></property>
+		</bean>
+	
+		<bean id="simpleTriggerMBPM" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+			<property name="jobDetail" ref="runJobMBPM" />
+			<property name="repeatInterval" value="60000" /> <!-- 120000 -->
+			<property name="startDelay" value="1000" />
+		</bean>
+	
+		<bean id="conTriggerMBPM"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+			<property name="jobDetail" ref="runJobMBPM" />
+			<property name="cronExpression" value="*/10 * * * * ?" />
+		</bean>
+			<!-- End of MBPM Master Job -->	
+			
+			<!-- Start of PayonFulFillment Master Job -->	
+		<bean id = "MasterTaskPOF" class = "com.walgreens.batch.central.PayOnFulfillmentTask" ></bean>
+	
+		
+		<bean id="runJobPOF" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+			<property name="targetObject" ref="MasterTaskPOF"></property>
+			<property name="targetMethod" value="run"></property>
+		</bean>
+	
+		<bean id="simpleTriggerPOF" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+			<property name="jobDetail" ref="runJobPOF" />
+			<property name="repeatInterval" value="60000" /> <!-- 120000 -->
+			<property name="startDelay" value="1000" />
+		</bean>
+	
+		<bean id="conTriggerPOF"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+			<property name="jobDetail" ref="runJobPOF" />
+			<property name="cronExpression" value="*/10 * * * * ?" />
+		</bean>
+			<!-- End of PayonFulFillment Master Job -->
+
+	<!-- Start of Royalty Monthly Report Master Job -->
+	<bean id="MasterTaskRoyaltyMonthlyReport" class="com.walgreens.batch.central.RoyaltyReporMonthlyTask"></bean>
+
+
+	<bean id="runJobRoyaltyMonthlyReport"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="MasterTaskRoyaltyMonthlyReport"></property>
+		<property name="targetMethod" value="run"></property>
+	</bean>
+
+	<bean id="simpleTriggerRoyaltyMonthly" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="runJobRoyaltyMonthlyReport" />
+		<property name="repeatInterval" value="999999999" /> <!-- 120000 -->
+		<property name="startDelay" value="1000" />
+	</bean>
+
+	<bean id="conTriggerRoyaltyMonthly"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="runJobRoyaltyMonthlyReport" />
+		<property name="cronExpression" value="*/10 * * * * ?" />
+	</bean>
+	<!-- End of Royalty Monthly Report Master job -->
+
+	<!-- Start of Sales Report Master Job -->
+	<bean id="MasterTaskSalesReport" class="com.walgreens.batch.central.SalesReportByProductTask"></bean>
+
+
+	<bean id="runJobSalesReport"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="MasterTaskSalesReport"></property>
+		<property name="targetMethod" value="run"></property>
+	</bean>
+
+	<bean id="simpleTriggerSales" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="runJobSalesReport" />
+		<property name="repeatInterval" value="999999999" /> <!-- 120000 -->
+		<property name="startDelay" value="1000" />
+	</bean>
+
+	<bean id="conTriggerSales"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="runJobSalesReport" />
+		<property name="cronExpression" value="*/10 * * * * ?" />
+	</bean>
+	<!-- End of Sales Report Master job -->	
+		
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="jobDetails">
+			<list>
+				<!-- <ref bean="runjob" /> -->
+				<!-- <ref bean="runjobLC" /> --> 
+				<!--      <ref bean="runJobPLU"/> -->
+				<!-- <ref bean="runJobAdhocPLU"/> -->
+				<!-- <ref bean="runjobDaily" />  -->
+				<ref bean="runjobLC" /> 
+				<!-- <ref bean="runjobPS" /> -->
+				<!-- <ref bean="runjobMachine" />
+				<ref bean= "runJobRoyaltyReport"/> 
+				<ref bean= "runJobRoyaltyMonthlyReport"/> 
+				<ref bean= "runJobSalesReport"/> 
+				-->
+			</list>
+		</property>
+
+		<property name="triggers">
+			<list>
+			<ref bean="simpleTriggerPLU"/>
+			<!-- <ref bean="simpleTriggerAdhocPLU"/> -->
+				<!-- <ref bean="simpleTrigger" /> -->
+				<ref bean="simpleTriggerLC" /> 
+				<!-- <ref bean="simpleTriggerDaily" />  -->
+				<!-- <ref bean="simpleTriggerPS" /> -->
+				<!-- <ref bean="simpleTriggerMachine" />
+				<ref bean="simpleTriggerRoyalty" /> 
+				<ref bean="simpleTriggerRoyaltyMonthly" /> 
+				<ref bean="simpleTriggerSales" /> 
+				-->
+			</list>
+		</property>
+	</bean>
+
+	<!-- Start of MBPM Master Job -->	
+		<!-- <bean id = "MBPMTask" class = "com.walgreens.batch.central.PromotionalMoneyTask" ></bean>
+	
+		
+		<bean id="runJobMBPM" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+			<property name="targetObject" ref="MBPMTask"></property>
+			<property name="targetMethod" value="run"></property>
+		</bean>
+	
+		<bean id="simpleTriggerMBPM" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+			<property name="jobDetail" ref="runJobMBPM" />
+			<property name="repeatInterval" value="60000" /> 120000
+			<property name="startDelay" value="1000" />
+		</bean>
+	
+		<bean id="conTriggerPM"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+			<property name="jobDetail" ref="runJobMBPM" />
+			<property name="cronExpression" value="*/10 * * * * ?" />
+		</bean> -->
+	<!-- End of MBPM Master Job -->
+	
+	<!-- Start of SilverCanister Master Job -->	
+		<!-- <bean id = "SilverCanisterTask" class = "com.walgreens.batch.central.SilverCanisterReportApp" ></bean>
+	
+		
+		<bean id="runJobSilverCanister" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+			<property name="targetObject" ref="SilverCanisterTask"></property>
+			<property name="targetMethod" value="run"></property>
+		</bean>
+	
+		<bean id="simpleTriggerSilverCanister" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+			<property name="jobDetail" ref="runJobSilverCanister" />
+			<property name="repeatInterval" value="60000" /> 120000
+			<property name="startDelay" value="1000" />
+		</bean>
+	
+		<bean id="conTriggerPM"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+			<property name="jobDetail" ref="runJobMBPM" />
+			<property name="cronExpression" value="*/10 * * * * ?" />
+		</bean> -->
+	<!-- End of SilverCanister Master Job -->
+	
+	<!-- Daily PLU Master Job starts -->
+		<bean id="DailyPLUTask" class="com.walgreens.batch.central.DailyPLUTask"/>
+		<bean id="runJobPLU" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+			<property ref="DailyPLUTask" name="targetObject"/>
+			<property name="targetMethod" value="run"/>
+		</bean>
+		<bean id="simpleTriggerPLU" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+			<property ref="runJobPLU" name="jobDetail"/>
+			<property name="repeatInterval" value="9990000"/>
+			<property name="startDelay" value="1000"/>
+		</bean>
+		<bean id="conTriggerPLU" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+			<property ref="runJobPLU" name="jobDetail"/>
+			<property name="cronExpression" value="*/10 * * * * ?"/>
+		</bean>
+	<!-- Daily PLU End of PLU Job -->
+	
+	<!-- Ad-hoc PLU report master job starts -->
+		<bean id = "AdhocPLUTask" class = "com.walgreens.batch.central.AdhocPLUTask"/>
+		<bean id="runJobAdhocPLU" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+			<property ref="AdhocPLUTask" name="targetObject"/>
+			<property name="targetMethod" value="run"/>
+		</bean>
+		<bean id="simpleTriggerAdhocPLU" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+			<property ref="runJobAdhocPLU" name="jobDetail"/>
+			<property name="repeatInterval" value="9990000"/>
+			<property name="startDelay" value="1000"/>
+		</bean>
+		<bean  id="conTriggerAdhocPLU" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+			<property ref="runJobAdhocPLU" name="jobDetail"/>
+			<property name="cronExpression" value="*/10 * * * * ?"/>
+		</bean>
+	<!-- Ad-hoc PLU ends -->
+</beans>

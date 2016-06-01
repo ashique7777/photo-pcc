@@ -1,0 +1,25 @@
+{
+	"itemtype": "alerts",
+	"data":
+		[
+			{
+			"id":"0233",
+			"text" : "Lorem Ipsum is simply dummy text of the printing"
+			},
+			{
+			"id":"6553",
+			"text" : "Lorem Ipsum is simply dummy text of the printing"
+			},
+			{
+			"id":"00535",
+			"text" : "Lorem Ipsum is simply dummy text of the printing"
+			},
+			{"id":"6253",
+			"text" : "Lorem Ipsum is simply dummy text of the printing"
+			},
+			{"id":"6863",
+			"text" : "Lorem Ipsum is simply dummy text of the printing"
+			}
+		]
+
+}

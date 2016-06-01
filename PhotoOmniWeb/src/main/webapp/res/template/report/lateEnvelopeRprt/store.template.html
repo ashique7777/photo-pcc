@@ -1,0 +1,72 @@
+<div ng-hide="printable">
+<div ng-hide="showErrorMessage">
+	<div class="row paddingTopBottom3">
+	<div class="col-sm-12 col-md-12 nopadding" ng-show="showTable">
+	<div class="row">
+		<div class="col-sm-6"><strong>Store: {{workspace.responseData.storeAddress}}</strong></div>
+		<div class="col-sm-6">
+			<span class="pull-right"><strong>Start Date : {{lateEnveReport.startDate | date:'MM/dd/yyyy'}} to End Date : {{lateEnveReport.endDate | date:'MM/dd/yyyy'}}</strong></span>
+		</div>
+	</div>
+	<div class="row" ng-show="showTable" > 
+  		<button type="button" class="btn btn-default marginTopMin20 paddingT7L11 pull-left marginLR5" ng-click="printDiv('Print')" ng-class="printStatus ? 'wag-btn-disabled-sm' : 'wag-btn-default-sm'" ng-disabled = "printStatus">Print</button>
+  		<div class="pull-right">
+		   <!--<pagination  previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" total-items="workspace.data.totalRecord" items-per-page="workspace.data.storeDetails.length" boundary-links="true" ng-model="workspace.data.currentPage" class="pagination-sm nomargin" max-size="5" rotate="false" ng-click="changeStorePagination('orders','default')"></pagination>-->
+		   <wgpagination start-index="1" total-page-count="{{totalPageCount}}" id="{{$index}}" show-table-data="showTableData" ng-click="changeStorePagination($index)"></wgpagination>
+		</div> 
+	</div>
+	</div>
+	</div>
+	<table class="table table-condensed table-hover table-bordered sortableTable fontSize80" ng-show="showTable">
+	<thead>
+		  <tr>
+			<th ng-click="sort('envelopeNumber','', $index)">
+				<span class="pull-left">Env#</span>
+				<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['envelopeNumber'].order && !colSortOrder['envelopeNumber'].firstLoad ? 'selected' : ''"></span>
+				<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['envelopeNumber'].order && !colSortOrder['envelopeNumber'].firstLoad ?' selected' : ''"></span>
+			</th>
+			<th ng-click="sort('orderOriginType','', $index)">
+				<span class="pull-left">Origin of Order</span>
+				<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['orderOriginType'].order && !colSortOrder['orderOriginType'].firstLoad ? 'selected' : ''"></span>
+				<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['orderOriginType'].order && !colSortOrder['orderOriginType'].firstLoad ?' selected' : ''"></span>
+			</th>
+			<th ng-click="sort('processingTypeCD','', $index)">
+				<span class="pull-left">Processing type</span>
+				<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['processingTypeCD'].order && !colSortOrder['processingTypeCD'].firstLoad ? 'selected' : ''"></span>
+				<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['processingTypeCD'].order && !colSortOrder['processingTypeCD'].firstLoad ?' selected' : ''"></span>
+			</th>
+			<th>Order Status</th>
+			<th ng-click="sort('employeeTookOrder','', $index)">
+				<span class="pull-left">Employee Took Order</span>
+				<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['employeeTookOrder'].order && !colSortOrder['employeeTookOrder'].firstLoad ? 'selected' : ''"></span>
+				<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['employeeTookOrder'].order && !colSortOrder['employeeTookOrder'].firstLoad ?' selected' : ''"></span>
+			</th>
+			<th>Time Submitted</th>
+			<th>Time Promised</th>
+			<th>Time Done</th>
+		  </tr>
+		</thead>
+		<tbody>
+	
+		  <tr ng-repeat="data in workspace.data">
+		  <!-- 	<td ui-sref="report.exception.item({itemId:data.env})" popover-placement="top" popover="1HR - 12 4x6 Internet Print 1HR [DONE]" popover-trigger="mouseenter" popover-append-to-body="true"> Modified to hyperlink for only the field that can pop-up
+				<span class="cPointer">{{data.env}}</span>
+			</td>  -->
+			
+			<!-- <td ng-click="openPopup($index)">{{data.envelopeNumber}}</td> -->
+			<td ng-click="openPopup(data.envelopeNumber,data.orderOriginType,data.processingTypeCD, data.orderid,data.timeSubmitted)"><a>{{data.envelopeNumber | numberFixedLen:6}}</a>  </td>
+			<td>{{data.orderOriginType}}</td>
+			<td>{{data.processingTypeCD}}</td>			
+			<td>{{data.status}}</td>
+			<td>{{data.employeeTookOrder}}</td>
+			<td>{{data.timeSubmitted}}</td>
+			<td>{{data.timePromised}}</td>
+			<td>{{data.timeDone}}</td>
+		  </tr>
+		</tbody>
+	</table>
+</div>
+</div>
+<div class="printable">
+  <div ng-include="workspace.printTemplate"></div>
+</div>

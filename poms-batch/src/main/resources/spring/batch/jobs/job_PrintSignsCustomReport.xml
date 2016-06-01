@@ -1,0 +1,126 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+  		
+	<!-- Import Common Job : Start -->
+	<import resource="classpath:spring/batch/jobs/job_Common.xml" />
+	<!-- Import Common Job : End -->	
+	
+	<bean id="PSCustomReportListener" class="org.springframework.batch.core.listener.ExecutionContextPromotionListener">
+		<property name="keys" value="refDataKeyForPrintSigns" />
+	</bean>
+	
+	<batch:job id="printSignsReportJob">
+		<batch:step id="printSignsReportStep1" next="printSignsReportStep2">
+			<batch:tasklet>
+				<batch:chunk reader="pSCSVReportItemReader" processor="pSCSVReportItemProcessor" writer="pSCSVCustomWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="PSCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="printSignsReportStep2" next = "printSignsReportStep5">
+			<batch:tasklet>
+				<batch:chunk reader="pSCSVFileItemReader" writer="pSCSVFileCustomWriter"
+					commit-interval="1000">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="PSCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		<!-- <batch:step id="printSignsReportStep3" next="printSignsReportStep5">
+			<batch:tasklet>
+				<batch:chunk reader="pSCloseCSVCustomReader" writer="pSCloseCSVCustomWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="PSCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step> -->
+		<!-- <batch:step id="printSignsReportStep4" next="printSignsReportStep5">
+			<batch:tasklet>
+				<batch:chunk reader="pSReportZipCustomReader"  writer="pSReportZipCustomWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="PSCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step> -->
+		<batch:step id="printSignsReportStep5" next="printSignsReportStep6">
+			<batch:tasklet>
+				<batch:chunk reader="pSReportEmailCustomReader" processor="pSReportEmailItemProcessor" writer="emailWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="PSCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+		
+        <batch:step id="printSignsReportStep6">
+			<batch:tasklet>
+				<batch:chunk reader="pSReportCustomReader" writer="pSReportItemWriter"
+					commit-interval="1">
+				</batch:chunk>
+				<batch:listeners>
+					<batch:listener ref="PSCustomReportListener" />
+				</batch:listeners>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	<!-- FOR STEP 1 -->
+	<bean id="pSCSVReportItemReader" scope="step" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="omniDataSource" />
+		<property name="sql"
+			value=" SELECT SYS_USER_REPORT_PREF_ID, SYS_REPORT_ID, FILTER_STATE FROM OM_USER_REPORT_PREFS 
+					WHERE SYS_USER_REPORT_PREF_ID = #{jobParameters['REPORT_ID']}" />
+		<property name="rowMapper">
+			<bean class="com.walgreens.batch.central.rowmapper.LCAndPSDataRowmapper" />
+		</property>
+	</bean>
+	<bean id="pSCSVReportItemProcessor" class="com.walgreens.batch.central.processor.PSCSVReportItemProcessor" scope="step">
+	</bean>
+	<bean id="pSCSVCustomWriter" class="com.walgreens.batch.central.writer.PSCSVCustomWriter" scope="step">
+	</bean>
+	<!-- FOR STEP 2 -->
+	<bean id="pSCSVFileItemReader" class="com.walgreens.batch.central.reader.PSCSVFileItemReader" scope="step" >
+	</bean>
+	<bean id="pSCSVFileCustomWriter" class="com.walgreens.batch.central.writer.PSCSVFileCustomWriter" scope="step">
+	</bean>
+	<!-- FOR STEP 3 -->
+	<!-- <bean id="pSCloseCSVCustomReader" class="com.walgreens.batch.central.reader.PSCloseCSVCustomReader">
+	</bean>
+	<bean id="pSCloseCSVCustomWriter" class="com.walgreens.batch.central.writer.PSCloseCSVCustomWriter">
+	</bean> -->
+	<!-- FOR STEP 4 -->
+	<!-- <bean id="pSReportZipCustomReader" class="com.walgreens.batch.central.reader.PSReportZipCustomReader">
+	</bean>
+	<bean id="pSReportZipCustomWriter" class="com.walgreens.batch.central.writer.PSReportZipCustomWriter">
+	</bean> -->
+	<!-- FOR STEP 5 -->
+	<bean id="pSReportEmailCustomReader" class="com.walgreens.batch.central.reader.PSReportEmailCustomReader" scope="step">
+	</bean>
+	<bean id="pSReportEmailItemProcessor" class="com.walgreens.batch.central.processor.PSReportEmailItemProcessor" scope="step">
+	</bean>
+	<!-- FOR STEP 6 -->
+	<bean id="pSReportCustomReader" class="com.walgreens.batch.central.reader.PSReportCustomReader" scope="step">
+	</bean>
+	<bean id="pSReportItemWriter" class="com.walgreens.batch.central.writer.PSReportItemWriter" scope="step">
+	</bean>
+</beans>

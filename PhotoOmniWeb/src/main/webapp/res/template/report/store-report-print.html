@@ -1,0 +1,242 @@
+<div class="storePrintDiv">
+	<div class="showPMByProdPrint" ng-show="showPMByProdPrint">
+		<table class="table table-condensed table-hover table-bordered">
+		    <thead>
+	          <tr class="active">
+	            <th>Product Description</th>
+	            <th>PM per product</th>
+	            <th>PM Entered (Qty)</th>
+	            <!-- <th>PM Goal (Qty)</th> -->
+	            <th>PM Earned (Qty) (Based on sold)</th>
+	            <th>PM Pending (Qty)</th>
+	          </tr>
+	        </thead>
+	        <tbody>
+	        	<tr ng-repeat="data in workspace.product" >
+					<td>{{data.productDesc}}</td>
+					<td>{{data.pmPerProduct | currency}}</td>
+					<td>{{data.pmEnteredAmt | currency}} ({{data.pmEnteredQty}})</td>
+					<!-- <td>{{data.pmEnteredAmt}}</td> -->
+					<td>{{data.pmEarnedAmt | currency}} ({{data.pmEarnedQty}})</td>
+					<td>{{data.pmPendingAmt | currency}} ({{data.pmPendingQty}})</td>
+					
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<div class="showExceptionPrint" ng-show="showExceptionPrint">
+		<div ng-if="exceptionReport.viewSection == 'Exception Report - by Envelope'">
+			<table class="table table-condensed table-hover table-bordered exceptionReportTable">
+				<thead>
+				  <tr>
+					<th>Env#</th>
+					<!-- <th>Customer Name</th> -->
+					<th>Envelope Status</th>
+					<th>Envelope Description</th>
+					<th>Envelope Entered Date / Time</th>
+					<th>Exception Status</th>
+					<th>Reason</th>
+					<th>Employee Last Name</th>
+					<th>Exception Entered Date / Time</th>
+					<th>Order Price</th>
+					<th>Sold Price</th>
+					<th>Refused Prints/Waste</th>
+				  </tr>
+				</thead>
+		
+				<tbody>
+				  <tr ng-repeat="data in workspace.printableData.repByEnvList">
+				  	<td>{{data.env}}</a>
+					</td> 
+					<!-- <td>{{data.customerName}}</td> -->
+					<td>{{data.envelopeStatus}}</td>
+					<td>{{data.envelopeDescription}}</td>
+					
+					<td>{{data.envelopeEntered}}</td>
+					<td>{{data.exceptionStatus}}</td>
+					<td>{{data.reason}}</td>
+					<td>{{data.employeeLastName}}</td>
+					
+					<td>{{data.exceptionEntered}}</td>
+					<td>{{data.orderPrice}}</td>
+					<td>{{data.soldPrice}}</td>
+					<td>{{data.refusedPrints}}</td>
+				  </tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<div ng-if="exceptionReport.viewSection == 'Exception Report - by Employee'">
+			<table class="table table-condensed table-hover table-bordered sortableTable fontSize80">
+				<thead>
+					  <tr>
+						<th>Employee Name</th>
+						<th colspan="2">Total Exceptions</th>
+						<th colspan="2">Refused</th>
+						<th colspan="2">Remake</th>
+						<th colspan="2">Cancel</th>
+						<th colspan="2">Un-sellable</th>
+						<th colspan="2">Sold for free</th>
+						<th colspan="2">Price Modify</th>
+						<th colspan="2">Missing</th>
+						
+					  </tr>
+					  <tr>
+						<td></td>
+						<td>count</td><td>$</td>
+						<td>count</td><td>$</td>
+						<td>count</td><td>$</td>
+						<td>count</td><td>$</td>
+						<td>count</td><td>$</td>
+						<td>count</td><td>$</td>
+						<td>count</td><td>$</td>
+						<td>count</td><td>$</td>
+						
+					  </tr>
+					</thead>
+					<tbody>
+				
+					  <tr ng-repeat="data in workspace.printableData.empResponseList" class="cPointer">
+					  	<td>{{data.empName}}</td>
+					  	 
+						<td>{{data.totalExceptions.count}}</td>
+						<td>{{data.totalExceptions.dollars}}</td>
+						
+						<td>{{data.refused.count}}</td>
+						<td>{{data.refused.dollars}}</td>
+						
+						<td>{{data.remake.count}}</td>
+						<td>{{data.remake.dollars}}</td>
+						
+						<td>{{data.cancel.count}}</td>
+						<td>{{data.cancel.dollars}}</td>
+						
+						<td>{{data.unSellable.count}}</td>
+						<td>{{data.unSellable.dollars}}</td>
+						
+						<td>{{data.soldForFree.count}}</td>
+						<td>{{data.soldForFree.dollars}}</td>
+									
+						<td>{{data.priceModify.count}}</td>
+						<td>{{data.priceModify.dollars}}</td>
+						
+						<td>{{data.missing.count}}</td>
+						<td>{{data.missing.dollars}}</td>
+					  </tr>
+					</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<div class="showMacDowntimePrint" ng-show="showMacDowntimePrint">
+		<table  class="table table-condensed table-hover table-bordered">
+			<thead>
+				  <tr>
+					<th>Machine Name</th>
+					<th>Equipment Name</th>
+					<th>Component Name</th>
+					<th>Entered By</th>
+					<th>Start Time</th>
+					<th>End Time</th>
+					<th>Duration</th>
+					<th>Reason</th>
+				  </tr>
+				</thead>
+				<tbody>
+				  <tr  ng-repeat="data1 in store.data" >
+					<td>{{data1.machineName}}</td>
+					<td>{{data1.equipmentName}}</td>
+					<td>{{data1.componentName}}</td>
+					<td>{{data1.enteredBy}}</td>
+					<td>{{data1.startTime}}</td>
+					<td>{{data1.endTime}}</td>
+					<td>{{data1.duration}}</td>
+					<td>{{data1.reason}}</td>
+				  </tr>
+				</tbody>
+		</table>
+	</div>
+	<div class="showLateEnvPrint" ng-show="showLateEnvPrint">
+		<table class="table table-condensed table-hover table-bordered" ng-show="showTable">
+			<thead>
+			  <tr>
+				<th>Env#</th>
+				<th>Origin of Order</th>
+				<th>Processing type</th>
+				<th>Order Status</th>
+				<th>Employee Took Order</th>
+				<th>Time Submitted</th>
+				<th>Time Promised</th>
+				<th>Time Done</th>
+			  </tr>
+			</thead>
+			<tbody>
+		
+			  <tr ng-repeat="data in workspace.printData">
+				
+				<!-- <td ng-click="openPopup($index)">{{data.envelopeNumber}}</td> -->
+				<td>{{data.envelopeNumber | numberFixedLen:6}}</td>
+				<td>{{data.orderOriginType}}</td>
+				<td>{{data.processingTypeCD}}</td>			
+				<td>{{data.status}}</td>
+				<td>{{data.employeeTookOrder}}</td>
+				<td>{{data.timeSubmitted}}</td>
+				<td>{{data.timePromised}}</td>
+				<td>{{data.timeDone}}</td>
+			  </tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="showUnclaimedPrint" ng-show="showUnclaimedPrint">
+		<table class="table table-condensed table-hover table-bordered">
+			<thead>
+				  <tr>
+					<th>Customer Name</th>
+					<th>Phone</th>
+					<th>Total Envelopes</th>
+					<th>Total Value</th>
+					<th>Order date range</th>
+				  </tr>
+				</thead>
+				<tbody>
+			
+				  <tr ng-repeat="data in workspace.printableData.unclaimedBeanList">
+				  	<td>{{data.customerName}}</td> 
+					<td>{{data.phoneNumber}}</td>
+					<td>{{data.totalEnvelope}}</td>
+					<td>{{data.totalValue}}</td>			
+					<td>{{data.orderRangePlaceddate}}</td>
+				  </tr>
+				</tbody>
+		</table>
+	</div>
+	<div class="showPOFPrint" ng-show="showPOFPrint">
+		<table class="table table-condensed table-hover table-bordered">
+			<thead>
+				  <tr>
+					<th>S. No.</th>
+					<th>Store No.</th>
+					<th>Reporting Date</th>
+					<th>Envelope Number</th>
+					<th>EDI UPC (Day/Store#/Envelope Number)</th>
+					<th>Quantity</th>
+					<th>Cost</th>
+					<th>Done Date</th>
+				  </tr>
+			</thead>
+			<tbody>
+				  <tr ng-repeat="data in workspace.printableData.repByPayOnFulfillmentList">
+					<td>{{data.serialNumber}}</td>
+					<td>{{data.storeNumber}}</td>
+					<td>{{data.reportingDate}}</td>
+					<td>{{data.envelopeNumber | numberFixedLen:6}}</td>
+					<td>{{data.eDIupc}}</td>
+					<td>{{data.quantity}}</td>
+					<td>{{data.cost}}</td>
+					<td>{{data.doneDate}}</td>
+				  </tr>
+			</tbody>
+		</table>
+	</div>
+</div>

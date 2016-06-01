@@ -1,0 +1,59 @@
+<div class="containercustom" ng-repeat="store in workspace.data.store" >
+  <div class="row paddingTopBottom3">
+	<div class=" col-sm-12 col-md-6 nopadding">
+
+	<span class="label label-default" ng-show="store.regionNumber">Region: {{store.regionNumber}}</span>
+	<span class="label label-primary" ng-show="store.districtNumber">District: {{store.districtNumber}}</span>
+	<span class="label label-success" ng-show="store.storeNumber">Store: {{store.storeNumber}}</span>
+		
+	</div>
+	<div class="col-sm-12 col-md-6 nopadding">
+		  
+  
+	
+	  <div class="pull-right">
+		<button class="btn btn-default btn-xs marginTopMin20 paddingT7L11"><!-- ui-sref="report.addtodashboard({'reportId':workspace.id})"-->
+			<i class="glyphicon glyphicon-star"></i>Add to Dashboard</button>
+	   <button class="btn btn-default btn-xs marginTopMin20 paddingT7L11" ng-click="printDiv(store.storeNumber)" >Print</button>
+	   <button class="btn btn-default btn-xs marginTopMin20 paddingT7L11" ng-click="exportMachineRptToExcel(store.storeNumber)">Export</button>
+		<pagination  previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" total-items="store.totalRecord" items-per-page="store.data.length" boundary-links="true" ng-model="store.currentPage" class="pagination-sm nomargin" max-size="5" rotate="false" ng-click="changeStorePagination('machine',$index)" ></pagination>
+			   
+	  </div>    
+  
+	</div>
+
+  </div>
+  <div  ng-attr-id="{{ store.storeNumber}}" class="">
+	  <table  class="table table-condensed table-hover table-bordered">
+		<thead>
+			  <tr>
+				<th>Machine Name</th>
+				<th>Equipment Name</th>
+				<th>Component Name</th>
+				<th>Entered By</th>
+				<th>Start Time</th>
+				<th>End Time</th>
+				<th>Duration</th>
+				<th>Reason</th>
+
+			  </tr>
+			</thead>
+			<tbody>
+			  <tr  ng-repeat="data in store.data" >
+				<td>{{data.machineName}}</td>
+				<td>{{data.equipmentName}}</td>
+				<td>{{data.componentName}}</td>
+				<td>{{data.enteredBy}}</td>
+				<td>{{data.startTime}}</td>
+				<td>{{data.endTime}}</td>
+				<td>{{data.duration}}</td>
+				<td>{{data.reason}}</td>
+			  </tr>
+			</tbody>
+	  </table>
+	</div>
+</div>
+
+<button class="btn btn-default btn-xs pull-right  paddingT7L11"><i class="glyphicon glyphicon-star"></i>Add to Dashboard</button>
+		
+		<br/>		<br/>		<br/>		<br/>

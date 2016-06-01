@@ -1,0 +1,56 @@
+	 <div ng-repeat="error in errorMessageText">
+	    <div ng-show="showErrorMessage" class="error-container">
+			<section class="alert wag-alert alert-danger" role="alert">
+				<span class="icon-Alert"></span>
+				<span><strong>Error:</strong> {{error}}</span>
+			</section>
+	  	</div>
+	</div>
+	  <div ng-show="showSuccessMessage " class="error-container">
+			<section class="alert wag-alert alert-success" role="alert">
+				<span class="icon-ConfirmCircle"></span>
+				<span><strong>Success:</strong>{{successMessage}}</span>
+			</section>
+	 </div>
+	<div ng-show="showFilter" class="paddingTopBottom10" ng-click="hideErrorMessage()">
+	   <div class="row">
+		  <div class="col-md-4 paddingTopBottom3">
+			<div class="input-group">
+			  <span class="input-group-addon" >
+				Start Date 
+			  </span>
+			  <input type="text" class="form-control start" placeholder="MM/DD/YYYY" datepicker-popup={{format}} ng-model="licenseContentData.startDate" is-open="workspace.openedStart"  ng-click="open($event,'start')" max-date="endMaxDate"/>
+			</div>
+		  </div>
+		  <div class="col-md-4 paddingTopBottom3">
+			<div class="input-group">
+			  <span class="input-group-addon" >
+				End Date 
+			  </span>
+			  <input type="text" class="form-control end" placeholder="MM/DD/YYYY" datepicker-popup={{format}} ng-model="licenseContentData.endDate" is-open="workspace.openedEnd"  ng-click="open($event,'end')" max-date="endMaxDate"/>
+			</div>
+		  </div>
+		   <div class="col-md-4 paddingTopBottom3">
+			<div class="input-group">
+			  
+			 <span class="input-group-addon"> Email : </span>
+			 	<input class="form-control ng-pristine ng-valid ng-touched" type="text" ng-model="licenseContentData.emailIds" ng-click="hideErrorMessage()">
+				<span class="input-group-addon"> @walgreens.com </span>
+			</div>  
+			</div>
+		  </div>
+		</div>
+		<div class="row filter-buttons">
+			<div class="col-md-12 pull-right" id="messageId">
+				
+			</div>
+		</div>
+		<div class="row filter-buttons">
+			<div class="col-md-12 pull-right">
+				<button class="btn btn-info pull-right btn-xs wag-btn-primary-sm" id="submit" ng-show="showFilter" ng-hide="addDashboardPop" ng-click="updateData($event,'licenseContentReport')" >Submit</button>
+			</div>
+		</div>
+		 
+	</div>		
+  </div>
+ </div>

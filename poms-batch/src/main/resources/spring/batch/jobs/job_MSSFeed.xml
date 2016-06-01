@@ -1,0 +1,291 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+  		
+	<!-- Import Common Job : Start -->
+	<import resource="classpath:spring/batch/jobs/job_Common.xml" />
+	<!-- Import Common Job : End -->		
+		
+	
+	<bean id="DailyMSSdecider" class="com.walgreens.batch.central.decider.DailyMSSStepDecider"></bean>
+		                          	
+	 <batch:job id="dailyMSSJob">
+					<!-- MSS JOB PARAM  -->	 
+	 	<batch:step id="dailyMSSStep1" next="dailyMSSStep2" >
+			<batch:tasklet ref="mssJobParamTasklet"></batch:tasklet>
+		</batch:step>
+					<!-- Delete Old Feed Files -->		
+		<batch:step id="dailyMSSStep2" next="deploymentProcessJob2" >
+			<batch:tasklet ref="deleteOldFeedFileTasklet"></batch:tasklet>
+		</batch:step>
+					<!-- Deployment Process Reader And Writer -->
+		<batch:step id="deploymentProcessJob2" next="deploymentProcessDecider2">
+			<batch:tasklet>
+				<batch:chunk reader="deploymentProcessReader1" writer="deploymentProcessWriter1"
+						commit-interval="1">
+				</batch:chunk>
+			</batch:tasklet>
+		</batch:step>
+					<!-- Deployment Process Decider -->	
+		<batch:decision id="deploymentProcessDecider2" decider="deploymentProcessDecider">
+	        	 <batch:next on="COMPLETED" to="UpdatePreFlagSelectedStoredecision" />
+	        	 <batch:next on="FAILED" to="UpdatePreFlagAllStoredecision" />
+	    </batch:decision>
+	    			<!-- UpdatePreFlag Decision For Selected Store -->
+		<batch:decision id="UpdatePreFlagSelectedStoredecision" decider="DailyMSSdecider">
+	        	 <batch:next on="COMPLETED" to="dailyMSSStep3" />
+	        	 <batch:next on="FAILED" to="dailyMSSStep4" />
+	    </batch:decision>
+	    			<!-- UpdatePreFlag Decision For All Store -->
+	    <batch:decision id="UpdatePreFlagAllStoredecision" decider="DailyMSSdecider">
+	        	 <batch:next on="COMPLETED" to="dailyMSSStep5" />
+	        	 <batch:next on="FAILED" to="dailyMSSStep6" />
+	    </batch:decision>
+	    			<!-- UpdatePreFlag MSS_TRANSFER_CD='I' For Selected Store -->
+		<batch:step id="dailyMSSStep3" next="dailyMSSStep7">
+			<batch:tasklet ref="updatePreFlagSelectedStore1Tasklet"></batch:tasklet>
+		</batch:step>
+		<batch:step id="dailyMSSStep4" next="dailyMSSStep8">
+			<batch:tasklet ref="updatePreFlagSelectedStore2Tasklet"></batch:tasklet>
+		</batch:step>
+					<!-- UpdatePreFlag MSS_TRANSFER_CD='I' For All Store -->
+		<batch:step id="dailyMSSStep5" next="dailyMSSStep9">
+			<batch:tasklet ref="updatePreFlagAllStore1Tasklet"></batch:tasklet>
+		</batch:step>
+		<batch:step id="dailyMSSStep6" next="dailyMSSStep10">
+			<batch:tasklet ref="updatePreFlagAllStore2Tasklet"></batch:tasklet>
+		</batch:step>
+					<!-- Flat File Creation For Selected Store -->
+		<batch:step id="dailyMSSStep7" next="dailyMSSStep11">
+				<batch:tasklet>
+					<batch:chunk reader="dailyMSSFileReaderSelectedStore"  writer="dailyMSSFileWriterSelectedStore"
+						commit-interval="20000">
+					</batch:chunk>
+				</batch:tasklet>
+		</batch:step>
+		<batch:step id="dailyMSSStep8" next="dailyMSSStep11">
+				<batch:tasklet>
+					<batch:chunk reader="dailyMSSFileReaderSelectedStore1"  writer="dailyMSSFileWriterSelectedStore1"
+						commit-interval="20000">
+					</batch:chunk>
+				</batch:tasklet>
+		</batch:step>
+					<!-- Flat File Creation For All Store -->
+		<batch:step id="dailyMSSStep9" next="dailyMSSStep11">
+				<batch:tasklet>
+					<batch:chunk reader="dailyMSSFileReaderAllStore"  writer="dailyMSSFileWriterAllStore"
+						commit-interval="20000">
+					</batch:chunk>
+				</batch:tasklet>
+		</batch:step>
+		<batch:step id="dailyMSSStep10" next="dailyMSSStep11">
+				<batch:tasklet>
+					<batch:chunk reader="dailyMSSFileReaderAllStore1"  writer="dailyMSSFileWriterAllStore1"
+						commit-interval="20000">
+					</batch:chunk>
+				</batch:tasklet>
+		</batch:step>
+					<!-- File Moving From Source To Exact For All/Selected Store -->
+		 <batch:step id="dailyMSSStep11" next="deploymentProcessDecider3">
+			<batch:tasklet ref="fileMovingTasklet"></batch:tasklet>
+		</batch:step>
+					<!-- Deployment Process Decider -->	
+		<batch:decision id="deploymentProcessDecider3" decider="deploymentProcessDecider">
+	        	 <batch:next on="COMPLETED" to="UpdatePostFlagSelectedStoredecision" />
+	        	 <batch:next on="FAILED" to="UpdatePostFlagAllStoredecision" />
+	    </batch:decision>
+	    			<!-- UpdatePostFlag Decider For Selected Store -->	
+		<batch:decision id="UpdatePostFlagSelectedStoredecision" decider="DailyMSSdecider">
+	        	 <batch:next on="COMPLETED" to="dailyMSSStep12" />
+	        	 <batch:next on="FAILED" to="dailyMSSStep13" />
+	    </batch:decision>
+	    			<!-- UpdatePostFlag Decider For All Store -->	
+	    <batch:decision id="UpdatePostFlagAllStoredecision" decider="DailyMSSdecider">
+	        	 <batch:next on="COMPLETED" to="dailyMSSStep14" />
+	        	 <batch:next on="FAILED" to="dailyMSSStep15" />
+	    </batch:decision>
+	    			<!-- UpdatePreFlag MSS_TRANSFER_CD='Y' For Selected Store -->
+		<batch:step id="dailyMSSStep12" next="dailyMSSStep16">
+			<batch:tasklet ref="updatePostFlagSelectedStore1Tasklet"></batch:tasklet>
+		</batch:step>
+		<batch:step id="dailyMSSStep13" next="dailyMSSStep16">
+			<batch:tasklet ref="updatePostFlagSelectedStore2Tasklet"></batch:tasklet>
+		</batch:step>
+					<!-- UpdatePreFlag MSS_TRANSFER_CD='Y' For All Store -->
+		<batch:step id="dailyMSSStep14" next="dailyMSSStep16">
+			<batch:tasklet ref="updatePostFlagAllStore1Tasklet"></batch:tasklet>
+		</batch:step>
+					<!-- UpdatePreFlag MSS_TRANSFER_CD='Y' For All Store -->
+		<batch:step id="dailyMSSStep15" next="dailyMSSStep16">
+			<batch:tasklet ref="updatePostFlagAllStore2Tasklet"></batch:tasklet>
+		</batch:step>
+					<!-- File Moving From Exact To Archive For All/Selected Store -->
+		<batch:step id="dailyMSSStep16">
+			<batch:tasklet ref="fileMovingTOArchiveTasklet"></batch:tasklet>
+		</batch:step>
+	</batch:job>
+	
+	<!-- DailyMSS Step 1 MSSJobParam -->
+	<bean id="mssJobParamTasklet" class="com.walgreens.batch.central.tasklet.MSSJobParamTasklet" scope="step"></bean>				
+	<!-- DailyMSS Step 2 Delete Old Feed File-->
+	<bean id="deleteOldFeedFileTasklet" class="com.walgreens.batch.central.tasklet.MSSDeleteFeedFileTasklet" scope="step"></bean>
+	<!-- DailyMSS Deployment Process Reader and Writer -->
+	<bean id="deploymentProcessReader1" scope="step" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="omniDataSource" />
+		<property name="sql" value="#{PhotoOmniBatchsql['MSS_DEPLOYMENT_PROCESS']}" />
+		<property name="rowMapper">
+			<bean class="com.walgreens.batch.central.rowmapper.DeploymentProcessRowmapper" />
+		</property>
+	</bean>
+	<bean id="deploymentProcessWriter1" class="com.walgreens.batch.central.writer.DeploymentProcessWriter" scope="step">
+	</bean>
+	
+	<!-- DailyMSS Step 3 UpdatePreFlag MSS_TRANSFER_CD='I' For Selected Store-->
+	<bean id="updatePreFlagSelectedStore1Tasklet" class="com.walgreens.batch.central.tasklet.MSSUpdatePreFlagTasklet" scope="step">
+		<property name="query" value="#{PhotoOmniBatchsql['MSS_UPDATE_PRE_FLAG_SEL_STORE_WITH_BEGIN']}"></property>
+		<property name="omniJdbcTemplate" ref="omniJdbcTemplate" ></property>
+		<property name="beginDate" value = "#{jobParameters['${data.begin.dttm}']}"></property>
+	 	<property name="endDate" value = "#{jobParameters['${data.end.dttm}']}"></property>
+	</bean>
+	<!-- DailyMSS Step 4 UpdatePreFlag MSS_TRANSFER_CD='I' For Selected Store -->
+	<bean id="updatePreFlagSelectedStore2Tasklet" class="com.walgreens.batch.central.tasklet.MSSUpdatePreFlagTasklet" scope="step">
+		<property name="query" value="#{PhotoOmniBatchsql['MSS_UPDATE_PRE_FLAG_SEL_STORE_WITHOUT_BEGIN']}"></property>
+		<property name="omniJdbcTemplate" ref="omniJdbcTemplate" ></property>
+	 	<property name="endDate" value = "#{jobParameters['${data.end.dttm}']}"></property>
+	</bean>
+	<!-- DailyMSS Step 5 UpdatePreFlag MSS_TRANSFER_CD='I' For All Store-->
+	<bean id="updatePreFlagAllStore1Tasklet" class="com.walgreens.batch.central.tasklet.MSSUpdatePreFlagTasklet" scope="step">
+		<property name="query" value="#{PhotoOmniBatchsql['MSS_UPDATE_PRE_FLAG_ALL_STORE_WITH_BEGIN']}"></property>
+		<property name="omniJdbcTemplate" ref="omniJdbcTemplate" ></property>
+		<property name="beginDate" value = "#{jobParameters['${data.begin.dttm}']}"></property>
+	 	<property name="endDate" value = "#{jobParameters['${data.end.dttm}']}"></property>
+	</bean>
+	<!-- DailyMSS Step 6 UpdatePreFlag MSS_TRANSFER_CD='I' For All Store -->
+	<bean id="updatePreFlagAllStore2Tasklet" class="com.walgreens.batch.central.tasklet.MSSUpdatePreFlagTasklet" scope="step">
+		<property name="query" value="#{PhotoOmniBatchsql['MSS_UPDATE_PRE_FLAG_ALL_STORE_WITHOUT_BEGIN']}"></property>
+		<property name="omniJdbcTemplate" ref="omniJdbcTemplate" ></property>
+	 	<property name="endDate" value = "#{jobParameters['${data.end.dttm}']}"></property>
+	</bean>
+	<!-- DailyMSS Step 7 Flat File Creation For Selected Store -->
+	 <bean id="dailyMSSFileReaderSelectedStore" class="org.springframework.batch.item.database.JdbcCursorItemReader" scope="step">
+	 	<property name="dataSource" ref="omniDataSource" ></property>
+		<property name="sql" value="#{PhotoOmniBatchsql['MSS_FLAT_FILE_DATA_SEL_STORE_WITH_BEGIN']}">
+     	</property>
+     	<property name="preparedStatementSetter" ref="statementSetterEndBegin" />
+		<property name="rowMapper">
+		<bean class="com.walgreens.batch.central.rowmapper.DailyMSSRowMapper"></bean>
+		</property>
+     </bean>
+     <bean id="dailyMSSFileWriterSelectedStore" class="com.walgreens.batch.central.writer.DailyMSSFileWriter" scope="step">
+		<property name="fileName" value="${mss.src.folder.path}#{jobParameters['${job.submit.date}']}.daily.photo.#{jobExecutionContext['FILE_SYS_TIME']}.txt"></property>
+	</bean>
+	<!-- DailyMSS Step 8 Flat File Creation For Selected Store -->
+	<bean id="dailyMSSFileReaderSelectedStore1" class="org.springframework.batch.item.database.JdbcCursorItemReader" scope="step">
+	 	<property name="dataSource" ref="omniDataSource" ></property>
+		<property name="sql" value="#{PhotoOmniBatchsql['MSS_FLAT_FILE_DATA_SEL_STORE_WITHOUT_BEGIN']}">
+     	</property>
+     	<property name="preparedStatementSetter" ref="statementSetterEnd" />
+		<property name="rowMapper">
+		<bean class="com.walgreens.batch.central.rowmapper.DailyMSSRowMapper"></bean>
+		</property>
+     </bean>
+     <bean id="dailyMSSFileWriterSelectedStore1" class="com.walgreens.batch.central.writer.DailyMSSFileWriter" scope="step">
+		<property name="fileName" value="${mss.src.folder.path}#{jobParameters['${job.submit.date}']}.daily.photo.#{jobExecutionContext['FILE_SYS_TIME']}.txt"></property>
+	</bean>
+
+	<bean id="statementSetterEndBegin" class="org.springframework.batch.core.resource.ListPreparedStatementSetter" scope="step">
+		<property name="parameters">
+			<list>
+				<value>#{jobParameters['${data.end.dttm}']}</value>
+				<value>#{jobParameters['${data.begin.dttm}']}</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="statementSetterEnd" class="org.springframework.batch.core.resource.ListPreparedStatementSetter" scope="step">
+		<property name="parameters">
+			<list>
+				<value>#{jobParameters['${data.end.dttm}']}</value>
+			</list>
+		</property>
+	</bean>
+    
+     <!-- DailyMSS Step 9 Flat File Creation For All Store -->
+	 <bean id="dailyMSSFileReaderAllStore" class="org.springframework.batch.item.database.JdbcCursorItemReader" scope="step">
+	 	<property name="dataSource" ref="omniDataSource" ></property>
+		<property name="sql" value="#{PhotoOmniBatchsql['MSS_FLAT_FILE_DATA_ALL_STORE_WITH_BEGIN']}">
+     	</property>
+     	<property name="preparedStatementSetter" ref="statementSetterEndBegin" />
+     	<property name="rowMapper">
+				<bean class="com.walgreens.batch.central.rowmapper.DailyMSSRowMapper"></bean>
+		</property>
+     </bean>
+	<bean id="dailyMSSFileWriterAllStore" class="com.walgreens.batch.central.writer.DailyMSSFileWriter" scope="step">
+		<property name="fileName" value="${mss.src.folder.path}#{jobParameters['${job.submit.date}']}.daily.photo.#{jobExecutionContext['FILE_SYS_TIME']}.txt"></property>
+	</bean>
+	<!-- DailyMSS Step 10 Flat File Creation For All Store -->
+	<bean id="dailyMSSFileReaderAllStore1" class="org.springframework.batch.item.database.JdbcCursorItemReader" scope="step">
+	 	<property name="dataSource" ref="omniDataSource" ></property>
+		<property name="sql" value="#{PhotoOmniBatchsql['MSS_FLAT_FILE_DATA_ALL_STORE_WITHOUT_BEGIN']}">
+     	</property>
+     	<property name="preparedStatementSetter" ref="statementSetterEnd" />
+     	<property name="rowMapper">
+				<bean class="com.walgreens.batch.central.rowmapper.DailyMSSRowMapper"></bean>
+		</property>
+     </bean>
+	<bean id="dailyMSSFileWriterAllStore1" class="com.walgreens.batch.central.writer.DailyMSSFileWriter" scope="step">
+		<property name="fileName" value="${mss.src.folder.path}#{jobParameters['${job.submit.date}']}.daily.photo.#{jobExecutionContext['FILE_SYS_TIME']}.txt"></property>
+	</bean>
+	 <!-- DailyMSS Step 11 File Moving From Source To Exact For All/Selected Store -->
+	<bean id="fileMovingTasklet" class="com.walgreens.batch.central.tasklet.MSSFileMovingTasklet" scope="step"></bean>
+	<!-- DailyMSS Step 12 UpdatePreFlag MSS_TRANSFER_CD='Y' For Selected Store -->
+	<bean id="updatePostFlagSelectedStore1Tasklet" class="com.walgreens.batch.central.tasklet.MSSUpdatePostFlagTasklet" scope="step">
+		<property name="query" value="#{PhotoOmniBatchsql['MSS_UPDATE_POST_FLAG_SEL_STORE_WITH_BEGIN']}"></property>
+		<property name="omniJdbcTemplate" ref="omniJdbcTemplate" ></property>
+		<property name="beginDate" value = "#{jobParameters['${data.begin.dttm}']}"></property>
+	 	<property name="endDate" value = "#{jobParameters['${data.end.dttm}']}"></property>
+	 	<property name="jobSubmitDate" value = "#{jobParameters['${job.submit.date}']}"></property>
+	 	<property name="fileSysTime" value = "#{jobExecutionContext['FILE_SYS_TIME']}"></property>
+	</bean>
+	<!-- DailyMSS Step 13 UpdatePreFlag MSS_TRANSFER_CD='Y' For Selected Store -->
+	<bean id="updatePostFlagSelectedStore2Tasklet" class="com.walgreens.batch.central.tasklet.MSSUpdatePostFlagTasklet" scope="step">
+		<property name="query" value="#{PhotoOmniBatchsql['MSS_UPDATE_POST_FLAG_SEL_STORE_WITHOUT_BEGIN']}"></property>
+		<property name="omniJdbcTemplate" ref="omniJdbcTemplate" ></property>
+	 	<property name="endDate" value = "#{jobParameters['${data.end.dttm}']}"></property>
+	 	<property name="jobSubmitDate" value = "#{jobParameters['${job.submit.date}']}"></property>
+	 	<property name="fileSysTime" value = "#{jobExecutionContext['FILE_SYS_TIME']}"></property>
+	</bean>
+	<!-- DailyMSS Step 14 UpdatePreFlag MSS_TRANSFER_CD='Y' For ALL Store -->
+	<bean id="updatePostFlagAllStore1Tasklet" class="com.walgreens.batch.central.tasklet.MSSUpdatePostFlagTasklet" scope="step">
+		<property name="query" value="#{PhotoOmniBatchsql['MSS_UPDATE_POST_FLAG_ALL_STORE_WITH_BEGIN']}"></property>
+		<property name="omniJdbcTemplate" ref="omniJdbcTemplate" ></property>
+		<property name="beginDate" value = "#{jobParameters['${data.begin.dttm}']}"></property>
+	 	<property name="endDate" value = "#{jobParameters['${data.end.dttm}']}"></property>
+	 	<property name="jobSubmitDate" value = "#{jobParameters['${job.submit.date}']}"></property>
+	 	<property name="fileSysTime" value = "#{jobExecutionContext['FILE_SYS_TIME']}"></property>
+	</bean>
+	<!-- DailyMSS Step 15 UpdatePreFlag MSS_TRANSFER_CD='Y' For ALL Store -->
+	<bean id="updatePostFlagAllStore2Tasklet" class="com.walgreens.batch.central.tasklet.MSSUpdatePostFlagTasklet" scope="step">
+		<property name="query" value="#{PhotoOmniBatchsql['MSS_UPDATE_POST_FLAG_ALL_STORE_WITHOUT_BEGIN']}"></property>
+		<property name="omniJdbcTemplate" ref="omniJdbcTemplate" ></property>
+	 	<property name="endDate" value = "#{jobParameters['${data.end.dttm}']}"></property>
+	 	<property name="jobSubmitDate" value = "#{jobParameters['${job.submit.date}']}"></property>
+	 	<property name="fileSysTime" value = "#{jobExecutionContext['FILE_SYS_TIME']}"></property>
+	</bean>
+	<!-- DailyMSS Step 16 File Moving From Exact To Archive For All/Selected Store -->
+	<bean id="fileMovingTOArchiveTasklet" class="com.walgreens.batch.central.tasklet.MSSArchiveFolderTasklet" scope="step"></bean>
+	
+		 
+	</beans>	
+		

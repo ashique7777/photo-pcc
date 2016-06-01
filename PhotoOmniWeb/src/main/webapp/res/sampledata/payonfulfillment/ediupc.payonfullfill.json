@@ -1,0 +1,43 @@
+{
+	"totalRecord" : "10",
+	"currrentPage" : "1",
+	"searchType" : "EDIUPC",
+	"store" : "59156",
+	"vendorName" : "District Photo",
+	"envelopeNo" : "123456",
+	"vendorTotalCost" : "$10.00",
+	"asnReceivedDttm" : "08/22/2013",
+	"dttmDone" : "08/22/2013",
+	"ediTransmittedDttm" : "08/22/2013",
+	"calculatedRetailPrice" : "$10.00",
+	"productDetail": [
+		{
+			"id" : "1234",
+			"product" :"APS neg picture CD",
+			"wic" : "780374",
+			"upc" : "4220000139",
+			"quantity" : "2",
+			"vendorItem" : "$2.00"
+		},
+		{
+			"id" : "1254",
+			"product" :"APS Glossy 40 exp",
+			"wic" : "780374",
+			"upc" : "4220000139",
+			"quantity" : "3",
+			"vendorItem" : "$4.00"
+		},
+		{
+			"id" : "1454",
+			"product" :"PAN 4x12 Glossy 12 exp",
+			"wic" : "780374",
+			"upc" : "4220000139",
+			"quantity" : "4",
+			"vendorItem" : "$10.00"
+		}
+		
+	]
+	
+	
+
+}

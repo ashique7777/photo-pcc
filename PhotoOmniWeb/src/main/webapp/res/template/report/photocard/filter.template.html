@@ -1,0 +1,118 @@
+<style>
+ul.listbox {
+    border: 1px solid #D8D8D8;
+    height: 200px;
+    margin: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    padding: 0;
+    width: 100%;
+}
+ul.listboxHead{
+    border: 1px solid #D8D8D8;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background-color: #D8D8D8;
+}
+ul.listboxHead li {
+    display: block;
+    margin: 1px 5px;
+    overflow: hidden;
+    padding: 0;
+}
+ul.listbox li {
+    display: block;
+    margin: 1px 5px;
+    overflow: hidden;
+    padding: 0;
+}
+</style>
+<div ng-controller="SalesReportByProductCtrl">
+<div class="error-container" ng-show="showErrorContainer">
+	<section class="alert wag-alert alert-danger" role="alert">
+		<span class="icon-Alert"></span>
+		<span><strong>Error: </strong>{{errorMessage}}</span>
+	</section>
+</div>
+<div ng-show="showSucessContainer">
+<div ng-show="workspace.data.status " class="error-container">
+			<section class="alert wag-alert alert-success" role="alert">
+				<span class="icon-ConfirmCircle"></span>
+				<span><strong>Success: </strong>Your request for the Report ID {{workspace.data.reportId}} has been {{workspace.data.responseMessage}}. An E-mail will be triggered with the report.</span>
+			</section>
+</div>
+<div class="alert alert-danger alert-dismissible" role="alert" ng-show="!workspace.data.status && workspace.data.responseMessage ">
+ <span><strong>Failure: </strong>Your request for the report has been {{workspace.data.responseMessage}}.</span>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12 col-md-12 nopadding">
+		<span class="col-sm-12 col-md-12 nopadding"> Date Range restriction for generating report is 93 days.
+		 </span>
+	</div>  
+     <div class="col-md-3 paddingTopBottom3">
+       <div class="input-group">
+         <span class="input-group-addon" >
+           Start Date 
+         </span>
+         <input type="text" class="form-control" placeholder="MM/DD/YYYY" datepicker-popup={{format}} ng-model="workspace.filter.startDate" is-open="workspace.openedStart"  
+         close-text="Close"  max-date="endMaxDate" ng-click="open($event,'start',workspace)" ng-required="true"/>
+       </div>
+     </div>
+     <div class="col-md-3 paddingTopBottom3">
+       <div class="input-group">
+          <span class="input-group-addon" >
+           End Date 
+         </span>
+         <input type="text" class="form-control" placeholder="MM/DD/YYYY" datepicker-popup={{format}} ng-model="workspace.filter.endDate" is-open="workspace.openedEnd"  
+         close-text="Close" max-date="endMaxDate" ng-click="open($event,'end',workspace)" ng-required="true"/>
+       </div>
+     </div>
+</div>
+</br>
+<div class="row">
+	<div class="col-md-3">
+		<ul  class="listboxHead">
+			<li style="background-color:#D8D8D8;"/><input type="checkbox" ng-model="workspace.defaultFilters.selectAllProduct" 
+			ng-click= "hideMessage()" ng-change="selectAllProduct(workspace)"> &nbsp;&nbsp;<b>Select Product</b></li>
+		</ul>
+		<ul class="listbox">
+			<li ng-repeat="productCat in workspace.defaultFilters.productCategory"><input type="checkbox" ng-model="productCat.selected" 
+			ng-click= "hideMessage()" value="{{productCat.CODE}}"/> &nbsp;&nbsp;{{productCat.DESCRIPTION}}</li>
+		</ul>
+	</div>
+	
+	<div class="col-md-3">
+		<ul  class="listboxHead">
+			<li style="background-color:#D8D8D8;"><input type="checkbox" ng-model="workspace.defaultFilters.selectAllSize" 
+			ng-click= "hideMessage()" ng-change="selectAllSize(workspace)"/> &nbsp;&nbsp;<b>Select Size</b></li>
+		</ul>
+		<ul class="listbox">
+			<li ng-repeat="productSize in workspace.defaultFilters.productSizes"><input type="checkbox" ng-model="productSize.selected" 
+			ng-click= "hideMessage()" value="{{productSize.CODE}}"/> &nbsp;&nbsp;{{productSize.DESCRIPTION}}</li>
+		</ul>
+	</div>
+	
+</div>
+</br>
+<div class="row">
+	<div class="col-md-6">
+		<div class="input-group">
+			<span class="input-group-addon"> Email  </span> <input type= "text"
+				class="form-control" ng-model="workspace.filter.emailIds" ng-click= "hideMessage()" /> <span
+				class="input-group-addon"> @walgreens.com </span>
+		</div>
+		<div class="col-sm-12 col-md-12 nopadding align-center">
+			<span>Enter user name (multiple separated by commas)</span>
+		</div>
+	</div>
+</div>
+
+
+<div class="row filter-buttons">
+	<div class="col-md-6" style="text-align:center;">
+		<button class="btn btn-info  btn-xs wag-btn-primary-sm"  ng-click="saveSalesReportByProduct()" >Submit</button>
+	</div>
+</div>
+</div>

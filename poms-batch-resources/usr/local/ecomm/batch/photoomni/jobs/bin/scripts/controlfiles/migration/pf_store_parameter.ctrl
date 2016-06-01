@@ -1,0 +1,12 @@
+LOAD DATA append into table OM_PF_STORE_PARAMETER_TMP TRAILING NULLCOLS
+( 
+PF_PARAMETER_ID char terminated by '^|' OPTIONALLY ENCLOSED BY '"' ,
+PF_LOCATION_NUMBER char terminated by '^|' OPTIONALLY ENCLOSED BY '"' , 
+PF_LOCATION_TYPE char terminated by '^|' OPTIONALLY ENCLOSED BY '"' ,
+PF_PARAMETER_VALUE char terminated by  '^|' OPTIONALLY ENCLOSED BY '"' ,
+PF_TRANSFER_IND char terminated by '^|' OPTIONALLY ENCLOSED BY '"' "nvl(substr(trim(:PF_TRANSFER_IND),1,1),' ')", 
+ID_CREATED char terminated by '^|' OPTIONALLY ENCLOSED BY '"' , 
+DATE_TIME_CREATED DATE  "MM/DD/RRRR HH24:MI:SS" terminated by '^|' OPTIONALLY ENCLOSED BY '"'  ,
+ID_MODIFIED char terminated by '^|' OPTIONALLY ENCLOSED BY '"' , 
+DATE_TIME_MODIFIED DATE  "MM/DD/RRRR HH24:MI:SS" terminated by '^|' OPTIONALLY ENCLOSED BY '"' 
+)

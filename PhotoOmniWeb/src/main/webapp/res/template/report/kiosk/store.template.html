@@ -1,0 +1,124 @@
+<style type="text/css">
+.wrap {
+   width: 99%;
+}
+.wrap table {
+	table-layout: fixed;
+   	width: 99%;
+}
+.wrap .inner_table .no-scroll-table { width: 97.8%; }
+.wrap .inner_table .no-scroll-table-small { width: 97.1%; }
+table tr td {
+    padding: 5px;
+    border: 1px solid #eee;
+    word-wrap: break-word;
+}
+table tr th {
+    padding: 5px;
+    border: 1px solid #eee;
+    word-wrap: break-word;
+}
+
+table.head tr td {
+    background: #eee;
+}
+
+.inner_table {
+	height: 170px;
+    overflow-y: auto;
+    margin-right: -16px;
+}
+
+.kiosk_table_10 {
+	width: 10%;
+}
+.kiosk_table_13 {
+	width: 13.33%;
+}
+</style>
+<!-- <div class="row paddingTopBottom3 kioskFilter" ng-if = "workspace.data.data != null && workspace.data.data.length > 0">
+	<div class="kiosk_table_102 col-md-12 nopadding">
+		<span class="label label-primary" ng-show="workspace.data.totalRecord">Total Row: {{workspace.data.totalRecord}}</span>
+	</div>
+</div> -->
+<div class="row paddingTopBottom3 kioskFilter">
+	
+	<!-- commented to remove total row :: 03-24-2015 -->
+	 <!-- <span class="label label-default" ng-show="workspace.data.totalRecord">Total Row: {{workspace.data.totalRecord}}</span> -->
+
+	 <!-- <div class="pull-right">
+	   "Add to dashboard" button removed on 03-24-2015
+	   <button class="btn btn-default btn-xs marginTopMin20 paddingT7L11" ui-sref="report.addtodashboard({'reportId':workspace.id})">
+		<i class="glyphicon glyphicon-star"></i>Add to Dashboard{{workspace.data.id}}</button>
+	   <button class="btn btn-default btn-xs marginTopMin20 paddingT7L11" ng-click="printKioskRpt()">Print</button>
+	   <button class="btn btn-default btn-xs marginTopMin20 paddingT7L11" ng-click="exportKioskRptToExcel()">Export</button>
+	   <pagination  previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" total-items="workspace.data.totalRecord" items-per-page="workspace.data.data.length" boundary-links="true" ng-model="workspace.data.currrentPage" class="pagination-sm nomargin" max-size="5" rotate="false" ng-click="changeStorePagination('kiosk')"></pagination>
+	 </div> -->
+	 
+	 <!-- pagination and button position update -->
+	 
+	 <div class="col-sm-6 col-md-6 nopadding">
+	  
+	   <!--<pagination  previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" total-items="workspace.data.totalRecord" items-per-page="workspace.data.storeDetails.length" boundary-links="true" ng-model="workspace.data.currentPage" class="pagination-sm nomargin" max-size="5" rotate="false" ng-click="changeStorePagination('orders','default')"></pagination>-->
+	   <!-- <ul class="pager wag-pager pagi pull-right marginLeft3 margintop2">
+			<li ng-click="changeStorePagination('kiosk','','','prev')"><span class="wag-btn-default-sm"><i class="icon-ChevronLeft wag-pager-icon-pos"></i></span></li>
+			<li><span>Page {{workspace.data.currentPage}} of {{workspace.data.totalPage}}</span></li>
+			<li ng-click="changeStorePagination('kiosk','','','next')"><span href="#" class="wag-btn-default-sm"><i class="icon-ChevronRight wag-pager-icon-pos"></i></span></li>
+	  </ul> -->
+	  
+	  
+	<!-- "Add to Dashboard" button removed on 03-24-2015 -->
+	<!-- <button class="btn btn-default btn-xs marginTopMin20 paddingT7L11 wag-btn-default-sm">
+		<i class="glyphicon glyphicon-star"></i>Add to Dashboard</button> -->
+	   <button ng-if = "workspace.data.data.length" class="btn btn-default btn-xs marginTopMin20 paddingT7L11 wag-btn-default-sm" ng-click="printKioskRpt()">Print</button>
+	   <button ng-if = "workspace.data.data.length" class="btn btn-default btn-xs marginTopMin20 paddingT7L11 wag-btn-default-sm" ng-click="exportKioskRptToExcel()">Export</button>
+	   <span class="label label-primary"  ng-if = "workspace.data.data != null && workspace.data.data.length > 0" ng-show="workspace.data.totalRecord">Total Row: {{workspace.data.totalRecord}}</span>
+	 </div>
+	 <div class="col-sm-6 col-md-6 nopadding">
+		 <div class="pull-right">
+		  <!-- <pagination  previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" total-items="workspace.data.totalRecord" items-per-page="workspace.data.data.length" boundary-links="true" ng-model="workspace.data.currrentPage" class="pagination-sm nomargin" max-size="5" rotate="false" ng-click="changeStorePagination('kiosk')"></pagination> -->
+		  <wgpagination start-index="1" total-page-count="{{workspace.data.totalPage}}" id="{{$index}}" show-table-data="showTableData" ng-click="changeStorePagination('kiosk',$index)"></wgpagination>
+		  </div>
+	 </div>
+	  
+	  <!-- pagination and button position update -->
+	
+</div>
+<div class="wrap kioskFilter">
+	<table>
+	<thead>
+	  <tr>
+		<th class="kiosk_table_10">Store No.</th>
+		<th class="kiosk_table_10">Kiosk IP</th>
+		<th class="kiosk_table_10">Software version</th>
+		<th class="kiosk_table_10">Template version</th>
+		<th class="kiosk_table_13">iMemories version</th>
+		<th class="kiosk_table_10">TOMO Version</th>
+		<th class="kiosk_table_10">Last Reboot</th>
+		<th class="kiosk_table_13">C Drive Space (MB)</th>
+		<th class="kiosk_table_13">D Drive Space (MB)</th>
+	  </tr>
+	</thead>
+	</table>
+
+	<div class="inner_table">
+		<table ng-class="addClassName()">
+			<tbody><!--tooltip="1HR - 12 4x6 Internet Print 1HR [DONE]"-->
+		  	<tr ng-repeat="data in workspace.data.data"  tooltip-animation="false" ng-if = "workspace.data.data != null && workspace.data.data.length > 0">
+				<td class="kiosk_table_10">{{data.storeNumber}}</td>
+				<td class="kiosk_table_10">{{data.deviceIp}}</td>
+				<td class="kiosk_table_10">{{data.softwareVersion}}</td>
+				<td class="kiosk_table_10">{{data.templateVersion}}</td>
+				<td class="kiosk_table_13">{{data.imemoriesVersion}}</td>
+				<td class="kiosk_table_10">{{data.tomoVersion}}</td>
+				<td class="kiosk_table_10">{{data.lastReboot | date : "MM-dd-yyyy"}}</td>
+				<td class="kiosk_table_13">{{data.cDriveSpaceMb}}</td>
+				<td class="kiosk_table_13">{{data.dDriveSpaceMb}}</td>
+		  	</tr>
+		  	<tr ng-if = "!workspace.data.data.length || showNoDataKiosk">
+		  	<td colspan="9">No Records Found for the Search Criteria.</td>
+	     	</tr>	
+			</tbody>
+		</table>
+	</div>
+</div>

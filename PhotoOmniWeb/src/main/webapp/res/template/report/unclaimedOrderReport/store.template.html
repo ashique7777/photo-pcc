@@ -1,0 +1,73 @@
+<!-- commented to remove total row :: 03-24-2015 -->
+<!-- <div class="row paddingTopBottom3">
+<div class="col-sm-12 col-md-12 nopadding">
+ <span class="label label-default" ng-show="workspace.data.totalRecord">Total Row: {{workspace.data.totalRecord}}</span>
+</div>
+</div> -->
+<div ng-show="showNoDataFound" class="error-container">
+	<section class="alert wag-alert alert-info" role="alert">
+		<span class="icon-Info text-primary"></span>
+		<span><strong></strong> No data found for the search criteria </span>
+	</section>
+</div>
+<div ng-hide="showNoDataFound">
+	<div class="row panel-body pop-content paddingTopBottom3">
+		<div class="col-sm-12 col-md-12 nopadding" ng-show="showTableData">
+			<div class="col-sm-6 col-md-6 nopadding">
+				<span class="pull-left"><b>Store : {{workspace.data.storeNumber}}</b></span>
+			</div>
+			<div class="col-sm-6 col-md-6 nopadding">
+				<span class="pull-right"><b>As of Date : {{workspace.data.currentDate}}</b></span>
+			</div>
+		</div>
+	</div>
+	<div class="row panel-body pop-content paddingTopBottom3">
+		<button type="button" class="btn btn-default btn-sm marginTopMin20 paddingT7L11 pull-left marginLR5" ng-click="printDiv()" ng-class="printStatus ? 'wag-btn-disabled-sm' : 'wag-btn-default-sm'" ng-disabled = "printStatus">Print</button>
+		<div class="pull-right">	  
+			<wgpagination start-index="1" total-page-count="{{totalPageCount}}" id="{{$index}}" show-table-data="showTableData" ng-click="changeStorePagination('unclaimedOrderReport',$index)"></wgpagination>
+		</div>
+	</div>
+	 <div id="Print">
+	 <div class="panel-body pop-content paddingTopBottom3">
+	<table class="table table-condensed table-hover table-bordered sortableTable" ng-show="showTableData">
+	<thead>
+		  <tr>
+			<th ng-click="sort('unclaimedOrderReport','customerName','', $index)">
+				<span class="pull-left">Customer Name</span>
+				<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['customerName'].order && !colSortOrder['customerName'].firstLoad ? 'selected' : ''"></span>
+				<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['customerName'].order && !colSortOrder['customerName'].firstLoad ?' selected' : ''"></span>
+			</th>
+			<th>Phone</th>
+			<th ng-click="sort('unclaimedOrderReport','totalEnvelope','', $index)">
+				<span class="pull-left">Total Envelopes</span>
+				<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['totalEnvelope'].order && !colSortOrder['totalEnvelope'].firstLoad ? 'selected' : ''"></span>
+				<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['totalEnvelope'].order && !colSortOrder['totalEnvelope'].firstLoad ?' selected' : ''"></span>
+			</th>
+			<th ng-click="sort('unclaimedOrderReport','totalValue','', $index)">
+				<span class="pull-left">Total Value</span>
+				<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['totalValue'].order && !colSortOrder['totalValue'].firstLoad ? 'selected' : ''"></span>
+				<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['totalValue'].order && !colSortOrder['totalValue'].firstLoad ?' selected' : ''"></span>
+			</th>
+			<th ng-click="sort('unclaimedOrderReport','orderRangePlaceddate','', $index)">
+				<span class="pull-left">Order date range</span>
+				<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['orderRangePlaceddate'].order && !colSortOrder['orderRangePlaceddate'].firstLoad ? 'selected' : ''"></span>
+				<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['orderRangePlaceddate'].order && !colSortOrder['orderRangePlaceddate'].firstLoad ?' selected' : ''"></span>
+			</th>
+		  </tr>
+		</thead>
+		<tbody>
+	
+		  <tr ng-repeat="data in workspace.data.unclaimedBeanList">
+		  	<td  ng-click="openPopup(data.customerId)" class="cPointer" popover-placement="top" popover-trigger="mouseenter" popover-append-to-body="true"><a class="cursor">{{data.customerName}}</a></td> 
+			<td>{{data.phoneNumber}}</td>
+			<td>{{data.totalEnvelope}}</td>
+			<td>{{data.totalValue}}</td>			
+			<td>{{data.orderRangePlaceddate}}</td>
+		  </tr>
+		</tbody>
+	</table>
+	</div>
+</div>
+<div class="printable">
+  <div ng-include="workspace.printTemplate"></div>
+</div>

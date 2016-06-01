@@ -1,0 +1,105 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:3.1.1"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
+
+version = '1.0'
+group = 'com.walgreens.photoomni'
+
+// Uses JDK 7
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+
+// 1. Get dependencies from Walgreens Artifactory
+// 2. Get dependencies from Maven central repository
+repositories {
+    mavenCentral()
+    maven { url "http://s3.amazonaws.com/maven.springframework.org/milestone" }
+    maven { url "https://repo.spring.io/libs-snapshot-local" }
+    maven { url "https://objectstyle.org/maven2" }
+    maven { url "http://repo.maven.apache.org/maven2" }
+    maven { url "http://wagwiki.walgreens.com/artifactory/retail_photo_release_libs" }
+}
+
+compileJava.options.encoding = 'Cp1252'
+
+artifactory {
+    publish {
+        contextUrl = 'http://wagwiki.walgreens.com/artifactory'
+        repository {
+            repoKey = 'retail_photo_release_libs'
+            username = 'bss-write'
+            password = '{DESede}8orjbt7BYZRbG///op33lQ=='
+            maven = true
+        }
+        defaults {
+            publications('mavenJava')
+        }
+    }
+    resolve {
+        contextUrl = 'http://wagwiki.walgreens.com/artifactory'
+        repository {
+            repoKey = 'repo'
+            username = 'bss-read'
+            password = '{DESede}D+CBhduNKsE6n/gXBTt9Vw=='
+            maven = true
+        }
+    }
+    clientConfig.setIncludeEnvVars(true)
+    clientConfig.info.addEnvironmentProperty('test.adding.dynVar', new java.util.Date().toString())
+    clientConfig.info.setBuildName('spring-batch-admin')
+    clientConfig.info.setBuildNumber('' + new java.util.Random(System.currentTimeMillis()).nextInt(20000))    
+}
+
+//Project dependencies
+dependencies {
+    compile group: 'org.springframework', name: 'spring-core', version:'4.1.2.RELEASE'
+    compile group: 'org.springframework', name: 'spring-aop', version:'4.1.2.RELEASE'
+    compile group: 'org.springframework', name: 'spring-web', version:'4.1.2.RELEASE'
+    compile group: 'org.springframework', name: 'spring-webmvc', version:'4.1.2.RELEASE'
+    compile group: 'org.springframework', name: 'spring-jdbc', version:'4.1.2.RELEASE'
+    compile group: 'commons-io', name: 'commons-io', version:'2.4'
+    compile group: 'commons-collections', name: 'commons-collections', version:'3.2.1'
+    compile group: 'org.aspectj', name: 'aspectjrt', version:'1.8.2'
+    compile group: 'org.freemarker', name: 'freemarker', version:'2.3.20'
+    compile group: 'org.springframework.batch', name: 'spring-batch-core', version:'3.0.3.RELEASE'
+    compile group: 'org.springframework.batch', name: 'spring-batch-infrastructure', version:'3.0.3.RELEASE'
+    compile group: 'org.springframework.batch', name: 'spring-batch-admin-manager', version:'2.0.0.BUILD-SNAPSHOT'
+    compile group: 'org.springframework.batch', name: 'spring-batch-admin-resources', version:'2.0.0.BUILD-SNAPSHOT'
+	compile 'ch.qos.logback:logback-classic:1.1.2'
+	compile 'org.slf4j:jcl-over-slf4j:1.7.10'
+	compile 'ch.qos.logback:logback-access:1.1.2'
+    runtime group: 'commons-dbcp', name: 'commons-dbcp', version:'1.4'
+    runtime group: 'org.aspectj', name: 'aspectjweaver', version:'1.8.2'
+    testCompile group: 'junit', name: 'junit', version:'4.11'
+    testCompile group: 'org.springframework', name: 'spring-test', version:'4.1.2.RELEASE'
+    testCompile group: 'org.mockito', name: 'mockito-all', version:'1.9.5'
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.0.1'
+    compile 'javax.mail:mail:1.4.7'
+}
+
+configurations {
+	compile.exclude group: 'commons-logging'
+}
+
+artifactoryPublish {
+    dependsOn jar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}

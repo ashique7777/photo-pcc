@@ -1,0 +1,33 @@
+<div class="row" ng-repeat="filter in cWindow.kioskFilters">
+      <div class="col-md-7 paddingTopBottom3" >
+        <div class="input-group">
+          <span class="input-group-addon" >
+            Search Criteria
+          </span>
+          <select class="form-control" ng-model="filter.criteria" ng-options="opt for opt in cWindow.kioskFilterOptions"></select>
+                  </div>
+      </div>
+      <div class="col-md-5 paddingTopBottom3" >
+        <div class="input-group">
+          <span class="input-group-addon" >
+            Value :
+          </span>
+          <input class="form-control" ng-model="filter.value" />
+          
+        </div>
+      </div>
+      
+ </div>
+ <div class="row filter-buttons" ng-show="cWindow.showFilter">
+	<div class="col-md-6">
+		<button class="btn btn-default btn-xs wag-btn-blue-secondary-sm" ng-show="cWindow.kioskFilters" ng-click="cWindow.resetKioskCriteria($event)" >Reset</button>
+	</div>
+	<div class="col-md-3 pull-right">
+		<button class="btn btn-info btn-xs wag-btn-primary-sm" ng-click="cWindow.updateKioskData($event)" >Update Result</button>
+	</div>
+	<div class="col-md-2 pull-right">
+		<button class="btn pull-right btn-default btn-xs wag-btn-blue-secondary-sm" ng-show="cWindow.kioskFilters" ng-click="cWindow.addKioskCriteria($event)" >Add Criteria</button>
+	</div>
+	
+	
+ </div>

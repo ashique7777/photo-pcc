@@ -1,0 +1,104 @@
+<div ng-controller="PMByEmpCtrl">
+
+    <script type="text/ng-template" id="PMByEmpContent.html">
+        <div class='ng-modal-close' ng-click='cancel()'>X</div>
+        <div class="modal-header">
+            <h3>Product Level Promotional Money Report</h3>
+        </div>
+        <div class="modal-body" style="height:'400px'; ">
+      <div class="paddingTopBottom10">
+	   <div class="row">
+		  <div class="col-md-6 paddingTopBottom3">
+			<div class="input-group">
+			  <span class="input-group-addon" >
+				Start Date 
+			  </span>
+			  <input type="text" class="form-control" placeholder="MM/DD/YYYY" datepicker-popup="dd-MM-yyyy" ng-model="workspace.filterData.startDate" is-open="workspace.pmByEmp.openedStart"  ng-click="open($event,'start')" />
+			</div>
+		 </div>
+		 <div class="col-md-6 paddingTopBottom3">
+			<div class="input-group">
+			  <span class="input-group-addon" >
+				End Date 
+			  </span>
+			  <input type="text" class="form-control" placeholder="MM/DD/YYYY" datepicker-popup="dd-MM-yyyy" ng-model="workspace.filterData.endDate" is-open="workspace.pmByEmp.openedEnd"  ng-click="open($event,'end')" />
+			</div>
+		  </div>
+		</div>
+		<div class="row filter-buttons">
+			<div class="col-md-12 pull-right">
+				<button class="btn btn-info pull-right btn-xs" ng-click="submitData($event)" >Generate Report</button>
+			</div>
+<br/>
+<br/>
+       <div class="pull-right" ng-show = "showtable">
+	   <button class="btn btn-default btn-xs marginTopMin20 paddingT7L11" ng-click="printPMByEmpRpt()">Print</button>
+	   <pagination  previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" total-items="workspace.data.totalRecord" items-per-page="workspace.data.data.length" boundary-links="true" ng-model="workspace.data.currrentPage" class="pagination-sm nomargin" max-size="5" rotate="false" ng-click="changeStorePagination('kiosk')"></pagination>
+	 </div>         
+
+         <div class="col-md-6 paddingTopBottom3"  ng-show = "showtable">
+
+			<div class="input-group">
+			  <span>
+				<b>Store:  11662,189 W NORTWEST HWY </b>
+			  </span>
+			</div>
+		  </div>
+         <div class="col-md-6 paddingTopBottom3" ng-show = "showtable">
+			<div class="input-group">
+			  <span>
+				<b>Start Date {{workspace.filterData.startDate | date : "dd/MM/yyyy"}} TO End Date {{workspace.filterData.endDate | date : "dd/MM/yyyy"}}</b>
+			  </span>
+			</div>
+		  </div>
+
+<div class="row filter-buttons">
+<table class="table table-condensed table-hover table-bordered" ng-show = "showtable" >
+<thead>
+	  <tr>
+		<th><a><span style="cursor:pointer;" ng-click="sortField='employeeName'; reverse =! reverse">Employee Name</span></a></th>
+		<th>PM Dollars Earned</th>
+		<th>PM Earned Qty</th>
+	  </tr>
+	</thead>
+	<tbody style="overflow: auto;">
+	  <tr ng-repeat="data in workspace.data | orderBy:sortField:reverse"  tooltip-animation="false" ng-show = "showDataTD">
+		<td>{{data.employeeName}}</td>
+		<td>{{data.pmDollarEarned}}</td>
+		<td>{{data.pmEarnedQty}}</td>
+	  </tr>
+	  <tr ng-show = "showNoDataTD">
+	<td colspan="3">No Records Found for the Search Criteria.</td>
+</tr>
+	</tbody>
+</table>
+</div>
+          <div ng-show="selected">Selection from a modal: {{ workspace || Json }}</div>
+		</div>
+	  </div>		
+        </div>
+        <div class="modal-footer">
+
+           <!-- <button class="btn btn-primary" ng-click="clickMe()">OK</button> -->
+           <!-- <button class="btn btn-warning" ng-click="cancel()">Cancel</button> -->
+
+        </div>
+    </script>
+    <button class="btn" ng-click="open('lg')">PMByProduct</button>
+    
+</div>
+  </body>
+  
+  <style>
+.ng-modal-close {
+  position: absolute;
+  top: 3px;
+  right: 5px;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 120%;
+  display: inline-block;
+  font-weight: bold;
+  font-family: 'arial', 'sans-serif';
+}</style>
+</html>

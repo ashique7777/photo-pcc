@@ -1,0 +1,84 @@
+<div class="containercustom" ng-repeat="store in workspace.data.store" ng-hide="printable">
+  <div class="header">
+  	  <div class="row">
+	  	<span class="" ng-show="store.chain"><b>Chain</b></span>
+	  </div>
+	  <div class="row paddingTopBottom3">
+		<div class=" col-sm-12 col-md-6 nopadding" ng-if="storeNumberAddress == ''">
+			<span class="label label-default" ng-show="store.regionNumber">Region: {{store.regionNumber}}</span>
+			<span class="label label-primary" ng-show="store.districtNumber">District: {{store.districtNumber}}</span>
+			<span class="label label-success" ng-show="store.storeNumber">Store: {{store.storeNumber}}</span>
+		</div>
+		<div ng-if="storeNumberAddress != ''">
+			<div class="col-sm-6"><strong>Store: {{storeNumberAddress}}</strong></div>
+			<div class="col-sm-6">
+				<span class="pull-right"><strong>Start Date : {{machineFilter.startDate | date:'MM/dd/yyyy'}} to End Date : {{machineFilter.endDate | date:'MM/dd/yyyy'}}</strong></span>
+			</div>
+		</div>
+	  </div>
+  </div>
+  
+   <div class="row">
+	   	<button type="button" class="btn btn-default btn-sm marginTopMin20 paddingT7L11 pull-left marginLR5" ng-click="printDiv(store.storeNumber)" ng-class="printStatus ? 'wag-btn-disabled-sm' : 'wag-btn-default-sm'" ng-disabled = "printStatus">Print</button>
+	   	<button class="btn btn-default btn-sm marginTopMin20 paddingT7L11 pull-left" ng-click="exportMachineRptToExcel(store.storeNumber)">Export</button>
+	   	<div class="pull-right">
+	   		<wgpagination start-index="1" total-page-count="{{store.totalPageCount}}" id="{{$index}}" show-table-data="showTableData" ng-click="changeStorePagination('machine',$index,store.storeNumber)"></wgpagination>
+	   	</div>
+	  </div>  
+  <div ng-attr-id={{store.storeNumber}}>
+	  <table  class="table table-condensed table-hover table-bordered sortableTable fontSize80">
+		<thead>
+			  <tr>
+				<th ng-click="sort('machineFilter','machineName',store.storeNumber, $index)">
+					<span class="pull-left">Machine Name</span>
+					<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder[$index]['machineName'].order && !colSortOrder[$index]['machineName'].firstLoad ? 'selected' : ''"></span>
+					<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder[$index]['machineName'].order && !colSortOrder[$index]['machineName'].firstLoad ?' selected' : ''"></span>
+				</th>
+				<th ng-click="sort('machineFilter','equipmentName',store.storeNumber, $index)">
+					<span class="pull-left">Equipment Name</span>
+					<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder[$index]['equipmentName'].order && !colSortOrder[$index]['equipmentName'].firstLoad ? 'selected' : ''"></span>
+					<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder[$index]['equipmentName'].order && !colSortOrder[$index]['equipmentName'].firstLoad ? 'selected' : ''"></span>
+				</th>
+				<th ng-click="sort('machineFilter','componentName',store.storeNumber, $index)">
+					<span class="pull-left">Component Name</span>
+					<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder[$index]['componentName'].order && !colSortOrder[$index]['componentName'].firstLoad ? 'selected' : ''"></span>
+					<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder[$index]['componentName'].order && !colSortOrder[$index]['componentName'].firstLoad ?' selected' : ''"></span>
+				</th>
+				<th>Entered By</th>
+				<th ng-click="sort('machineFilter','startTime',store.storeNumber, $index)">
+					<span class="pull-left">Start Time</span>
+					<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder[$index]['startTime'].order && !colSortOrder[$index]['startTime'].firstLoad ? 'selected' : ''"></span>
+					<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder[$index]['startTime'].order && !colSortOrder[$index]['startTime'].firstLoad ?' selected' : ''"></span>
+				</th>
+				<th>End Time</th>
+				<th ng-click="sort('machineFilter','duration',store.storeNumber, $index)">
+					<span class="pull-left">Duration</span>
+					<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder[$index]['duration'].order && !colSortOrder[$index]['duration'].firstLoad ? 'selected' : ''"></span>
+					<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder[$index]['duration'].order && !colSortOrder[$index]['duration'].firstLoad ?' selected' : ''"></span>
+				</th>
+				<th ng-click="sort('machineFilter','reason',store.storeNumber, $index)">
+					<span class="pull-left">Reason</span>
+					<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder[$index]['reason'].order && !colSortOrder[$index]['reason'].firstLoad ? 'selected' : ''"></span>
+					<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder[$index]['reason'].order && !colSortOrder[$index]['reason'].firstLoad ?' selected' : ''"></span>
+				</th>
+			  </tr>
+			</thead>
+			<tbody>
+			  <tr  ng-repeat="data in store.data" >
+				<td>{{data.machineName}}</td>
+				<td>{{data.equipmentName}}</td>
+				<td>{{data.componentName}}</td>
+				<td>{{data.enteredBy}}</td>
+				<td>{{data.startTime}}</td>
+				<td>{{data.endTime}}</td>
+				<td>{{data.duration}}</td>
+				<td>{{data.reason}}</td>
+			  </tr>
+			</tbody>
+	  </table>
+	</div>
+</div>
+<div class="printable">
+  <div ng-include="workspace.printTemplate"></div>
+</div>
+		<br/>		<br/>		<br/>		<br/>

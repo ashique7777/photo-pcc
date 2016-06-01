@@ -1,0 +1,55 @@
+<!-- commented to remove total row :: 03-24-2015 -->
+<!-- <div class="row paddingTopBottom3">
+<div class="col-sm-12 col-md-12 nopadding">
+ <span class="label label-default" ng-show="workspace.data.totalRecord">Total Row: {{workspace.data.totalRecord}}</span>
+</div>
+</div> -->
+<div ng-hide="showErrorMessage" class="vendorCostStyle">
+	<div class="row paddingTopBottom3">
+	<div class="col-sm-12 col-md-12 nopadding">
+	 <div class="">
+	  <wgpagination start-index="1" total-page-count="{{totalPageCount}}" id="{{$index}}" show-table-data="showTableData" ng-click="changeStorePagination('pofVendCost',$index)"></wgpagination>
+	<!-- "Add to Dashboard" button removed on 03-24-2015 -->
+	<!-- <button class="btn btn-default btn-xs marginTopMin20 paddingT7L11 wag-btn-default-sm">
+		<i class="glyphicon glyphicon-star"></i>Add to Dashboard</button> -->
+	 </div>
+	
+	  
+	</div>
+	</div>
+	<table class="table table-condensed table-hover table-bordered">
+	<thead>
+		  <tr>
+			<th>Select.</th>
+			<th>Store#</th>
+			<th>Envelope#</th>
+			<th>Product</th>
+			<th>Vendor Name</th>
+			<th>Store Calculated Cost</th>
+			<th>Central Calculated Cost</th>
+			<th>Approved Cost</th>
+		  </tr>
+		</thead>
+		<tbody>
+	
+	<tr ng-repeat="data in workspace.data">
+		<td>
+			<section class="checkbox wag-checkbox-small checkbox-primary">
+				<input type="checkbox" name="checkbox4" id="{{data.vcId}}" value="{{data.vcId}}" ng-model="payOnFilterVendCost.checkBox[data.vcId].checkedStatus" ng-change="selectedRowToApprove(data.vcId)">
+				<label for="{{data.vcId}}"></label>
+			</section>
+		</td>
+		<td>{{data.storeNumber}}</td>
+		<td>{{data.envNumber | numberFixedLen:6}}</td>
+		<td class="textAlignLeft">{{data.productDesc}}</td>
+		<td class="textAlignLeft">{{data.vendorName}}</td>
+		<td>{{data.storeCalculatedCost}}</td>
+		<td>{{data.centralCalculatedCost}}</td>
+		<td><input type="text" class="form-control" ng-model="payOnFilterVendCost.checkBox[data.vcId].approvedCost" ng-disabled="payOnFilterVendCost.checkBox[data.vcId].completionStatus" ng-click="hideErrorMessage()" /></td>
+	  </tr>
+		</tbody>
+	</table>
+	<div class="paddingTopBottom3">
+		<button class="btn btn-info pull-right btn-xs wag-btn-primary-sm" ng-show="showFilter" ng-click="saveDataForPOFVC()" >Submit</button>
+	</div>
+</div>

@@ -1,0 +1,43 @@
+<ul class="list-group marginbottom5">
+  <li class="list-group-item">
+    <div class="row">
+	  <div ng-repeat="error in errorMessageText">
+		    <div ng-show="showErrorMessage" class="error-container">
+				<section class="alert wag-alert alert-danger" role="alert">
+					<span class="icon-Alert"></span>
+					<span><strong>Error:</strong> {{error}}</span>
+				</section>
+		  	</div>
+		</div>
+	  <div ng-show="showNoDataFound" class="error-container">
+	  		<section class="alert wag-alert alert-info" role="alert">
+				<span class="icon-Info text-primary"></span>
+				<span><strong></strong> No data found for the search criteria </span>
+			</section>
+	  </div>
+	  <div class="col-md-3">
+				<div class="input-group">
+		           <span class="input-group-addon" >Start Date</span>
+		           <input type="text" class="form-control start" placeholder="MM/DD/YYYY" datepicker-popup={{format}} ng-model="lateEnveReport.startDate" is-open="workspace.openedStart" ng-click="open($event,'start')" max-date="endMaxDate" min-date="startMinDate" close-text="Close"/>
+		        </div>
+		      </div>     
+		      <div class="col-md-3">
+		        <div class="input-group">
+		        	<span class="input-group-addon">End Date</span>
+		          	<input type="text" class="form-control end" placeholder="MM/DD/YYYY" datepicker-popup={{format}} ng-model="lateEnveReport.endDate" is-open="workspace.openedEnd"  ng-click="open($event,'end')" min-date="startMinDate" max-date="endMaxDate"/>
+		        </div>
+		      </div>
+     <!--  <span class="icon-Question icon-Question-reg-edit text-primary wag-popover-box" popover-placement="top" popover={{helpText}} popover-trigger="mouseenter"></span> -->
+    </div> 
+    	<!-- section view -->
+	    	  
+	    </div> 
+     
+  </li> 
+ </ul>
+
+<div class="row filter-buttons nopadding">
+	<div class="col-md-12">
+		<button class="btn btn-info pull-right btn-xs wag-btn-primary-sm" ng-show="showFilter" ng-click="updateData()" >Generate Report</button>
+	</div>
+</div>

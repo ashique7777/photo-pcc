@@ -1,0 +1,18 @@
+<div class="spopupOuterContainer" ui-keydown="{'pageup':'goToReport($event);'}">
+	<div class="popupMainContainer col-md-7 panel panel-primary slide">
+	  <div class="panel-heading">
+	  <h3 class="panel-title">Add to Dashboard
+	  <a href="javascript:void(0);" ng-click="goToReport($event);"  class="pull-right glyphicon glyphicon-remove"></a></h3>
+	  </div>
+	  
+
+	  <div class="panel-body pop-content">
+		  <div  ng-show="showFilter" ng-include="filterPage" class="paddingTopBottom10"></div>
+	  </div>
+
+		
+		
+	</div>
+
+</div>
+

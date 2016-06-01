@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/security
+    http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<http create-session="stateless" entry-point-ref="authenticationEntryPoint" authentication-manager-ref="authenticationManager" use-expressions="true">
+		<custom-filter position="PRE_AUTH_FILTER" ref="cookieAuthenticationFilter" />
+		<custom-filter after="PRE_AUTH_FILTER" ref="restSecurityFilter" />
+		<intercept-url pattern="/**" access="isAuthenticated()" />
+	</http>
+
+	<beans:bean id="cookieAuthenticationFilter"	class="com.walgreens.common.security.oam.CookieAuthenticationFilter">
+		<beans:property name="cookiename" value="${security.persist.cookie.name}" />
+		<beans:property name="cookietimeout" value="${security.persist.cookie.timeout}" />
+		<beans:property name="cookiepath" value="${security.persist.cookie.path}" />
+		<beans:property name="advancedEncryptionStandard" ref="advancedEncryptionStandard" />
+		<beans:property name="secureCookie" value="${security.persist.cookie.secure}" />
+		<beans:property name="sidCookieName" value="${security.sid.cookie.name}" />
+		<beans:property name="ipHash" value="${ipHash}" />
+	</beans:bean>
+
+	<beans:bean id="authenticationEntryPoint" class="com.walgreens.common.security.rest.RestAuthenticationEntryPoint">
+		<beans:property name="realmName" value="Secure RESTful Resource" />
+	</beans:bean>
+
+	<beans:bean id="restSecurityFilter" class="com.walgreens.common.security.rest.RestSecurityFilter">
+		<beans:constructor-arg name="authenticationManager" ref="authenticationManager" />
+	</beans:bean>
+
+	<beans:bean id="restAuthenticationProvider" class="com.walgreens.admin.security.RestAuthenticationProviderImpl" />
+
+	<authentication-manager alias="authenticationManager">
+		<authentication-provider ref="restAuthenticationProvider" />
+	</authentication-manager>
+
+	<beans:bean id="advancedEncryptionStandard" class="com.walgreens.common.security.oam.AdvancedEncryptionStandard">
+		<beans:property name="encryptionKey" value="${security.persist.cookie.encrypt.key}" />
+		<beans:property name="iv" value="${security.persist.cookie.encrypt.iv}" />
+	</beans:bean>
+
+</beans:beans>

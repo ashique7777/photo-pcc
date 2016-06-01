@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+	<!-- Define Properties -->
+	<!-- All possible levels TRACE, DEBUG, INFO, WARN, ERROR and OFF-->
+	<property name="log.level" value="INFO" />
+	<property name="log.pattern" value="%d{MM/dd/yyyy-HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n" />
+	<property name="log.history" value="10" />
+	
+	<!-- Define Error File Appender -->
+	<appender name="errorFileAppender"	class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${log.file.prefix}Error.txt</File>
+		
+		<!-- Allow ONLY ERROR logs using Threshold filter -->
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>${log.file.prefix}Error.%i.txt</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>${log.history}</MaxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+           	<MaxFileSize>10MB</MaxFileSize>
+       	</triggeringPolicy>		
+
+		<encoder>
+			<pattern>${log.pattern}</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- Define Trace file Appender -->
+	<appender name="traceFileAppender"	class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${log.file.prefix}Trace.txt</File>
+		
+		<!-- Block ERROR logs using Level filter-->
+   		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+      		<level>ERROR</level>
+      		<onMatch>DENY</onMatch>
+      		<onMismatch>ACCEPT</onMismatch>
+    	</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>${log.file.prefix}Trace.%i.txt</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>${log.history}</MaxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+           	<MaxFileSize>10MB</MaxFileSize>
+       	</triggeringPolicy>		
+		<encoder>
+			<pattern>${log.pattern}</pattern>
+		</encoder>
+	</appender>	
+	<root level="${log.level}">
+		<appender-ref ref="traceFileAppender" />
+		<appender-ref ref="errorFileAppender" />
+	</root>
+</configuration>

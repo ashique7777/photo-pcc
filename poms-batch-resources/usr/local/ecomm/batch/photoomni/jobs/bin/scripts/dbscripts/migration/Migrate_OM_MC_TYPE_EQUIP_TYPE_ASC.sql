@@ -1,0 +1,241 @@
+SET SERVEROUTPUT ON;
+-- UPDATE / ADD Machine Equipment IN OM_MC_TYPE_EQUIP_TYPE_ASC
+
+DECLARE
+  CURSOR c_macequip
+  IS
+   	SELECT 	 OM_PF_MACHINE_EQUIPMENT_TMP.PF_MULTIPLE_INSTANCE_IND ,
+			 OM_PF_MACHINE_EQUIPMENT_TMP.PF_MINILAB_NAME ,
+			 OM_PF_MACHINE_EQUIPMENT_TMP.PF_MACHINE_TYPE_ID ,
+			 OM_PF_MACHINE_EQUIPMENT_TMP.PF_EQUIPMENT_ID ,
+			 OM_PF_MACHINE_EQUIPMENT_TMP.PF_TRANSFER_IND ,
+			 OM_PF_MACHINE_EQUIPMENT_TMP.ID_CREATED ,
+			 OM_PF_MACHINE_EQUIPMENT_TMP.DATE_TIME_CREATED,
+			 OM_PF_MACHINE_EQUIPMENT_TMP.ID_MODIFIED ,
+			 OM_PF_MACHINE_EQUIPMENT_TMP.DATE_TIME_MODIFIED,
+			 OM_PF_MACHINE_EQUIPMENT_TMP.PF_EQUIP_MANDATORY_IND ,
+			 OM_PF_MACHINE_EQUIPMENT_TMP.PF_PROMISED_TIME_ELIGIBLE,
+			 OM_EQUIPMENT_TYPE.SYS_EQUIPMENT_TYPE_ID,
+			 OM_MACHINE_TYPE.SYS_MACHINE_TYPE_ID
+	FROM OM_PF_MACHINE_EQUIPMENT_TMP, OM_EQUIPMENT_TYPE, OM_MACHINE_TYPE
+	WHERE OM_EQUIPMENT_TYPE.EQUIPMENT_TYPE_NBR = OM_PF_MACHINE_EQUIPMENT_TMP.PF_EQUIPMENT_ID
+	AND OM_MACHINE_TYPE.MACHINE_TYPE_NBR = OM_PF_MACHINE_EQUIPMENT_TMP.PF_MACHINE_TYPE_ID;
+
+
+  -- DEFINE THE RECORD
+  rec_macequip c_macequip%ROWTYPE;
+  -- DEFINE VARIABLES
+  v_sysmacequipid OM_MC_TYPE_EQUIP_TYPE_ASC.SYS_MC_TP_EQUIP_TP_ASC_ID%TYPE:= 0;
+  v_deleted_ind OM_PF_MACHINE_EQUIPMENT_TMP.PF_TRANSFER_IND%TYPE := 'D';
+  v_counter NUMBER := 0;
+  v_commitinterval NUMBER := 20;
+  v_active_cd NUMBER := 1;
+  v_err_msg VARCHAR2(200) := '';
+  v_err_code VARCHAR2(10) := '';
+BEGIN
+  OPEN c_macequip;
+  LOOP
+    FETCH c_macequip INTO rec_macequip;
+    EXIT WHEN c_macequip%NOTFOUND OR c_macequip%NOTFOUND IS NULL;
+    --DBMS_OUTPUT.PUT_LINE ('Processing the record --> ' || 'Machine Number=' || rec_macequip.PF_MACHINE_TYPE_ID || ',Equipment Number=' || rec_macequip.PF_EQUIPMENT_ID);
+    BEGIN
+    
+    	v_active_cd := 1;
+    	
+    	-- IF PF_TRANSFER_IND = "D" THEN ACTIVE_CD WILL BE 0 ELSE 1		
+    	IF (rec_macequip.PF_TRANSFER_IND IS NOT NULL AND upper(rec_macequip.PF_TRANSFER_IND) = v_deleted_ind) THEN        			
+    		v_active_cd := 0;
+	END IF;
+	
+        -- CHECK IF RECORD EXISTS
+        SELECT SYS_MC_TP_EQUIP_TP_ASC_ID INTO v_sysmacequipid 
+		FROM OM_MC_TYPE_EQUIP_TYPE_ASC 
+		WHERE SYS_MACHINE_TYPE_ID = rec_macequip.PF_MACHINE_TYPE_ID
+		AND SYS_EQUIPMENT_TYPE_ID = rec_macequip.PF_EQUIPMENT_ID; 
+		
+		
+	UPDATE OM_MC_TYPE_EQUIP_TYPE_ASC 
+		SET SYS_MACHINE_TYPE_ID = rec_macequip.SYS_MACHINE_TYPE_ID
+			 , SYS_EQUIPMENT_TYPE_ID = rec_macequip.SYS_EQUIPMENT_TYPE_ID
+			 , EQUIP_MANDATORY_CD = DECODE(UPPER(rec_macequip.PF_EQUIP_MANDATORY_IND),'Y',1,'N',0) 
+			 , PROMISED_TIME_ELIGIBLE_CD = DECODE(UPPER(rec_macequip.PF_PROMISED_TIME_ELIGIBLE),'Y',1,'N',0) 
+			 , CREATE_USER_ID = rec_macequip.ID_CREATED
+			 , CREATE_DTTM = rec_macequip.DATE_TIME_CREATED
+			 , UPDATE_USER_ID = rec_macequip.ID_MODIFIED
+			 , UPDATE_DTTM = rec_macequip.DATE_TIME_MODIFIED
+			 , ACTIVE_CD = v_active_cd
+		WHERE  SYS_MC_TP_EQUIP_TP_ASC_ID = v_sysmacequipid;
+
+		--DBMS_OUTPUT.PUT_LINE ('Updated Machine Number=' || rec_macequip.PF_MACHINE_TYPE_ID || ',Equipment Number=' || rec_macequip.PF_EQUIPMENT_ID) ;       
+        EXCEPTION
+        -- INSERT MACHINE
+        WHEN NO_DATA_FOUND THEN
+		BEGIN
+        
+		INSERT INTO OM_MC_TYPE_EQUIP_TYPE_ASC 
+		( 
+			 SYS_MC_TP_EQUIP_TP_ASC_ID ,
+			 SYS_MACHINE_TYPE_ID ,
+			 SYS_EQUIPMENT_TYPE_ID ,
+			 EQUIP_MANDATORY_CD ,
+			 PROMISED_TIME_ELIGIBLE_CD ,
+			 CREATE_USER_ID ,
+			 CREATE_DTTM ,
+			 UPDATE_USER_ID ,
+			 UPDATE_DTTM ,
+			 ACTIVE_CD
+		 ) 
+		 VALUES 
+		 (
+			 OM_MC_TYPE_EQUIP_TYPE_ASC_SEQ.NEXTVAL,
+			 rec_macequip.SYS_MACHINE_TYPE_ID,
+			 rec_macequip.SYS_EQUIPMENT_TYPE_ID,
+			 DECODE(UPPER(rec_macequip.PF_EQUIP_MANDATORY_IND),'Y',1,'N',0) , 
+			 DECODE(UPPER(rec_macequip.PF_PROMISED_TIME_ELIGIBLE),'Y',1,'N',0) , 
+			 rec_macequip.ID_CREATED ,
+			 rec_macequip.DATE_TIME_CREATED ,
+			 rec_macequip.ID_MODIFIED ,
+			 rec_macequip.DATE_TIME_MODIFIED ,
+			 v_active_cd
+
+		  );
+
+        --DBMS_OUTPUT.PUT_LINE ('Added Machine Number=' || rec_macequip.PF_MACHINE_TYPE_ID || ',Equipment Number=' || rec_macequip.PF_EQUIPMENT_ID) ; 
+	    EXCEPTION	
+			WHEN OTHERS THEN
+			v_err_msg := SUBSTR(SQLERRM, 1 , 200);
+			v_err_code := SQLCODE ;
+			--DBMS_OUTPUT.PUT_LINE ('An error was encountered - ' || v_err_code || ' -ERROR- ' || v_err_msg);	
+				
+			
+			INSERT INTO OM_PF_MACHINE_EQUIPMENT_BAD 
+			( 
+			 PF_MACHINE_TYPE_ID ,
+			 PF_EQUIPMENT_ID ,
+			 PF_TRANSFER_IND ,
+			 ID_CREATED ,
+			 DATE_TIME_CREATED ,
+			 ID_MODIFIED ,
+			 DATE_TIME_MODIFIED ,
+			 PF_EQUIP_MANDATORY_IND ,
+			 PF_PROMISED_TIME_ELIGIBLE ,
+			 PF_MULTIPLE_INSTANCE_IND ,
+			 PF_MINILAB_NAME ,
+			 EXCEPTION_CODE ,
+			 EXCEPTION_MSSG ,
+			 EXCEPTION_DTTM ) 
+			 VALUES  
+			 (  
+			 rec_macequip.PF_MACHINE_TYPE_ID ,
+			 rec_macequip.PF_EQUIPMENT_ID ,
+			 rec_macequip.PF_TRANSFER_IND ,
+			 rec_macequip.ID_CREATED ,
+			 rec_macequip.DATE_TIME_CREATED ,
+			 rec_macequip.ID_MODIFIED ,
+			 rec_macequip.DATE_TIME_MODIFIED ,
+			 rec_macequip.PF_EQUIP_MANDATORY_IND ,
+			 rec_macequip.PF_PROMISED_TIME_ELIGIBLE ,
+			 rec_macequip.PF_MULTIPLE_INSTANCE_IND ,
+			 rec_macequip.PF_MINILAB_NAME ,
+			 v_err_code ,
+			 v_err_msg ,
+			 SYSDATE
+			 ) ;
+
+		 v_counter := v_counter + 1;
+        END;      
+	    WHEN OTHERS THEN
+			v_err_msg := SUBSTR(SQLERRM, 1 , 200);
+			v_err_code := SQLCODE ;
+			--DBMS_OUTPUT.PUT_LINE ('An error was encountered - ' || v_err_code || ' -ERROR- ' || v_err_msg);	
+				
+			INSERT INTO OM_PF_MACHINE_EQUIPMENT_BAD 
+			( 
+			 PF_MACHINE_TYPE_ID ,
+			 PF_EQUIPMENT_ID ,
+			 PF_TRANSFER_IND ,
+			 ID_CREATED ,
+			 DATE_TIME_CREATED ,
+			 ID_MODIFIED ,
+			 DATE_TIME_MODIFIED ,
+			 PF_EQUIP_MANDATORY_IND ,
+			 PF_PROMISED_TIME_ELIGIBLE ,
+			 PF_MULTIPLE_INSTANCE_IND ,
+			 PF_MINILAB_NAME ,
+			 EXCEPTION_CODE ,
+			 EXCEPTION_MSSG ,
+			 EXCEPTION_DTTM ) 
+			 VALUES  
+			 (  
+			 rec_macequip.PF_MACHINE_TYPE_ID ,
+			 rec_macequip.PF_EQUIPMENT_ID ,
+			 rec_macequip.PF_TRANSFER_IND ,
+			 rec_macequip.ID_CREATED ,
+			 rec_macequip.DATE_TIME_CREATED ,
+			 rec_macequip.ID_MODIFIED ,
+			 rec_macequip.DATE_TIME_MODIFIED ,
+			 rec_macequip.PF_EQUIP_MANDATORY_IND ,
+			 rec_macequip.PF_PROMISED_TIME_ELIGIBLE ,
+			 rec_macequip.PF_MULTIPLE_INSTANCE_IND ,
+			 rec_macequip.PF_MINILAB_NAME ,
+			 v_err_code ,
+			 v_err_msg ,
+			 SYSDATE
+			 
+			 ) ;
+
+		v_counter := v_counter - 1;
+	END;
+	v_counter := v_counter + 1;
+    --DBMS_OUTPUT.PUT_LINE ('Counter :' || v_counter);
+    IF (v_counter = v_commitinterval) THEN        
+        COMMIT;
+        --DBMS_OUTPUT.PUT_LINE ('Committed ' || v_counter || ' records');  
+        v_counter := 0;
+    END IF;
+       
+  END LOOP;
+  -- COMMIT CURSOR RECORDS
+  COMMIT;
+  INSERT INTO OM_PF_MACHINE_EQUIPMENT_BAD 
+	( 
+	 PF_MACHINE_TYPE_ID ,
+	 PF_EQUIPMENT_ID ,
+	 PF_TRANSFER_IND ,
+	 ID_CREATED ,
+	 DATE_TIME_CREATED ,
+	 ID_MODIFIED ,
+	 DATE_TIME_MODIFIED ,
+	 PF_EQUIP_MANDATORY_IND ,
+	 PF_PROMISED_TIME_ELIGIBLE ,
+	 PF_MULTIPLE_INSTANCE_IND ,
+	 PF_MINILAB_NAME ,
+	 EXCEPTION_CODE ,
+	 EXCEPTION_MSSG ,
+	 EXCEPTION_DTTM ) 
+	 SELECT 	 
+	 MAC_EQUIP.PF_MACHINE_TYPE_ID ,
+	 MAC_EQUIP.PF_EQUIPMENT_ID ,
+	 MAC_EQUIP.PF_TRANSFER_IND ,
+	 MAC_EQUIP.ID_CREATED ,
+	 MAC_EQUIP.DATE_TIME_CREATED ,
+	 MAC_EQUIP.ID_MODIFIED ,
+	 MAC_EQUIP.DATE_TIME_MODIFIED,
+	 MAC_EQUIP.PF_EQUIP_MANDATORY_IND ,
+	 MAC_EQUIP.PF_PROMISED_TIME_ELIGIBLE,
+	 MAC_EQUIP.PF_MULTIPLE_INSTANCE_IND ,
+	 MAC_EQUIP.PF_MULTIPLE_INSTANCE_IND,
+	 '000' ,
+	 'Master records not found' ,
+	 SYSDATE
+	 FROM OM_PF_MACHINE_EQUIPMENT_TMP MAC_EQUIP
+	 WHERE NOT EXISTS
+		( SELECT 1
+		  FROM OM_PF_MACHINE_EQUIPMENT_TMP, OM_EQUIPMENT_TYPE, OM_MACHINE_TYPE
+		  WHERE OM_EQUIPMENT_TYPE.EQUIPMENT_TYPE_NBR = OM_PF_MACHINE_EQUIPMENT_TMP.PF_EQUIPMENT_ID
+		  AND OM_MACHINE_TYPE.MACHINE_TYPE_NBR = OM_PF_MACHINE_EQUIPMENT_TMP.PF_MACHINE_TYPE_ID
+		  AND OM_PF_MACHINE_EQUIPMENT_TMP.PF_MACHINE_TYPE_ID = MAC_EQUIP.PF_MACHINE_TYPE_ID
+		  AND OM_PF_MACHINE_EQUIPMENT_TMP.PF_EQUIPMENT_ID = MAC_EQUIP.PF_EQUIPMENT_ID
+		);
+END;
+/

@@ -1,0 +1,52 @@
+<div ng-hide="showErrorMessage">
+	<div class="row">
+		<div class="col-sm-6"><span ng-show="showStoreHeader"><strong>Store: {{workspace.data.storeWithAddress}}</strong></span></div>
+		<div class="col-sm-6">
+			<span class="pull-right"><strong>Start Date : {{payOnFilter.startDate | date:'MM/dd/yyyy'}} to End Date : {{payOnFilter.endDate | date:'MM/dd/yyyy'}}</strong></span>
+		</div>
+	</div>
+	<div class="row paddingTopBottom3">
+	<div class="col-sm-12 col-md-12 nopadding">
+	 <div class="pull-left">
+	   <button class="btn btn-default btn-xs marginTopMin20 paddingT7L11 wag-btn-default-sm" ng-click="exportPOFRptToExcel()">Export<!-- Generate CSV --><!-- changed to "Export" on 03-24-2015 --></button>
+	   <button class="btn btn-default btn-xs marginTopMin20 paddingT7L11 wag-btn-default-sm" ng-click="printDiv('printableDiv')"  ng-class="printStatus ? 'wag-btn-disabled-sm' : ''" ng-disabled = "printStatus">Print</button>
+	 </div>
+	 <div class="pull-right">
+	   		<wgpagination start-index="{{startIndex}}" total-page-count="{{totalPageCount}}" id="{{$index}}" show-table-data="showTableData" ng-click="changeStorePagination('pof',$index,store.storeNumber)"></wgpagination>
+	   </div>
+	
+	  
+	</div>
+	</div>
+	<div id="printableDiv">
+		<table class="table table-condensed table-hover table-bordered">
+			<thead>
+				  <tr>
+					<th>S. No.</th>
+					<th>Store No.</th>
+					<th>Reporting Date</th>
+					<th>Envelope Number</th>
+					<th>EDI UPC (Day/Store#/Envelope Number)</th>
+					<th>Quantity</th>
+					<th>Cost</th>
+					<th>Done Date</th>
+				  </tr>
+			</thead>
+			<tbody>
+				  <tr ng-repeat="data in workspace.data.repByPayOnFulfillmentList">
+					<td>{{data.serialNumber}}</td>
+					<td>{{data.storeNumber}}</td>
+					<td>{{data.reportingDate}}</td>
+					<td>{{data.envelopeNumber | numberFixedLen:6}}</td>
+					<td>{{data.eDIupc}}</td>
+					<td>{{data.quantity}}</td>
+					<td>{{data.cost}}</td>
+					<td>{{data.doneDate}}</td>
+				  </tr>
+			</tbody>
+		</table>
+	</div>
+	<div ng-show="printable" class="printable">
+		<div ng-include="workspace.printTemplate"></div>	 
+	</div>
+</div>

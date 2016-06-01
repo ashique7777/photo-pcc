@@ -1,0 +1,23 @@
+<div class="padding10">
+	<div class="row posRelative" >
+	 <div ng-controller="DashboardCtrl" ng-init="sWindow=sWindow"
+	 		ng-repeat="sWindow in windowList">
+	  <skwindow  title="{{sWindow.title}}" windowid="{{sWindow.reportId}}" enableremovesession="{{!sWindow.defaultItem}}" enableremovepermanent="{{!sWindow.defaultItem}}"  windowclass="col-sm-12 col-md-6">
+	  	<auto-refresh report="sWindow"></auto-refresh>
+		<div class="panel panel-default nopadding zindex9" ng-show="sWindow.filterEnabled">
+		  <div class="panel-body nopadding">
+		    <div class="btn-filter" ng-click="filterToggle(sWindow);">
+		    	 Filter
+		    	 <div class="pull-right">
+			    	<i class="glyphicon glyphicon-plus" ng-show="!sWindow.showFilter"></i>
+					<i class="glyphicon glyphicon-minus" ng-show="sWindow.showFilter"></i>
+		    	 </div>
+		    </div>
+			<div  ng-show="sWindow.showFilter" ng-include="sWindow.filterTemplate"></div>
+		  </div>
+		</div>
+		<div ng-include="sWindow.storeTemplate" ng-show="sWindow.autoExecute" onload="hideLoading(sWindow.reportId)"></div>
+	  </skwindow>
+	  </div>
+	</div>
+</div>

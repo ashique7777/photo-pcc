@@ -1,0 +1,79 @@
+<ul class="list-group marginbottom5 simsRetailBlock">
+  <li class="list-group-item">
+    <div class="row">
+	     <div ng-repeat="error in errorMessageText">
+	      	<div ng-show="showErrorMessage" class="error-container">
+				<section class="alert wag-alert alert-danger" role="alert">
+					<span class="icon-Alert"></span>
+					<span><strong>Error:</strong> {{error}}</span>
+					
+				</section>
+		  	</div>
+	      </div>
+	     
+		  <div ng-show="showNoDataFound" class="error-container paddingTopBottom3">
+		 		<section class="alert wag-alert alert-info" role="alert">
+					<span class="icon-Info text-primary"></span>
+					<span><strong></strong> No data found for the search criteria </span>
+				</section>
+		 </div>
+		 <div class="paddingTopBottom3">
+	 		<section class="alert wag-alert alert-info" role="alert">
+				<span class="icon-Info text-primary"></span>
+				<span><strong></strong> *Please upload excel file in xlsx format for multiple values </span>
+			</section>
+		 </div>
+		 
+	       <div class="row">
+	       		<div style="width: 39%" class="col-md-6 paddingTopBottom3">
+			        <div class="input-group ">
+			          <span class="input-group-addon line-break-class" style="padding: 6px 8px;">
+			            Retail Block
+			          </span>
+			          <select class="form-control" ng-model="workspace.retailBlockObj" ng-options="retail.retailBlock for retail in workspace.simBlockListArr" ng-click="hideErrorMessage()">
+			          		<option value="">{{workspace.simBlockDefault.retailBlock}}</option>
+			          </select>
+			        </div>      
+			    </div>
+			    <div style="width:10%;" class="col-md-1"></div>
+			    <div class="col-md-5 paddingTopBottom3" style="width: 44%;">
+			        <div class="input-group ">
+			          <span class="input-group-addon line-break-class" style="padding: 6px 8px;">
+			            Location type
+			          </span>
+			          <select class="form-control" ng-model="workspace.simsLocationObj" ng-options="list.text for list in workspace.locationType" ng-click="hideErrorMessage()">
+			          	<option value="">Chain</option>
+			          </select>
+			        </div>      
+			    </div>
+	       </div>
+	       <div class="row">
+	       		<div class="col-md-6 file-to-upload">
+				  	 <div class="input-group pull-left" style="width: 80%;">
+					  	 <span class="input-group-addon" >
+					          Upload file
+					     </span>
+					     <input type="text" class="form-control" ng-model="simsBlockFilter.xlsFileName" readonly="readonly"/>
+					     <input type="file" class="form-control" style="display: none;" ng-model-instant id="fileToUpload" ng-disabled = "!enableFileUpload" multiple onchange="angular.element(this).scope().setSimsFiles(this)" accept=".xsl,application/multipart" value=""/>
+				     	 <label for="fileToUpload"><button type="button" class="btn btn-info btn-xs" ng-disabled = "!enableFileUpload" ng-class="enableFileUpload ? 'wag-btn-primary-sm' : 'wag-btn-disabled-sm'">Browse</button></label>
+				     </div>
+				     <!-- <span class="icon-Question icon-Question-reg-edit text-primary wag-popover-box pull-left" popover-placement="top" popover={{simsHelpText}} popover-trigger="mouseenter"></span> -->
+				</div>
+				<div class="col-md-5 nopadding">
+				  	<div class="input-group">
+				        <span class="input-group-addon" style="padding:6px 25px;">
+				          Number
+				        </span>
+				        <input type="text" style="width: 438px;" class="form-control" ng-click="hideErrorMessage()" ng-model="simsBlockFilter.number" id="number" ng-disabled="disableNumber" />
+				    </div>
+				    <p class="help-text">*Number should only contain numeric character</p>
+				</div>
+	       </div>
+     </div>  
+  </li>
+</ul>
+<div class="row filter-buttons nopadding">
+	<div class="col-md-12 nopadding">
+		<button class="btn btn-info pull-right btn-xs wag-btn-primary-sm" ng-show="showFilter" ng-click="updateSimsData()" >Generate Report</button>
+	</div>
+</div>

@@ -1,0 +1,307 @@
+<!--"(c) Walgreen Co. All rights reserved"-->
+<project name="Batch Framework Launcher" basedir=".">
+
+	<!-- Specify the base class path  -->
+	<path id="base.class.path">
+		<pathelement path="${java.lib.dir}" />
+		<pathelement path="${java.program.dir}" />
+		<fileset dir="${java.lib.dir}" includes="*.jar" />
+		<fileset dir="${java.program.dir}" />
+	</path>
+
+	<!-- Phase-1 Targets -->
+
+	<target name="PMByWICCustomReportTask">
+		<launch classname="com.walgreens.batch.central.PMByWICCustomReportTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/PMByWICCustomReportTask/PMByWICCustomReportTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="PayOnFulfillmentTask">
+		<launch classname="com.walgreens.batch.central.PayOnFulfillmentTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/PayOnFulfillmentTask/PayOnFulfillmentTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="MachineDownTimeReportTask">
+		<launch classname="com.walgreens.batch.central.MachineDownTimeReportTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/MachineDownTimeReportTask/MachineDownTimeReportTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="PrintSignsCustomReportTask">
+		<launch classname="com.walgreens.batch.central.PrintSignsCustomReportTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/PrintSignsCustomReportTask/PrintSignsCustomReportTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="SilverCanisterReportTask">
+		<launch classname="com.walgreens.batch.central.SilverCanisterReportTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/SilverCanisterReportTask/SilverCanisterReportTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="LCAdhocAndExceptionCustomReportTask">
+		<launch classname="com.walgreens.batch.central.LCAdhocAndExceptionCustomReportTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/LCAdhocAndExceptionCustomReportTask/LCAdhocAndExceptionCustomReportTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="LCDailyCustomReportTask">
+		<launch classname="com.walgreens.batch.central.LCDailyCustomReportTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/LCDailyCustomReportTask/LCDailyCustomReportTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="PosExceptionReportTask">
+		<launch classname="com.walgreens.batch.central.PosExceptionReportTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/PosExceptionReportTask/PosExceptionReportTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="PosReconciliationTask">
+		<launch classname="com.walgreens.batch.central.PosReconciliationTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/PosReconciliationTask/PosReconciliationTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="RoyaltyReportCustomTask">
+		<launch classname="com.walgreens.batch.central.RoyaltyReportCustomTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/RoyaltyReportCustomTask/RoyaltyReportCustomTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="RoyaltyReporMonthlyTask">
+		<launch classname="com.walgreens.batch.central.RoyaltyReporMonthlyTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/RoyaltyReporMonthlyTask/RoyaltyReporMonthlyTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="SalesReportByProductTask">
+		<launch classname="com.walgreens.batch.central.SalesReportByProductTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/SalesReportByProductTask/SalesReportByProductTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="PMByWICMonthlyReportTask">
+		<launch classname="com.walgreens.batch.central.PMByWICMonthlyReportTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/PMByWICMonthlyReportTask/PMByWICMonthlyReportTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="DailyPLUTask">
+		<launch classname="com.walgreens.batch.central.DailyPLUTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/DailyPLUTask/DailyPLUTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+
+	<target name="AdhocPLUTask">
+		<launch classname="com.walgreens.batch.central.AdhocPLUTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/AdhocPLUTask/AdhocPLUTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+
+	<target name="DailyPhotoTotalSalesReportTask">
+		<launch classname="com.walgreens.batch.central.DailyPhotoTotalSalesReportTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/DailyPhotoTotalSalesReportTask/DailyPhotoTotalSalesReportTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+
+	<target name="DailyPhotoDetailsSalesReportTask">
+		<launch classname="com.walgreens.batch.central.DailyPhotoDetailsSalesReportTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/DailyPhotoDetailsSalesReportTask/DailyPhotoDetailsSalesReportTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+
+	<target name="DailyPhotoOpsReportTask">
+		<launch classname="com.walgreens.batch.central.DailyPhotoOpsReportTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/DailyPhotoOpsReportTask/DailyPhotoOpsReportTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+
+	<target name="DailyPhotoCancelationReportTask">
+		<launch classname="com.walgreens.batch.central.DailyPhotoCancelationReportTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/DailyPhotoCancelationReportTask/DailyPhotoCancelationReportTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="DailyPhotoVendorPerformanceReportTask">
+		<launch classname="com.walgreens.batch.central.DailyPhotoVendorPerformanceReportTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/DailyPhotoVendorPerformanceReportTask/DailyPhotoVendorPerformanceReportTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="DailyPhotoMachineDowntimeReportTask">
+		<launch classname="com.walgreens.batch.central.DailyPhotoMachineDowntimeReportTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/DailyPhotoMachineDowntimeReportTask/DailyPhotoMachineDowntimeReportTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="HourlyPhotoTotalSalesReportTask">
+		<launch classname="com.walgreens.batch.central.HourlyPhotoTotalSalesReportTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/HourlyPhotoTotalSalesReportTask/HourlyPhotoTotalSalesReportTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="HourlyPhotoProductDetailsSalesReportTask">
+		<launch classname="com.walgreens.batch.central.HourlyPhotoProductDetailsSalesReportTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/HourlyPhotoProductDetailsSalesReportTask/HourlyPhotoProductDetailsSalesReportTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="WeeklyPhotoCancelationReportTask">
+		<launch classname="com.walgreens.batch.central.WeeklyPhotoCancelationReportTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/WeeklyPhotoCancelationReportTask/WeeklyPhotoCancelationReportTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="MonthlyPhotoCancelationReportTask">
+		<launch classname="com.walgreens.batch.central.MonthlyPhotoCancelationReportTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/MonthlyPhotoCancelationReportTask/MonthlyPhotoCancelationReportTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="DbPartitionPurgeTask">
+		<launch classname="com.walgreens.batch.central.DbPartitionPurgeTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/DbPartitionPurgeTask/DbPartitionPurgeTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+
+
+
+
+
+	<!-- Phase-2 Targets -->
+	<target name="PromotionFeedtoCentralTask">
+		<launch classname="com.walgreens.batch.central.PromotionFeedtoCentralTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/PromotionFeedtoCentralTask/PromotionFeedtoCentralTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="KPIIntegrationTask">
+		<launch classname="com.walgreens.batch.central.KPIIntegrationTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/KPIIntegrationTask/KPIIntegrationTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="DailyMSSJobLauncher">
+		<launch classname="com.walgreens.batch.central.DailyMSSJobLauncher">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/DailyMSSJobLauncher/DailyMSSJobLauncher" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="PurgeTask">
+		<launch classname="com.walgreens.batch.central.PurgeTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/PurgeTask/PurgeTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="DailyDeleteTask">
+		<launch classname="com.walgreens.batch.central.DailyDeleteTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/DailyDeleteTask/DailyDeleteTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="TimeAttendanceTask">
+		<launch classname="com.walgreens.batch.central.TimeAttendanceTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/TimeAttendanceTask/TimeAttendanceTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="KronosFeedJobLauncherTask">
+		<launch classname="com.walgreens.batch.central.KronosFeedJobLauncherTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/KronosFeedJobLauncherTask/KronosFeedJobLauncherTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="RestartFailedJobs">
+		<launch classname="com.walgreens.batch.central.RestartFailedJobs">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/RestartFailedJobs/RestartFailedJobs" />
+			</syspropertyset>
+		</launch>
+	</target>
+	<target name="StoreCloningTask">
+		<launch classname="com.walgreens.batch.central.StoreCloningTask">
+			<classpath refid="base.class.path" />
+			<syspropertyset>
+				<sysproperty key="log.file.prefix" file="${log.dir}/StoreCloningTask/StoreCloningTask" />
+			</syspropertyset>
+		</launch>
+	</target>
+
+
+</project>

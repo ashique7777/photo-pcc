@@ -1,0 +1,126 @@
+<ul class="list-group marginbottom5 exception-report">
+  <li class="list-group-item">
+    <div class="row">
+	  <div ng-repeat="error in errorMessageText">
+	    <div ng-show="showErrorMessage" class="error-container">
+			<section class="alert wag-alert alert-danger" role="alert">
+				<span class="icon-Alert"></span>
+				<span><strong>Error:</strong> {{error}}</span>
+			</section>
+	  	</div>
+	</div>
+	  
+	  <div ng-show="showNoDataFound" class="error-container">
+	  		<section class="alert wag-alert alert-info" role="alert">
+				<span class="icon-Info text-primary"></span>
+				<span><strong></strong> No data found for the search criteria </span>
+			</section>
+	  </div>
+      <div class="col-md-4 paddingTopBottom3">
+        <div class="input-group ">
+          <span class="input-group-addon fontSize80 line-break-class" >
+            View Section 
+          </span>
+          <select class="form-control fontSize80" ng-model="exceptionReport.viewSection">
+          	<option value="Exception Report - by Envelope">Exception Report - by Envelope</option>
+          	<option value="Exception Report - by Employee">Exception Report - by Employee</option>
+          </select>
+        </div>
+      </div>
+	  <!-- <span class="icon-Question icon-Question-reg-edit text-primary wag-popover-box" popover-placement="top" popover="Help text goes here" popover-trigger="mouseenter"></span> -->
+       <!--<span class="glyphicon glyphicon-question-sign" popover-placement="top" popover="Help text goes here" popover-trigger="mouseenter"></span>-->    
+    </div> 
+    	<!-- section view -->
+    	
+	    <!-- Exception Report - By Envelope -->
+	    <div class="exceptionReport" ng-show="exceptionReportByEnvelope">
+		    <div class="row">
+		    	<div class="col-md-3">
+					<div class="input-group">
+				          <span class="input-group-addon fontSize80" >
+				            Exception
+				          </span>
+			        	<select class="form-control fontSize80" ng-model="exceptionReport.exceptionStatus">
+			          		<option value="All">All</option>
+			          		<option value="R">Resolved</option>
+			          		<option value="O">Open</option>
+			          	</select>
+			    	</div> 
+			    </div>   
+			    <div class="col-md-3">
+			        <div class="input-group">
+			          <span class="input-group-addon fontSize80" >
+			            Reason
+			          </span>
+			          <select class="form-control fontSize80" ng-model="workspace.reasonTypeObj" ng-options="reason.reason for reason in workspace.reasonList">
+			          		<option value="">All</option>
+			          </select>
+			        </div>
+			    </div>   
+			   <!--  <div class="col-md-3">
+					<div class="input-group">
+			           <span class="input-group-addon fontSize80 line-break-class" >Customer last name</span>
+			           <input type="text" class="form-control fontSize80" ng-model="exceptionReport.customerLastName" ng-click="hideErrorMessage()"/>
+			        </div>
+			      </div>  -->    
+			      <div class="col-md-3">
+			        <div class="input-group">
+			        	<span class="input-group-addon fontSize80 line-break-class">Employee last name</span>
+			          	<input type="text" class="form-control" ng-model="exceptionReport.employeeLastName" ng-click="hideErrorMessage()"/>
+			        </div>
+			      </div> 
+		    
+		    	<div class="col-md-3">
+					<div class="input-group">
+			           <span class="input-group-addon fontSize80 line-break-class padding25" >Envelope Entered Date</span>
+			           <input type="text" class="form-control entered fontSize80" placeholder="MM/DD/YYYY" datepicker-popup={{format}} ng-model="exceptionReport.envelopeEnteredDate" datepicker-options="dateOptions" is-open="workspace.openedEntered" ng-click="open($event,'entered')" max-date="endMaxDate" close-text="Close"/>
+			        </div>
+			   </div> 
+		 </div>
+	 <div class="row">
+			    <div class="col-md-3">
+			        <div class="input-group">
+			        <span class="input-group-addon fontSize80 line-break-class padding25">Exception Start Date</span>			        
+			          <input type="text" class="form-control start fontSize80" placeholder="MM/DD/YYYY" datepicker-popup={{format}} ng-model="exceptionReport.startDate" datepicker-options="dateOptions" is-open="workspace.openedStart"  ng-click="open($event,'start')" max-date="endMaxDate" min-date="startMinDate" close-text="Close" />
+			        </div>
+			     </div>
+			     <div class="col-md-3">
+			        <div class="input-group">
+			        <span class="input-group-addon fontSize80 line-break-class">Exception End Date</span>
+			          <input type="text" class="form-control end fontSize80" placeholder="MM/DD/YYYY" datepicker-popup={{format}} ng-model="exceptionReport.endDate" datepicker-options="dateOptions" is-open="workspace.openedEnd"  ng-click="open($event,'end')" max-date="endMaxDate" min-date="startMinDate" close-text="Close"/>
+			          
+			        </div>
+			     </div>
+			   
+			    <div class="col-md-3">
+					<div class="input-group">
+			           <span class="input-group-addon fontSize80 line-break-class" >Env#</span>
+			           <input type="text" class="form-control fontSize80" ng-model="exceptionReport.envNumber" ng-click="hideErrorMessage()"/>
+			        </div>
+			      </div>
+		    </div>   
+	    </div>
+	    <!-- Exception Report - By Employee -->
+    	<div class="row exceptionReport" ng-show="exceptionReportByEmployee">
+	    	  <div class="col-md-3">
+				<div class="input-group">
+		           <span class="input-group-addon" >Start Date</span>
+		           <input type="text" class="form-control startEmp" placeholder="MM/DD/YYYY" datepicker-popup={{format}} ng-model="exceptionReport.startDate" is-open="workspace.openedStart" ng-click="open($event,'start')" max-date="endMaxDate" min-date="startMinDate" close-text="Close"/>
+		        </div>
+		      </div>     
+		      <div class="col-md-3">
+		        <div class="input-group">
+		          <input type="text" class="form-control endEmp" placeholder="MM/DD/YYYY" datepicker-popup={{format}} ng-model="exceptionReport.endDate" is-open="workspace.openedEnd"  ng-click="open($event,'end')" max-date="endMaxDate" min-date="startMinDate" close-text="Close">
+		          <span class="input-group-addon">End Date</span>
+		        </div>
+		      </div>
+	    </div> 
+     
+  </li> 
+ </ul>
+
+<div class="row filter-buttons nopadding">
+	<div class="col-md-12">
+		<button class="btn btn-info pull-right btn-xs wag-btn-primary-sm" ng-show="showFilter" ng-click="updateData($event,'exceptionReport')" >Generate Report</button>
+	</div>
+</div>

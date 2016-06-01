@@ -1,0 +1,110 @@
+<style>
+ul.listbox {
+    border: 1px solid #D8D8D8;
+    height: 150px;
+    margin: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    padding: 0;
+    width: 100%;
+}
+ul.listboxHead{
+    border: 1px solid #D8D8D8;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background-color: #D8D8D8;
+    width: -moz-max-content;"
+}
+ul.listboxHead li {
+    display: block;
+    margin: 1px 5px;
+    overflow: hidden;
+    padding: 0;
+}
+ul.listbox li {
+    display: block;
+    margin: 1px 5px;
+    overflow: hidden;
+    padding: 0;
+}
+</style>
+<div class="error-container" ng-show="showErrorContainer">
+	<section class="alert wag-alert alert-danger" role="alert">
+		<span class="icon-Alert"></span>
+		<span><strong>Error: </strong>{{errorMessage}}</span>
+	</section>
+</div>
+<div ng-show="showSucessContainer">
+	<div ng-show="workspace.data.pluStatus " class="error-container">
+		<section class="alert wag-alert alert-success" role="alert">
+			<span class="icon-ConfirmCircle"></span>
+			<span><strong>Success: </strong>Your request for the Report ID {{workspace.data.reportId}} has been {{workspace.data.response}}. An E-mail will be triggered with the report.</span>
+		</section>
+	</div>
+	<div class="alert wag-alert alert-danger" role="alert" ng-show="!workspace.data.pluStatus && workspace.data.response">
+  		<span class="icon-Alert"></span>
+  		<span><strong>Failure: </strong>Your request for the report has been {{workspace.data.response}}.</span>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-12 col-md-12 paddingTopBottom3">
+		<span class="col-sm-12 col-md-12 nopadding"> Date Range restriction for generating report is 93 days.</span>
+	</div>
+	<div class="col-md-3 paddingTopBottom3">
+		<div class="input-group">
+			<span class="input-group-addon"> Start Date </span> <input
+				type="text" class="form-control" datepicker-popup={{format}}
+				ng-model="workspace.plu.startDate" placeholder="MM/DD/YYYY" is-open="workspace.openedStart"
+				ng-required="workspace.plu.startDate"
+				ng-click="open($event,'start') " close-text="Close"  max-date="endMaxDate" />
+		</div>
+	</div>
+	<div class="col-md-3 paddingTopBottom3">
+		<div class="input-group">
+			<span class="input-group-addon">End Date </span>
+			<input type="text" class="form-control" placeholder="MM/DD/YYYY" datepicker-popup={{format}}
+				ng-model="workspace.plu.endDate" is-open="workspace.openedEnd"
+				ng-click="open($event,'end')" close-text="Close"  max-date="endMaxDate" /> 
+		</div>
+	</div>
+</div>
+</br>
+<div class="row">
+	<div class="col-md-6">
+		<div style="float:left">	
+			<ul class="listboxHead">
+				<li style="background-color:#D8D8D8;">
+					<input type="checkbox" ng-click="selectAll($event)" ng-checked="isSelectedAll()" ng-disabled="workspace.pluButtonFlag('sel')"/>
+					&nbsp;&nbsp;<b>Select PLU Number</b>
+				</li>
+			</ul>
+			<ul class="listbox">
+				<li ng-repeat="e in workspace.data.rowid" ng-class="getSelectedClass(e.id)">
+					<input type="checkbox" name="selected" ng-checked="isSelected(e.id)" ng-click="updateSelection($event, e.id,e)"/>&nbsp;&nbsp;
+					{{e.val}}
+				</li>
+			</ul>
+		</div>
+		<div style="margin-top:55px">
+			<button class="btn btn-default btn-xs marginTopMin20 paddingT7L11" ui-sref="report.plu.item()" style="width: 64px; margin-left: 30px;" ng-click="pluPopup($event)">Add</button>
+			</br>
+			<button class="btn btn-default btn-xs marginTopMin20 paddingT7L11" ng-click="remove($index)" style="margin-top: 15px; margin-left: 30px;" ng-disabled="workspace.pluButtonFlag()">Remove</button>
+		</div>
+	</div>
+</div>
+<br/>
+<div class="col-md-6 paddingTopBottom3 ">
+	<div class="input-group">
+		<span class="input-group-addon"> Email : </span> <input type="text" class="form-control" ng-click= "hideMessage()" ng-model="workspace.plu.emailIds" /> 
+		<span class="input-group-addon"> @walgreens.com </span>
+	</div>
+	<div class="col-sm-12 col-md-12 nopadding align-center">
+		<span>Enter user name (multiple separated by commas)</span>
+	</div>
+</div>
+<div class="row filter-buttons" ng-show="true">
+	<div class="col-md-2"> 
+	<button class="btn btn-info btn-xs wag-btn-primary-sm" ng-click="updateData($event,'plu')">Submit</button>
+	</div>
+</div>

@@ -1,0 +1,35 @@
+{
+    "storeNumber": "50125",
+    "currentDate": "03/17/2015",
+    "totalRecord": "10",
+    "currrentPage": "1",
+    "unclaimDataList": [
+        {
+            "customerId": "1",
+            "customerName": "KumarSourav",
+            "phoneNo": "24330361",
+            "totalEnvelope": "10",
+            "totalValue": "$12",
+            "PromiseTime": "09/01/201403: 56PM",
+            "OrderDateRange": "2015-03-03-2015-03-03"
+        },
+        {
+            "customerId": "2",
+            "customerName": "naskar animesh",
+            "phoneNo": "24330361",
+            "totalEnvelope": "12",
+            "totalValue": "$13",
+            "PromiseTime": "09/01/201403: 56PM",
+            "OrderDateRange": "2015-03-03-2015-03-03"
+        },
+        {
+            "customerId": "3",
+            "customerName": "JitheshNair",
+            "phoneNo": "24330361",
+            "totalEnvelope": "11",
+            "totalValue": "$14",
+            "PromiseTime": "09/01/201403: 56PM",
+            "OrderDateRange": "2015-03-03-2015-03-03"
+        }
+    ]
+}

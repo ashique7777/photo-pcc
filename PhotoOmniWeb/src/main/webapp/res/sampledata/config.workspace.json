@@ -1,0 +1,28 @@
+{
+	"workqueue":{ 	
+		"id": 1, 
+		"text": "WorkQueue",
+		"workqueueJson" : "res/sampledata/workspace/workqueue.json",
+		"earliestPromiseTimeJson" : "res/sampledata/workspace/earliest.promise.time.json"
+	},
+	"tickets" : {
+		"id": 4, 
+		"text": "Tickets",
+		"ticketsJson" : "res/sampledata/workspace/tickets.json"
+	},
+	"tabbox":[
+			{
+				"id": 2, 
+				"text": "Alerts" ,
+				"itemType":"alerts",
+				"dataJson" : "res/sampledata/workspace/alerts.json"
+			},
+			{
+				"id": 3, 
+				"text": "Notes" ,
+				"itemType":"notes",
+				"dataJson" : "res/sampledata/workspace/notes.json"
+			}
+	]
+	
+}

@@ -1,0 +1,5 @@
+<ul class="list-group reports">
+	<li class="list-group-item" ng-repeat="data in workspace.data.reports" ui-sref="systemManagement.report({'reportId': data.id})" class="cPointer">
+		<a href="#">{{data.text}}</a>
+	</li>
+</ul>

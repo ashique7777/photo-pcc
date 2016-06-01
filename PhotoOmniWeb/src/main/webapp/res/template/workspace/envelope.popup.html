@@ -1,0 +1,21 @@
+<div class="spopupOuterContainer" ui-keydown="{'pageup':'goToEnvelope($event);'}">
+	<div class="popupMainContainer col-md-7 panel panel-primary slide">
+	  <div class="panel-heading">
+	  <h3 class="panel-title">Envelope Details
+	  <a href="#" ng-click="goToEnvelope($event);"  class="pull-right glyphicon glyphicon-remove"></a></h3>
+	  </div>
+	  
+	  <div class="col-md-12 pop-nav">
+		<a ng-click="changeItem($event,'prev')" ng-class="{'disabled': !getNextItem($event,'prev')}" class="pull-left  glyphicon glyphicon-chevron-left" href="#">&nbsp;</a>
+		<a ng-click="changeItem($event,'next')" ng-class="{'disabled': !getNextItem($event,'next')}" class="pull-right glyphicon glyphicon-chevron-right" href="#">&nbsp;</a>
+	  </div>
+
+	  <div class="panel-body pop-content">
+		  <div class="row paddingTopBottom10">
+		  	<div>Id : {{envelopePopDetails.id}}</div>
+		  	<div>Description: {{envelopePopDetails.envelopedescription}}</div>
+		  </div>
+	  </div>
+
+</div>
+

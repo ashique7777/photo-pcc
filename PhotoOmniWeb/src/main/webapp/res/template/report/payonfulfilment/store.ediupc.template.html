@@ -1,0 +1,57 @@
+<div ng-hide="showErrorMessage">
+	<div class="row paddingTopBottom3">
+		 <div class="col-md-12 nopadding">
+			  <div class="row">
+				  <div class="col-md-4">
+					<div><strong>Store # :</strong> {{workspace.data.respData.storeNumber}}</div>
+					<div><strong>ASN Received Date :</strong> {{workspace.data.respData.asnRecievedDate}}</div>
+					<div><strong>Vendor Total Cost :</strong> {{workspace.data.respData.cost}}</div>
+				  </div>
+				  <div class="col-md-4">
+					<div><strong>Vendor Name :</strong> {{workspace.data.respData.vendorNbr}}</div>
+					<div><strong>DTTM Done :</strong> {{workspace.data.respData.doneDate}}</div>
+					<div><strong>Calculated Retail Price :</strong> {{workspace.data.respData.retailPrice}}</div>
+				  </div>
+				  <div class="col-md-4">
+					<div><strong>Env # :</strong> {{workspace.data.respData.envelopeNumber | numberFixedLen:6}}</div>
+					<div><strong>EDI Transmitted DTTM :</strong> {{workspace.data.respData.ediTransferDate}}</div>
+					<div><strong>Reporting DTTM :</strong> {{workspace.data.respData.reportingDate}}</div>
+				  </div>
+			  </div>
+		</div>
+	<div class="col-sm-12 col-md-12 nopadding"><div class="col-md-2"><strong>Product Information</strong></div></div>
+	
+	<div class="col-sm-12 col-md-12 nopadding">
+	 
+	 <div class="margintop6">
+    	<!-- <button class="btn btn-default btn-xs marginTopMin20 paddingT7L11 wag-btn-default-sm">ExportGenerate CSV --><!-- changed to "Export" on 03-24-2015</button> -->
+	   	<wgpagination start-index="{{startIndex}}" total-page-count="{{totalPageCount}}" id="{{$index}}" show-table-data="showTableData" ng-click="changeStorePagination('pof',$index,store.storeNumber)"></wgpagination>
+	   </div>
+	</div>
+	
+	
+	</div>
+	
+	<table class="table table-condensed table-hover table-bordered">
+	<thead>
+		  <tr>
+			<th>S. No.</th>
+			<th>Product Description</th>
+			<th>WIC</th>
+			<th>UPC</th>
+			<th>Quantity (Customer Ordered Quantity)</th>
+			<th>Vendor Item Cost</th>
+		  </tr>
+		</thead>
+		<tbody><!-- ui-sref="report.detail.item({itemId:data.id})" class="cPointer" -->
+		  <tr ng-repeat="data in workspace.data.productList">
+		<td>{{data.serialNumber}}</td>
+		<td>{{data.productDescription}}</td>
+		<td>{{data.wic}}</td>
+		<td>{{data.upc}}</td>
+		<td>{{data.quantity}}</td>
+		<td>{{data.vendorItemCost}}</td>
+	  </tr>
+		</tbody>
+	</table>
+</div>

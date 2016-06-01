@@ -1,0 +1,7 @@
+{
+  "view":[
+    { "id": 1, "text": "PMDOLLAR_BYPRODUCT" },
+    { "id": 2, "text": "PMDOLLAR_BYEMPLOYEE" }
+   
+  ]
+}

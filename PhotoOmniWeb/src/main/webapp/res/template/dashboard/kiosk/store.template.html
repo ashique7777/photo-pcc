@@ -1,0 +1,58 @@
+
+<!-- commented to remove total row :: 03-24-2015 -->
+<!-- <div class="row paddingTopBottom3">
+    <div class="col-sm-12 col-md-12 nopadding">
+
+
+     <span class="label label-default" ng-show="cWindow.data.totalRecord">Total Row: {{cWindow.data.totalRecord}}</span>
+     </div>
+	 </div> -->
+	<div class="row paddingTopBottom3">
+   
+	<div class="col-sm-12 col-md-12 pull-right nopadding">
+	
+    <!--<pagination  previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" total-items="cWindow.data.totalRecord" items-per-page="cWindow.data.data.length" boundary-links="false" ng-model="cWindow.data.currrentPage" class="pagination-sm nomargin" max-size="5" rotate="false" ng-click="cWindow.changeStorePagination('kiosk')"></pagination>-->
+	<ul class="pager wag-pager pagi pull-right marginLeft3 margintop2">
+<li><a href="#" class="wag-btn-default-sm"><i class="icon-ChevronLeft wag-pager-icon-pos"></i></a></li>
+<li><span>Page 1 of 4</span></li>
+<li><a href="#" class="wag-btn-default-sm"><i class="icon-ChevronRight wag-pager-icon-pos"></i></a></li>
+</ul>
+
+
+       <button class="btn btn-default btn-xs marginTopMin20 paddingT7L11 wag-btn-default-sm">Print</button>
+       <button class="btn btn-default btn-xs marginTopMin20 paddingT7L11 wag-btn-default-sm">Export</button>
+	</div>
+  </div>
+
+  <table class="table table-condensed table-hover table-bordered">
+    <thead>
+          <tr>
+            <th>Store No.</th>
+            <th>Kiosk IP</th>
+            <th>Software Ver.</th>
+            <th>Template Ver.</th>
+            <th>iMemories Ver.</th>
+            <th>TOMO Ver.</th>
+            <th>Last Reboot</th>
+            <th>C Drive Space (MB)</th>
+            <th>D Drive Space (MB)</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="data in cWindow.data.data">
+            <td>{{data.StoreNumber}}</td>
+            <td>{{data.KioskIP}}</td>
+            <td>{{data.SoftwareVer}}</td>
+            <td>{{data.TemplateVer}}</td>
+            <td>{{data.iMemoriesVer}}</td>
+            <td>{{data.TOMOVer}}</td>
+            <td>{{data.LastReboot}}</td>
+            <td>{{data.CSpace}}</td>
+            <td>{{data.DSpace}}</td>
+
+          </tr>
+        </tbody>
+  </table>
+
+

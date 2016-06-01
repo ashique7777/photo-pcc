@@ -1,0 +1,42 @@
+{
+	"totalRecord" : "4",
+	"currrentPage" : "1",
+	"searchType" : "NONEDIUPC",
+	"storeDetails":
+		[
+			{
+			"id":"1233",
+			"storeNumber" : "59156",
+			"reportingDate":"8/22/2013",
+			"envelopeNumber" : "381650",
+			"makeUpEDIUPC" : "02259156381650",
+			"quantity" : "2",
+			"cost" : "$2.00",
+			"timeDone": "8/22/2013",
+			"webid":"34718173005"
+			},
+			{
+			"id":"1235",
+			"storeNumber" : "59158",
+			"reportingDate":"8/22/2013",
+			"envelopeNumber" : "381651",
+			"makeUpEDIUPC" : "02259156381650",
+			"quantity" : "3",
+			"cost" : "$6.00",
+			"timeDone": "8/22/2013",
+			"webid":"3234173005"
+			},
+			{
+			"id":"12343",
+			"storeNumber" : "59156",
+			"reportingDate":"8/22/2013",
+			"envelopeNumber" : "381652",
+			"makeUpEDIUPC" : "02259156381650",
+			"quantity" : "3",
+			"cost" : "$8.00",
+			"timeDone": "8/22/2013",
+			"webid":"4518173034"
+			}
+		]
+
+}

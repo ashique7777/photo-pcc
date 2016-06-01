@@ -1,0 +1,112 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+  		
+	<!-- Import Common Job : Start -->
+	<import resource="classpath:spring/batch/jobs/job_Common.xml" />
+	<!-- Import Common Job : End -->	
+		
+	<batch:job id="machineDownTimeJob">
+		<batch:step id="machine_downtime_step1" next = "machine_downtime_step2">
+			<batch:tasklet transaction-manager="transactionManager">
+				<batch:chunk reader="machineItemReader" processor="machineDowtimeProcessor" writer="machineItemWriter"
+					commit-interval="100">
+				</batch:chunk>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="machine_downtime_step2" next = "machine_downtime_step3">
+			<batch:tasklet transaction-manager="transactionManager">
+				<batch:chunk reader="equipmentItemReader" processor="machineDowtimeProcessor" writer="equipmentItemWriter"
+					commit-interval="100">
+				</batch:chunk>
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="machine_downtime_step3">
+			<batch:tasklet transaction-manager="transactionManager">
+				<batch:chunk reader="componentItemReader" processor="machineDowtimeProcessor" writer="componentItemWriter"
+					commit-interval="100">
+				</batch:chunk>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+
+	<bean id="machineItemReader" class="org.springframework.batch.item.database.JdbcCursorItemReader" scope ="step">
+	 <property name="dataSource" ref="omniDataSource" />
+	  <property name="name" value="machineItemReader" />
+	  <property name="saveState" value="true" />
+	   <property name="sql" value = "SELECT * FROM (SELECT LOCTABLE.LOCATION_NBR, LOCTABLE.BUSINESS_TIME_OPEN_SUN, LOCTABLE.BUSINESS_TIME_OPEN_MON, LOCTABLE.BUSINESS_TIME_OPEN_TUE, LOCTABLE.BUSINESS_TIME_OPEN_WED, LOCTABLE.BUSINESS_TIME_OPEN_THU, LOCTABLE.BUSINESS_TIME_OPEN_FRI, LOCTABLE.BUSINESS_TIME_OPEN_SAT, LOCTABLE.BUSINESS_TIME_CLOSED_SUN,
+		 LOCTABLE.BUSINESS_TIME_CLOSED_MON, LOCTABLE.BUSINESS_TIME_CLOSED_TUE, LOCTABLE.BUSINESS_TIME_CLOSED_WED, LOCTABLE.BUSINESS_TIME_CLOSED_THUS,
+		 LOCTABLE.BUSINESS_TIME_CLOSED_FRI, LOCTABLE.BUSINESS_TIME_CLOSED_SAT, MACHINE_DOWNTIME.SYS_MACHINE_DWNT_ID, MACHINE_DOWNTIME.SYS_MACHINE_INSTANCE_ID,
+		 MACHINE_DOWNTIME.SYS_DOWNTIME_REASON_ID, MACHINE_DOWNTIME.DWNT_EVENT_NAME, MACHINE_DOWNTIME.DWNT_START_DTTM, MACHINE_DOWNTIME.ESTIMATED_DWNT_END_DTTM,
+		 MACHINE_DOWNTIME.ACTUAL_DWNT_END_DTTM, MACHINE_DOWNTIME.BEGIN_EMPLOYEE_ID, MACHINE_DOWNTIME.END_EMPLOYEE_ID, MACHINE_DOWNTIME.ACTIVE_CD, MACHINE_DOWNTIME.NOTES,
+		 MACHINE_DOWNTIME.CREATE_USER_ID, MACHINE_DOWNTIME.CREATE_DTTM, MACHINE_DOWNTIME.UPDATE_USER_ID, MACHINE_DOWNTIME.UPDATE_DTTM, ROWNUM ROW_NO 
+		 FROM 	OM_LOCATION  LOCTABLE 	 JOIN OM_MACHINE_INSTANCE MACHINE_INSTANCE  ON LOCTABLE.SYS_LOCATION_ID = MACHINE_INSTANCE.SYS_LOCATION_ID  JOIN OM_MACHINE_DOWNTIME MACHINE_DOWNTIME ON MACHINE_DOWNTIME.SYS_MACHINE_INSTANCE_ID = MACHINE_INSTANCE.SYS_MACHINE_INSTANCE_ID  WHERE MACHINE_DOWNTIME.PROCESSED_CD = 1 AND LOCTABLE.ACTIVE_CD = 1  ORDER BY MACHINE_DOWNTIME.SYS_MACHINE_DWNT_ID)" />
+	    <property name="rowMapper" ref="machineRowMapper" />
+	</bean>
+	
+	<bean id="machineRowMapper" class="com.walgreens.batch.central.rowmapper.MachineDwntmRowmapper"/>
+	
+	<bean id= "machineDowtimeProcessor" class = "com.walgreens.batch.central.processor.MachineDowntimeProcessor"  scope="step"/>
+	
+	<bean id="machineItemWriter" class="com.walgreens.batch.central.writer.MachineItemWriter">
+		<property name="jdbcTemplate" ref="omniJdbcTemplate"></property>
+	</bean>
+	
+	<bean id="equipmentItemReader" class="org.springframework.batch.item.database.JdbcCursorItemReader" scope ="step">
+	 <property name="dataSource" ref="omniDataSource" />
+	  <property name="name" value="equipmentItemReader" />
+	  <property name="saveState" value="true" />
+	   <property name="sql" value = "SELECT * FROM (SELECT LOCTABLE.LOCATION_NBR, LOCTABLE.BUSINESS_TIME_OPEN_SUN, LOCTABLE.BUSINESS_TIME_OPEN_MON,
+				 LOCTABLE.BUSINESS_TIME_OPEN_TUE, LOCTABLE.BUSINESS_TIME_OPEN_WED, LOCTABLE.BUSINESS_TIME_OPEN_THU, 
+				 LOCTABLE.BUSINESS_TIME_OPEN_FRI, LOCTABLE.BUSINESS_TIME_OPEN_SAT, LOCTABLE.BUSINESS_TIME_CLOSED_SUN,
+				 LOCTABLE.BUSINESS_TIME_CLOSED_MON, LOCTABLE.BUSINESS_TIME_CLOSED_TUE, LOCTABLE.BUSINESS_TIME_CLOSED_WED,
+				 LOCTABLE.BUSINESS_TIME_CLOSED_THUS, LOCTABLE.BUSINESS_TIME_CLOSED_FRI, LOCTABLE.BUSINESS_TIME_CLOSED_SAT,
+				 EQUIPMENT_DOWNTIME.SYS_EQUIP_DWNT_ID, EQUIPMENT_DOWNTIME.SYS_EQUIPIMENT_INSTANCE_ID,
+				 EQUIPMENT_DOWNTIME.SYS_DOWNTIME_REASON_ID,EQUIPMENT_DOWNTIME.DWNT_EVENT_NAME,EQUIPMENT_DOWNTIME.DWNT_START_DTTM,
+				 EQUIPMENT_DOWNTIME.ESTIMATED_DWNT_END_DTTM, EQUIPMENT_DOWNTIME.ACTUAL_DWNT_END_DTTM,
+				 EQUIPMENT_DOWNTIME.BEGIN_EMPLOYEE_ID,EQUIPMENT_DOWNTIME.END_EMPLOYEE_ID,
+				 EQUIPMENT_DOWNTIME.ACTIVE_CD,EQUIPMENT_DOWNTIME.NOTES,EQUIPMENT_DOWNTIME.CREATE_USER_ID,
+				 EQUIPMENT_DOWNTIME.CREATE_DTTM,EQUIPMENT_DOWNTIME.UPDATE_USER_ID,EQUIPMENT_DOWNTIME.UPDATE_DTTM, ROWNUM ROW_NO 
+				 FROM  OM_LOCATION  LOCTABLE  JOIN OM_MACHINE_INSTANCE  MACHINE_INSTANCE  ON LOCTABLE.SYS_LOCATION_ID = MACHINE_INSTANCE.SYS_LOCATION_ID JOIN OM_EQUIPMENT_INSTANCE  EQUIPMENT_INSTANCE  ON MACHINE_INSTANCE.SYS_MACHINE_INSTANCE_ID = EQUIPMENT_INSTANCE.SYS_MACHINE_INSTANCE_ID JOIN OM_EQUIPMENT_DOWNTIME EQUIPMENT_DOWNTIME ON EQUIPMENT_DOWNTIME.SYS_EQUIPIMENT_INSTANCE_ID = EQUIPMENT_INSTANCE.SYS_EQUIPMENT_INSTANCE_ID  WHERE EQUIPMENT_DOWNTIME.PROCESSED_CD = 1 AND LOCTABLE.ACTIVE_CD = 1 ORDER BY EQUIPMENT_DOWNTIME.SYS_EQUIP_DWNT_ID)" />
+	    <property name="rowMapper" ref="equipmentRowMapper" />
+	</bean>
+
+	<bean id="equipmentRowMapper" class="com.walgreens.batch.central.rowmapper.EquipmentDowntimeRowmapper"/>
+	
+	<bean id="equipmentItemWriter" class="com.walgreens.batch.central.writer.EquipmentItemWriter">
+		<property name="jdbcTemplate" ref="omniJdbcTemplate"></property>
+	</bean>
+	
+	<bean id="componentItemReader" class="org.springframework.batch.item.database.JdbcCursorItemReader" scope ="step">
+	 <property name="dataSource" ref="omniDataSource" />
+	  <property name="name" value="componentItemReader" />
+	  <property name="saveState" value="true" />
+	   <property name="sql" value = "SELECT * FROM (SELECT COM_DOWNTIME.SYS_COMPONENT_DWNT_ID, COM_DOWNTIME.SYS_EQUIPIMENT_INSTANCE_ID, COM_DOWNTIME.SYS_COMPONENT_ID,
+		 COM_DOWNTIME.SYS_DOWNTIME_REASON_ID, COM_DOWNTIME.DWNT_EVENT_NAME, COM_DOWNTIME.DWNT_START_DTTM, COM_DOWNTIME.ESTIMATED_DWNT_END_DTTM,
+		 COM_DOWNTIME.ACTUAL_DWNT_END_DTTM, COM_DOWNTIME.BEGIN_EMPLOYEE_ID, COM_DOWNTIME.END_EMPLOYEE_ID, COM_DOWNTIME.ACTIVE_CD,
+		 COM_DOWNTIME.NOTES, COM_DOWNTIME.CREATE_USER_ID, COM_DOWNTIME.CREATE_DTTM, COM_DOWNTIME.UPDATE_USER_ID, COM_DOWNTIME.UPDATE_DTTM, ROWNUM ROW_NO,
+		 LOCTABLE.LOCATION_NBR, LOCTABLE.BUSINESS_TIME_OPEN_SUN, LOCTABLE.BUSINESS_TIME_OPEN_MON, LOCTABLE.BUSINESS_TIME_OPEN_TUE,
+		  LOCTABLE.BUSINESS_TIME_OPEN_WED, LOCTABLE.BUSINESS_TIME_OPEN_THU, LOCTABLE.BUSINESS_TIME_OPEN_FRI, LOCTABLE.BUSINESS_TIME_OPEN_SAT,
+		 LOCTABLE.BUSINESS_TIME_CLOSED_SUN, LOCTABLE.BUSINESS_TIME_CLOSED_MON, LOCTABLE.BUSINESS_TIME_CLOSED_TUE, LOCTABLE.BUSINESS_TIME_CLOSED_WED,
+		 LOCTABLE.BUSINESS_TIME_CLOSED_THUS, LOCTABLE.BUSINESS_TIME_CLOSED_FRI,  LOCTABLE.BUSINESS_TIME_CLOSED_SAT FROM 
+		OM_COMPONENT_DOWNTIME  COM_DOWNTIME  INNER JOIN OM_EQUIPMENT_INSTANCE  EQUIP_INS  ON COM_DOWNTIME.SYS_EQUIPIMENT_INSTANCE_ID = EQUIP_INS.SYS_EQUIPMENT_INSTANCE_ID INNER JOIN OM_MACHINE_INSTANCE MACHINE_INSTANCE  ON EQUIP_INS.SYS_MACHINE_INSTANCE_ID = MACHINE_INSTANCE.SYS_MACHINE_INSTANCE_ID INNER JOIN OM_LOCATION  LOCTABLE  ON LOCTABLE.SYS_LOCATION_ID = MACHINE_INSTANCE.SYS_LOCATION_ID WHERE COM_DOWNTIME.PROCESSED_CD = 1 AND LOCTABLE.ACTIVE_CD = 1 ORDER BY COM_DOWNTIME.SYS_COMPONENT_DWNT_ID)" />
+	    <property name="rowMapper" ref="componentRowMapper" />
+	</bean>
+	
+	<bean id="componentRowMapper" class="com.walgreens.batch.central.rowmapper.ComponentDowntimeRowmapper"/>
+	
+	<bean id="componentItemWriter" class="com.walgreens.batch.central.writer.ComponentItemWriter">
+		<property name="jdbcTemplate" ref="omniJdbcTemplate"></property>
+	</bean>
+</beans>

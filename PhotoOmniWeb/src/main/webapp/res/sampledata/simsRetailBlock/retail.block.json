@@ -1,0 +1,10 @@
+{
+ "simRetailBlocOnloadList": [ 
+      {"retailBlock":"30 (US)"},
+	  {"retailBlock":"40 (NOT in USE_ 26 region GC)"},
+	  {"retailBlock":"50 (Passport Test Pricing)"},
+	  {"retailBlock":"73 (Puerto Rico)"},
+	  {"retailBlock":"83 (Hawaii)"},
+	  {"retailBlock":"93 (Alaska)"}
+   ]
+}

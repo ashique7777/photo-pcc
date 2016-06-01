@@ -1,0 +1,119 @@
+<!-- commented to remove total row :: 03-24-2015 -->
+<!-- <div class="row paddingTopBottom3">
+<div class="col-sm-12 col-md-12 nopadding">
+ <span class="label label-default" ng-show="workspace.data.totalRecord">Total Row: {{workspace.data.totalRecord}}</span>
+</div>
+</div> -->
+<div ng-hide="showErrorMessage">
+	<div class="row" ng-show="showTable">
+		<div class="col-sm-6">
+			<strong>Store : {{workspace.data.storeWithAddress}}</strong>
+		</div>
+		<div class="col-sm-6">
+			<span class="pull-right"><strong>Start Date : {{exceptionReport.startDate | date:'MM/dd/yyyy'}} to End Date : {{exceptionReport.endDate | date:'MM/dd/yyyy'}}</strong></span>
+		</div>
+	</div>
+	<div class="row paddingTopBottom3">
+		<div class="col-sm-12 col-md-12" ng-show="showTable">
+		 <div class="pull-right">
+			<wgpagination start-index="1" total-page-count="{{totalPageCount}}" id="{{$index}}" show-table-data="showTableData" ng-click="changeStorePagination('exceptionReport',$index)"></wgpagination>
+		 </div>
+		 <button type="button" class="btn btn-default wag-btn-default-xs marginTopMin20 paddingT7L11 pull-left" ng-click="printDiv()" ng-class="printStatus ? 'wag-btn-disabled-sm' : 'wag-btn-default-sm'"  ng-disabled = "printStatus">Print</button>
+		</div>
+	</div>
+	
+	<div id="Print" class="col-md-12">
+		<div class="scrollableTableXY">
+			<table class="table table-condensed table-hover table-bordered sortableTable exceptionReportTable fontSize80" ng-show="showTable">
+				<thead>
+				  <tr>
+					<th ng-click="sort('exceptionReport','env','', $index)">
+						<span class="pull-left">Env#</span>
+						<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['env'].order && !colSortOrder['env'].firstLoad ? 'selected' : ''"></span>
+						<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['env'].order && !colSortOrder['env'].firstLoad ?' selected' : ''"></span>
+					</th>
+					<!-- <th ng-click="sort('exceptionReport','customerName','', $index)">
+						<span class="pull-left">Customer Name</span>
+						<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['customerName'].order && !colSortOrder['customerName'].firstLoad ? 'selected' : ''"></span>
+						<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['customerName'].order && !colSortOrder['customerName'].firstLoad ?' selected' : ''"></span>
+					</th> -->
+					<th ng-click="sort('exceptionReport','envelopeStatus','', $index)">
+						<span class="pull-left">Envelope Status</span>
+						<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['envelopeStatus'].order && !colSortOrder['envelopeStatus'].firstLoad ? 'selected' : ''"></span>
+						<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['envelopeStatus'].order && !colSortOrder['envelopeStatus'].firstLoad ?' selected' : ''"></span>
+					</th>
+					<th ng-click="sort('exceptionReport','envelopeDescription','', $index)">
+						<span class="pull-left">Envelope Description</span>
+						<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['envelopeDescription'].order && !colSortOrder['envelopeDescription'].firstLoad ? 'selected' : ''"></span>
+						<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['envelopeDescription'].order && !colSortOrder['envelopeDescription'].firstLoad ?' selected' : ''"></span>
+					</th>
+					<th ng-click="sort('exceptionReport','envelopeEntered','', $index)">
+						<span class="pull-left">Envelope Entered Date / Time</span>
+						<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['envelopeEntered'].order && !colSortOrder['envelopeEntered'].firstLoad ? 'selected' : ''"></span>
+						<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['envelopeEntered'].order && !colSortOrder['envelopeEntered'].firstLoad ?' selected' : ''"></span>
+					</th>
+					<th ng-click="sort('exceptionReport','exceptionStatus','', $index)">
+						<span class="pull-left">Exception Status</span>
+						<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['exceptionStatus'].order && !colSortOrder['exceptionStatus'].firstLoad ? 'selected' : ''"></span>
+						<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['exceptionStatus'].order && !colSortOrder['exceptionStatus'].firstLoad ?' selected' : ''"></span>
+					</th>
+					<th ng-click="sort('exceptionReport','reason','', $index)">
+						<span class="pull-left">Reason</span>
+						<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['reason'].order && !colSortOrder['reason'].firstLoad ? 'selected' : ''"></span>
+						<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['reason'].order && !colSortOrder['reason'].firstLoad ?' selected' : ''"></span>
+					</th>
+					<th ng-click="sort('exceptionReport','employeeLastName','', $index)">
+						<span class="pull-left">Employee Last Name</span>
+						<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['employeeLastName'].order && !colSortOrder['employeeLastName'].firstLoad ? 'selected' : ''"></span>
+						<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['employeeLastName'].order && !colSortOrder['employeeLastName'].firstLoad ?' selected' : ''"></span>
+					</th>
+					<th ng-click="sort('exceptionReport','exceptionEntered','', $index)">
+						<span class="pull-left">Exception Entered Date / Time</span>
+						<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['exceptionEntered'].order && !colSortOrder['exceptionEntered'].firstLoad ? 'selected' : ''"></span>
+						<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['exceptionEntered'].order && !colSortOrder['exceptionEntered'].firstLoad ?' selected' : ''"></span>
+					</th>
+					<th ng-click="sort('exceptionReport','orderPrice','', $index)">
+						<span class="pull-left">Order Price</span>
+						<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['orderPrice'].order && !colSortOrder['orderPrice'].firstLoad ? 'selected' : ''"></span>
+						<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['orderPrice'].order && !colSortOrder['orderPrice'].firstLoad ?' selected' : ''"></span>
+					</th>
+					<th ng-click="sort('exceptionReport','soldPrice','', $index)">
+						<span class="pull-left">Sold Price</span>
+						<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['soldPrice'].order && !colSortOrder['soldPrice'].firstLoad ? 'selected' : ''"></span>
+						<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['soldPrice'].order && !colSortOrder['soldPrice'].firstLoad ?' selected' : ''"></span>
+					</th>
+					<th ng-click="sort('exceptionReport','refusedPrints','', $index)">
+						<span class="pull-left">Refused Prints/Waste</span>
+						<span class="indicator icon-ArrowDown wag-icon-arrow-gray pull-left downArrow" ng-class="colSortOrder['refusedPrints'].order && !colSortOrder['refusedPrints'].firstLoad ? 'selected' : ''"></span>
+						<span class="indicator icon-ArrowUp wag-icon-arrow-gray pull-left upArrow" ng-class="!colSortOrder['refusedPrints'].order && !colSortOrder['refusedPrints'].firstLoad ?' selected' : ''"></span>
+					</th>
+				  </tr>
+				</thead>
+		
+				<tbody>
+				  <tr ng-repeat="data in workspace.data.repByEnvList">
+				  	<td ng-click="openPopup(data.env, data.envelopeEntered, data.orderType, data.orderId)">  <!-- openPopup modifed by shikha for getting envelopeEntered)  --><!-- Modified to hyperlink for only the field that can pop-up -->
+						<a><span class="cPointer cursor">{{data.env | numberFixedLen:6}}</span></a>
+					</td> 
+					<!-- <td>{{data.customerName}}</td> -->
+					<td>{{data.envelopeStatus}}</td>
+					<td>{{data.envelopeDescription}}</td>
+					
+					<td>{{data.envelopeEntered}}</td>
+					<td>{{data.exceptionStatus}}</td>
+					<td>{{data.reason}}</td>
+					<td>{{data.employeeLastName}}</td>
+					
+					<td>{{data.exceptionEntered}}</td>
+					<td>{{data.orderPrice}}</td>
+					<td>{{data.soldPrice}}</td>
+					<td>{{data.refusedPrints}}</td>
+				  </tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<div ng-show="printable" class="printable">
+	<div ng-include="workspace.printTemplate"></div>	 
+</div>
